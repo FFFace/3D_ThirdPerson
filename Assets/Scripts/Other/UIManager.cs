@@ -12,26 +12,20 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Image skill3;
 
+    public static UIManager instance;
 
 
-    private void Start()
+
+    private void Awake()
     {
-
+        if (instance == null) instance = this;
+        else Destroy(gameObject);
     }
 
-    public void SetImageSkillSlot1()
+    public void SetSkillImage(Image _skill1, Image _skill2, Image _skill3)
     {
-
+        skill1 = _skill1;
+        skill2 = _skill2;
+        skill3 = _skill3;
     }
-
-    public void SetImageSkillSlot2()
-    {
-
-    }
-
-    public void SetImageSkillSlot3()
-    {
-
-    }
-
 }

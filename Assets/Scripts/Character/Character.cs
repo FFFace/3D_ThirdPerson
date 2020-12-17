@@ -366,3 +366,13 @@ public class Character : MonoBehaviour
             Debug.Log("존재하지 않는 아이템");
     }
 }
+
+public class CharacterState
+{
+    public float hp { get; set; }
+    public float attackDamage { get; set; }
+    public float attackSpeed { get; set; }
+    public float moveSpeed { get; set; }
+    public float jumpPower { get; set; }
+    public float defense { get; set; }
+}

@@ -110,3 +110,64 @@ public class PlayerControll : MonoBehaviour
         return isDead;
     }
 }
+
+public class NomalAttackPressDown : KeyCommand
+{
+    private Character character;
+    public NomalAttackPressDown(Character _character) { character = _character; }
+    public void command()
+    {
+        character.AttackPressDown();
+    }
+}
+
+public class NomalAttackPressUp : KeyCommand
+{
+    private Character character;
+    public NomalAttackPressUp(Character _character) { character = _character; }
+
+    public void command()
+    {
+        character.AttackPressUp();
+    }
+}
+
+public class SubAttack : KeyCommand
+{
+    private Character character;
+    public SubAttack(Character _character) { character = _character; }
+    public void command()
+    {
+        character.SubAttack();
+    }
+}
+
+public class Dodge : KeyCommand
+{
+    private Character character;
+    public Dodge(Character _character) { character = _character; }
+    public void command()
+    {
+        character.Dodge();
+    }
+}
+
+public class MainSkill : KeyCommand
+{
+    private Character character;
+    public MainSkill(Character _character) { character = _character; }
+    public void command()
+    {
+        character.MainSkill();
+    }
+}
+
+public class SubSkill : KeyCommand
+{
+    private Character character;
+    public SubSkill(Character _character) { character = _character; }
+    public void command()
+    {
+        character.SubSkill();
+    }
+}

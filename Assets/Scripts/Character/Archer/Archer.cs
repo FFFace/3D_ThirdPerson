@@ -61,6 +61,8 @@ public class Archer : Character
 
         arrowActive = new ArcherArrowActive(this);
         activeArrow = arrowActive;
+
+
     }
 
     public override void MainSkill()
