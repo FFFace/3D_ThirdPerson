@@ -20,6 +20,7 @@ public class Character : MonoBehaviour
     protected IRecharge recharge;
     protected ICharacterUpdate characterUpdate;
     protected IActiveObj activeArrow;
+    protected IItemEffect effect;
 
     protected float currentMoveSpeed;
     protected float currentAttackSpeed;
@@ -38,7 +39,8 @@ public class Character : MonoBehaviour
     [SerializeField]
     protected GameObject modelArrow;
 
-    protected List<(Item item, int num)> items = new List<(Item, int)>();
+    protected Dictionary<Item, int> items = new Dictionary<Item, int>();
+    protected List<IItemEffect> itemEffects = new List<IItemEffect>();
 
     [SerializeField]
     protected Arrow arrow;
@@ -268,11 +270,6 @@ public class Character : MonoBehaviour
         isRecharge = active;
     }
 
-    public void ItemApply()
-    {
-
-    }
-
     public float GetCharacterCurrentDamage()
     {
         return currentAttackDamage;
@@ -324,5 +321,48 @@ public class Character : MonoBehaviour
     public void SetSubSkillCoolTime(float time)
     {
         subSkillCoolTime = time;
+    }
+
+    public void AddItem(Item _item)
+    {
+        if (items.ContainsKey(_item))
+        {
+            items[_item]++;
+        }
+        else
+        {
+            items.Add(_item, 1);
+            itemEffects.Add(_item.GetItemEffect());
+        }
+
+        currentAttackDamage += _item.GetItemDamage();
+        currentAttackDamage += state.attackDamage * _item.GetItemDamageMag();
+        currentAttackSpeed += state.attackSpeed * _item.GetItemAttackSpeedMag();
+        currentCharacterHP += _item.GetItemHP();
+        currentCharacterHP += state.hp * _item.GetItemHP();
+        currentMoveSpeed += state.moveSpeed * _item.GetItemMoveSpeedMag();
+    }
+
+    public void DeleteItem(Item _item)
+    {
+        if (items.ContainsKey(_item))
+        {
+            items[_item]--;
+            if (items[_item] <= 0)
+            {
+                items.Remove(_item);
+                itemEffects.Remove(_item.GetItemEffect());
+            }
+
+            currentAttackDamage -= _item.GetItemDamage();
+            currentAttackDamage -= state.attackDamage * _item.GetItemDamageMag();
+            currentAttackSpeed -= state.attackSpeed * _item.GetItemAttackSpeedMag();
+            currentCharacterHP -= _item.GetItemHP();
+            currentCharacterHP -= state.hp * _item.GetItemHP();
+            currentMoveSpeed -= state.moveSpeed * _item.GetItemMoveSpeedMag();
+        }
+
+        else
+            Debug.Log("존재하지 않는 아이템");
     }
 }

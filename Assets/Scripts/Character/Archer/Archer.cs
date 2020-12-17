@@ -1,12 +1,22 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Archer : Character
 {
     private ArcherUpdate archerUpdate;
     private ArcherKick archerKick;
     private ArcherArrowActive arrowActive;
+
+    private ArcherMultiArrow multiArrow;
+    private ArcherSpreadArrow spreadArrow;
+
+    [SerializeField]
+    private Image multiArrowImage;
+    [SerializeField]
+    private Image spreadArrowImage;
 
     private ISkill skill1;
     private ISkill skill2;
@@ -42,11 +52,31 @@ public class Archer : Character
         subAttack = new ArcherSubAttack(archerUpdate);
         characterUpdate = archerUpdate;
         recharge = new ArcherRecharge(this, rechargeTime);
-        mainSkill = new ArcherSkillArrow(10.0f, 1.5f);
-        subSkill = new ArcherSkillArrow(15.0f, 1.25f);
 
-        arrowActive = new ArcherArrowActive(this, mainSkill, subSkill);
+        multiArrow = new ArcherMultiArrow(10.0f, 1.5f, multiArrowImage);
+        spreadArrow = new ArcherSpreadArrow(15.0f, 1.25f, spreadArrowImage);
+
+        mainSkill = multiArrow;
+        subSkill = spreadArrow;
+
+        arrowActive = new ArcherArrowActive(this);
         activeArrow = arrowActive;
+    }
+
+    public override void MainSkill()
+    {
+        base.MainSkill();
+
+        if (mainSkill == multiArrow as ISkill || mainSkill == spreadArrow as ISkill)
+            subSkill.isActive = mainSkill.isActive ? false : subSkill.isActive;
+    }
+
+    public override void SubSkill()
+    {
+        base.SubSkill();
+
+        if (subSkill == multiArrow as ISkill || subSkill == spreadArrow as ISkill)
+            mainSkill.isActive = subSkill.isActive ? false : subSkill.isActive;
     }
 
     public void BowStringPull()
@@ -108,57 +138,32 @@ public class ArcherRecharge : IRecharge
 
 public class ArcherArrowActive : IActiveObj
 {
-    private Archer archer;
-    private Arrow[] arrows;
+    private Character character;
+    private Arrow arrow;
     private float damage;
 
-    private ISkill mainSkill;
-    private ISkill subSkill;
-
-    public ArcherArrowActive(Archer _archer, ISkill _mainSkill, ISkill _subSkill) 
+    public ArcherArrowActive(Character _character)
     {
-        archer = _archer;
-        mainSkill = _mainSkill;
-        subSkill = _subSkill;
-        arrows = new Arrow[5];
+        character = _character;
     }
 
     public void Active()
     {
-        Transform MonsterTR = archer.MonsterInCrossHair();
+        Transform MonsterTR = character.MonsterInCrossHair();
 
-        if (mainSkill.isActive) 
-        {
-            for (int i = 0; i < 5; i++) 
-                arrows[i] = archer.ArrowDequeue();
+        arrow = character.ArrowDequeue();
 
-            damage = mainSkill.GetDamage(); 
-        }
+        Transform fireTR = character.GetArrowFireTR();
+        arrow.SetTarget(MonsterTR);
 
-        if (subSkill.isActive)
-        {
-            arrows[0] = archer.ArrowDequeue();
-            arrows[0].SetSkillSpread(true);
-            damage = subSkill.GetDamage();
-        }
+        arrow.transform.position = fireTR.position;
+        arrow.transform.rotation = fireTR.rotation;
 
-        else arrows[0] = archer.ArrowDequeue();
+        damage = character.GetCharacterCurrentDamage();
+        arrow.SetArrowDamage(damage);
+        arrow.gameObject.SetActive(true);
 
-        for (int i = 0; i < arrows.Length; i++)
-        {
-            if (!arrows[i]) break;
-
-            Transform fireTR = archer.GetArrowFireTR();
-            arrows[i].SetTarget(MonsterTR);
-
-            arrows[i].transform.position = fireTR.position;
-            arrows[i].transform.rotation = fireTR.rotation;
-
-            arrows[i].SetArrowDamage(damage);
-            arrows[i].gameObject.SetActive(true);
-
-            arrows[i] = null;
-        }
+        arrow = null;
 
         //obj = archer.ArrowDequeue();
         //obj.SetTarget(MonsterTR);
@@ -166,6 +171,145 @@ public class ArcherArrowActive : IActiveObj
         //obj.transform.position = fireTR.position;
         //obj.transform.rotation = fireTR.rotation;
         //obj.gameObject.SetActive(true);
+    }
+}
+
+public class ArcherSpreadArrow : ISkill, IActiveObj
+{
+    private Character character;
+    private Arrow arrow;
+    private float coolTime;
+    private float damageMagnification;
+    private bool isAttack = false;
+    private Image image;
+    public bool isActive { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="_coolTime">스킬 쿨타임</param>
+    /// <param name="_damageMagnification">스킬 데미지 배율</param>
+    public ArcherSpreadArrow(float _coolTime, float _damageMagnification, Image _image)
+    {
+        character = Character.instance;
+        coolTime = _coolTime;
+        damageMagnification = _damageMagnification;
+        image = _image;
+    }
+
+    public void Skill()
+    {
+        if (isAttack == false)
+            isActive = !isActive;
+    }
+
+    public void Active()
+    {
+        if (isActive)
+        {
+            Transform MonsterTR = character.MonsterInCrossHair();
+
+            arrow = character.ArrowDequeue();
+            arrow.SetSkillSpread(true);
+            float damage = GetDamage();
+            arrow.SetArrowDamage(damage);
+
+            Transform fireTR = character.GetArrowFireTR();
+            arrow.SetTarget(MonsterTR);
+
+            arrow.transform.position = fireTR.position;
+            arrow.transform.rotation = fireTR.rotation;
+
+            arrow.gameObject.SetActive(true);
+        }
+    }
+
+    public IEnumerator SkillCoolTime()
+    {
+        if (!isActive) yield return null;
+        else
+        {
+            isAttack = true;
+            isActive = false;
+            yield return new WaitForSeconds(coolTime);
+            isAttack = false;
+        }
+    }
+
+    public float GetDamage()
+    {
+        return character.GetCharacterCurrentDamage() * damageMagnification;
+    }
+}
+
+public class ArcherMultiArrow : ISkill, IActiveObj
+{
+    private Character character;
+    private Arrow[] arrows;
+    private float coolTime;
+    private float damageMagnification;
+    private bool isAttack = false;
+    private Image image;
+    public bool isActive { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="_coolTime">스킬 쿨타임</param>
+    /// <param name="_damageMagnification">스킬 데미지 배율</param>
+    public ArcherMultiArrow(float _coolTime, float _damageMagnification, Image _image)
+    {
+        character = Character.instance;
+        coolTime = _coolTime;
+        damageMagnification = _damageMagnification;
+        image = _image;
+        arrows = new Arrow[5];
+    }
+
+    public void Skill()
+    {
+        if (isAttack == false)
+            isActive = !isActive;
+    }
+
+    public void Active()
+    {
+        if (isActive)
+        {
+            Transform MonsterTR = character.MonsterInCrossHair();
+
+            for (int i = 0; i < 5; i++)
+            {
+                arrows[i] = character.ArrowDequeue();
+                float damage = GetDamage();
+                arrows[i].SetArrowDamage(damage);
+
+                Transform fireTR = character.GetArrowFireTR();
+                arrows[i].SetTarget(MonsterTR);
+
+                arrows[i].transform.position = fireTR.position;
+                arrows[i].transform.rotation = fireTR.rotation;
+
+                arrows[i].gameObject.SetActive(true);
+            }
+        }
+    }
+
+    public IEnumerator SkillCoolTime()
+    {
+        if (!isActive) yield return null;
+        else
+        {
+            isAttack = true;
+            isActive = false;
+            yield return new WaitForSeconds(coolTime);
+            isAttack = false;
+        }
+    }
+
+    public float GetDamage()
+    {
+        return character.GetCharacterCurrentDamage() * damageMagnification;
     }
 }
 
@@ -240,6 +384,7 @@ public class ArcherSkillArrow : ISkill
     private float coolTime;
     private float damageMagnification;
     private bool isAttack = false;
+    private Image image;
     public bool isActive { get; set; }
 
     /// <summary>
@@ -247,11 +392,12 @@ public class ArcherSkillArrow : ISkill
     /// </summary>
     /// <param name="_coolTime">스킬 쿨타임</param>
     /// <param name="_damageMagnification">스킬 데미지 배율</param>
-    public ArcherSkillArrow(float _coolTime, float _damageMagnification) 
+    public ArcherSkillArrow(float _coolTime, float _damageMagnification, Image _image) 
     {
         character = Character.instance;
         coolTime = _coolTime;
         damageMagnification = _damageMagnification;
+        image = _image;
     }
 
     public void Skill()

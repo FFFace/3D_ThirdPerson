@@ -47,8 +47,7 @@ public class Monster : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        action = MonsterAction.STAY;
-        Debug.Log("A");
+        action = MonsterAction.CHASE;
     }
 
     protected virtual void Start()

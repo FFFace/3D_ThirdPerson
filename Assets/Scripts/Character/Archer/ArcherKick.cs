@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ArcherKick : MonoBehaviour
 {
     private Character character;
     [SerializeField]
     private Collider col;
+    private Image image;
 
     private void Start()
     {
@@ -32,5 +34,10 @@ public class ArcherKick : MonoBehaviour
     public void ColliderDisable()
     {
         col.enabled = false;
+    }
+
+    public void SetSkillImage(Image _image)
+    {
+        image = _image;
     }
 }
