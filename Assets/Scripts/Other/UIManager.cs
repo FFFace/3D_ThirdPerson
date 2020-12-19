@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("-Skill Image-")]
+
     [SerializeField]
     private Image skill1;
     [SerializeField]
@@ -15,17 +17,16 @@ public class UIManager : MonoBehaviour
     public static UIManager instance;
 
 
-
     private void Awake()
     {
         if (instance == null) instance = this;
         else Destroy(gameObject);
     }
 
-    public void SetSkillImage(Image _skill1, Image _skill2, Image _skill3)
+    public void SetSkillImage(Sprite _skill1, Sprite _skill2, Sprite _skill3)
     {
-        skill1 = _skill1;
-        skill2 = _skill2;
-        skill3 = _skill3;
+        skill1.sprite = _skill1;
+        skill2.sprite = _skill2;
+        skill3.sprite = _skill3;
     }
 }

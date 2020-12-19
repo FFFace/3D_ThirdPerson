@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class Warrok : Monster
 { 
     [SerializeField]
     private List<Monster> summonMonster = new List<Monster>();
 
-    private ISkill summonSkill;
-    private ISkill buffSkill;
-    private ISkill jumpSkill;
-    private ISkill nomalAttack;
+    private WarrokSummonSkill summonSkill;
+    private WarrokBuffSkill buffSkill;
+    private WarrokJumpSKill jumpSkill;
+    private WarrokAttack nomalAttack;
 
     protected override void Start()
     {
@@ -22,7 +23,7 @@ public class Warrok : Monster
         jumpSkill = new WarrokJumpSKill(this, 15.0f, 1.5f);
         nomalAttack = new WarrokAttack(this);
 
-        attack = new WarrokAttack(this);
+        attack = nomalAttack;
         chase = new WarrokChase(this, nav, currentSpeed);
         stand = new WarrokStand(this, nav, currentSpeed);
         hit = new MonsterHit(this);
@@ -192,6 +193,8 @@ public class WarrokAttack : ISkill
     {
         return monster.GetMonsterDamage();
     }
+
+    public Sprite GetImage() { return null; }
 }
 
 public class WarrokJumpSKill : ISkill
@@ -227,6 +230,8 @@ public class WarrokJumpSKill : ISkill
     {
         return monster.GetMonsterDamage() * magnification;
     }
+
+    public Sprite GetImage() { return null; }
 }
 
 public class WarrokBuffSkill : ISkill
@@ -269,6 +274,8 @@ public class WarrokBuffSkill : ISkill
     {
         return 0;
     }
+
+    public Sprite GetImage() { return null; }
 }
 
 public class WarrokSummonSkill : ISkill
@@ -339,4 +346,6 @@ public class WarrokSummonSkill : ISkill
     {
         return 0;
     }
+
+    public Sprite GetImage() { return null; }
 }

@@ -13,10 +13,15 @@ public class Archer : Character
     private ArcherMultiArrow multiArrow;
     private ArcherSpreadArrow spreadArrow;
 
+    [Space]
+    [Header("Skill Image")]
+
     [SerializeField]
-    private Image multiArrowImage;
+    private Sprite multiArrowImage;
     [SerializeField]
-    private Image spreadArrowImage;
+    private Sprite spreadArrowImage;
+    [SerializeField]
+    private Sprite kickImage;
 
     private ISkill skill1;
     private ISkill skill2;
@@ -49,7 +54,7 @@ public class Archer : Character
 
         archerUpdate = new ArcherUpdate(bowStringTR, rightHandTR, modelArrow);
         nomalAttack = attack;
-        subAttack = new ArcherSubAttack(archerUpdate);
+        subAttack = new ArcherSubAttack(archerUpdate, kickImage);
         characterUpdate = archerUpdate;
         recharge = new ArcherRecharge(this, rechargeTime);
 
@@ -62,7 +67,9 @@ public class Archer : Character
         arrowActive = new ArcherArrowActive(this);
         activeArrow = arrowActive;
 
+        Debug.Log(mainSkill.GetImage().ToString());
 
+        UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
     }
 
     public override void MainSkill()
@@ -183,7 +190,7 @@ public class ArcherSpreadArrow : ISkill, IActiveObj
     private float coolTime;
     private float damageMagnification;
     private bool isAttack = false;
-    private Image image;
+    private Sprite image;
     public bool isActive { get; set; }
 
     /// <summary>
@@ -191,7 +198,7 @@ public class ArcherSpreadArrow : ISkill, IActiveObj
     /// </summary>
     /// <param name="_coolTime">스킬 쿨타임</param>
     /// <param name="_damageMagnification">스킬 데미지 배율</param>
-    public ArcherSpreadArrow(float _coolTime, float _damageMagnification, Image _image)
+    public ArcherSpreadArrow(float _coolTime, float _damageMagnification, Sprite _image)
     {
         character = Character.instance;
         coolTime = _coolTime;
@@ -242,6 +249,11 @@ public class ArcherSpreadArrow : ISkill, IActiveObj
     {
         return character.GetCharacterCurrentDamage() * damageMagnification;
     }
+
+    public Sprite GetImage()
+    {
+        return image;
+    }
 }
 
 public class ArcherMultiArrow : ISkill, IActiveObj
@@ -251,7 +263,7 @@ public class ArcherMultiArrow : ISkill, IActiveObj
     private float coolTime;
     private float damageMagnification;
     private bool isAttack = false;
-    private Image image;
+    private Sprite image;
     public bool isActive { get; set; }
 
     /// <summary>
@@ -259,7 +271,7 @@ public class ArcherMultiArrow : ISkill, IActiveObj
     /// </summary>
     /// <param name="_coolTime">스킬 쿨타임</param>
     /// <param name="_damageMagnification">스킬 데미지 배율</param>
-    public ArcherMultiArrow(float _coolTime, float _damageMagnification, Image _image)
+    public ArcherMultiArrow(float _coolTime, float _damageMagnification, Sprite _image)
     {
         character = Character.instance;
         coolTime = _coolTime;
@@ -313,6 +325,11 @@ public class ArcherMultiArrow : ISkill, IActiveObj
     {
         return character.GetCharacterCurrentDamage() * damageMagnification;
     }
+
+    public Sprite GetImage()
+    {
+        return image;
+    }
 }
 
 public class ArcherUpdate : ICharacterUpdate
@@ -352,12 +369,13 @@ public class ArcherSubAttack : ISkill
 {
     private Character character;
     private ArcherUpdate update;
+    private Sprite image;
 
     private float coolTime = 3.0f;
 
     public bool isActive { get; set; }
 
-    public ArcherSubAttack(ArcherUpdate _update) { character = Character.instance; update = _update; }
+    public ArcherSubAttack(ArcherUpdate _update, Sprite _image) { character = Character.instance; update = _update; image = _image; }
 
     public void Skill()
     {
@@ -377,51 +395,58 @@ public class ArcherSubAttack : ISkill
     {
         return 0;
     }
+
+    public Sprite GetImage() { return image; }
 }
 
 
-public class ArcherSkillArrow : ISkill
-{
-    private Character character;
-    private float coolTime;
-    private float damageMagnification;
-    private bool isAttack = false;
-    private Image image;
-    public bool isActive { get; set; }
+//public class ArcherSkillArrow : ISkill
+//{
+//    private Character character;
+//    private float coolTime;
+//    private float damageMagnification;
+//    private bool isAttack = false;
+//    private Sprite image;
+//    public bool isActive { get; set; }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="_coolTime">스킬 쿨타임</param>
-    /// <param name="_damageMagnification">스킬 데미지 배율</param>
-    public ArcherSkillArrow(float _coolTime, float _damageMagnification, Image _image) 
-    {
-        character = Character.instance;
-        coolTime = _coolTime;
-        damageMagnification = _damageMagnification;
-        image = _image;
-    }
+//    /// <summary>
+//    /// 
+//    /// </summary>
+//    /// <param name="_coolTime">스킬 쿨타임</param>
+//    /// <param name="_damageMagnification">스킬 데미지 배율</param>
+//    public ArcherSkillArrow(float _coolTime, float _damageMagnification, Sprite _image) 
+//    {
+//        character = Character.instance;
+//        coolTime = _coolTime;
+//        damageMagnification = _damageMagnification;
+//        image = _image;
+//    }
 
-    public void Skill()
-    {
-        if (isAttack == false)
-            isActive = !isActive;
-    }
+//    public void Skill()
+//    {
+//        if (isAttack == false)
+//            isActive = !isActive;
+//    }
 
-    public IEnumerator SkillCoolTime()
-    {
-        if (!isActive) yield return null;
-        else
-        {
-            isAttack = true;
-            isActive = false;
-            yield return new WaitForSeconds(coolTime);
-            isAttack = false;
-        }
-    }
+//    public IEnumerator SkillCoolTime()
+//    {
+//        if (!isActive) yield return null;
+//        else
+//        {
+//            isAttack = true;
+//            isActive = false;
+//            yield return new WaitForSeconds(coolTime);
+//            isAttack = false;
+//        }
+//    }
 
-    public float GetDamage()
-    {
-        return character.GetCharacterCurrentDamage() * damageMagnification;
-    }
-}
+//    public float GetDamage()
+//    {
+//        return character.GetCharacterCurrentDamage() * damageMagnification;
+//    }
+
+//    public Sprite GetImage()
+//    {
+//        return image;
+//    }
+//}

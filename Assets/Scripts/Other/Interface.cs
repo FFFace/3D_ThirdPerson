@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Dynamic;
 using System.Collections;
+using UnityEngine.UI;
 
 public interface KeyCommand
 {
@@ -53,5 +54,7 @@ public interface ISkill
     IEnumerator SkillCoolTime();
 
     float GetDamage();
+
+    Sprite GetImage();
 }
 

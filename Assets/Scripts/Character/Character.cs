@@ -144,16 +144,16 @@ public class Character : MonoBehaviour
 
     public virtual void AttackPressDown()
     {
-        if (!isAttack)
-        {
-            isAttack = true;
-            recharge.Recharge();
-        }
+        recharge.Recharge();
     }
 
     public virtual void AttackPressUp()
     {
-        nomalAttack.Attack();
+        if (!isAttack)
+        {
+            isAttack = true;
+            nomalAttack.Attack();
+        }
     }
 
     public virtual void SubAttack()

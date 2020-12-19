@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class Monster : MonoBehaviour
 {
@@ -9,14 +11,18 @@ public class Monster : MonoBehaviour
     protected MonsterAction action;
     protected CharacterState state = new CharacterState();
 
+    protected IStand move;
     protected ISkill attack;
     protected IMove chase;
     protected IMove hit;
-    protected IStand knockBack;
     protected IMove dead;
     protected IMove stay;
+    protected IStand knockBack;
     protected IStand stand;
     protected ICharacterUpdate update;
+
+    protected MonsterAttackStay monsterAttackStay = new MonsterAttackStay();
+    protected MonsterMoveStay monsterMoveStay = new MonsterMoveStay();
 
     protected float skill1CoolTime;
     protected float skill2CoolTime;
@@ -51,39 +57,45 @@ public class Monster : MonoBehaviour
     }
 
     protected virtual void Start()
-    {               
+    {
         InitData();
     }
 
     protected virtual void Update()
     {
-        switch (action)
-        {
-            case MonsterAction.STAND:
-                Stand();
-                break;
-
-            case MonsterAction.CHASE:
-                Chase();
-                break;
-
-            case MonsterAction.ATTACK:
-                Attack();
-                break;
-
-            case MonsterAction.HIT:
-                Hit();
-                break;
-
-            case MonsterAction.STAY:
-                Stay();
-                break;
-
-            case MonsterAction.DEAD:
-                Dead();
-                break;
-        }
+        Stand();
+        Attack();
     }
+
+    //protected virtual void State()
+    //{
+    //    switch (action)
+    //    {
+    //        case MonsterAction.STAND:
+    //            Stand();
+    //            break;
+
+    //        case MonsterAction.CHASE:
+    //            Chase();
+    //            break;
+
+    //        case MonsterAction.ATTACK:
+    //            Attack();
+    //            break;
+
+    //        case MonsterAction.HIT:
+    //            Hit();
+    //            break;
+
+    //        case MonsterAction.STAY:
+    //            Stay();
+    //            break;
+
+    //        case MonsterAction.DEAD:
+    //            Dead();
+    //            break;
+    //    }
+    //}
 
     protected virtual void InitData()
     {
@@ -96,6 +108,7 @@ public class Monster : MonoBehaviour
         monsterDirection = new MonsterAttackDirection(this);
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody>();
+        attack = monsterAttackStay;
         //rigid.isKinematic = false;
         GetComponent<Collider>().enabled = true;
 
@@ -109,7 +122,7 @@ public class Monster : MonoBehaviour
         Damage -= Damage * currentDefense;
         currentHP -= Damage;
 
-        action =  currentHP <= 0 ? MonsterAction.DEAD : MonsterAction.HIT;
+        action = currentHP <= 0 ? MonsterAction.DEAD : MonsterAction.HIT;
         KnockBack(knockBack, knockBackPower);
     }
 
@@ -131,37 +144,36 @@ public class Monster : MonoBehaviour
 
     protected virtual void Stand()
     {
-        action = !isAttack ? MonsterAction.CHASE : MonsterAction.STAND;
+        move.Stand(Vector3.zero);
+        //action = !isAttack ? MonsterAction.CHASE : MonsterAction.STAND;
     }
 
     protected virtual void Attack()
     {
-        if (!isAttack)
-        {
-            isAttack = true;
-            nav.isStopped = true;
-            attack.Skill();
-            float time = Random.Range(2.0f, 5.0f);
-            StartCoroutine(AttackCoolTime(time));
-            StartCoroutine(attack.SkillCoolTime());
-        }
+        //if (!isAttack)
+        //{
+        //    isAttack = true;
+        //    nav.isStopped = true;
+        //    attack.Skill();
+        //    float time = Random.Range(2.0f, 5.0f);
+        //    StartCoroutine(AttackCoolTime(time));
+        //    StartCoroutine(attack.SkillCoolTime());
+        //}
 
-        else if(isAttackDecision)
-        {
-            character.Hit(currentDamage);
-            isAttackDecision = false;
-        }
+        //else if (isAttackDecision)
+        //{
+        //    character.Hit(currentDamage);
+        //    isAttackDecision = false;
+        //}
     }
 
     protected virtual void Chase()
     {
-        nav.isStopped = false;
-        nav.destination = character.transform.position;
         chase.Move();
 
         float dis = Vector3.Distance(transform.position, character.transform.position);
 
-        action = !isAttack ? dis < attackDistance ? monsterDirection.GetinDirection(attackDirection) ? 
+        action = !isAttack ? dis < attackDistance ? monsterDirection.GetinDirection(attackDirection) ?
             MonsterAction.ATTACK : MonsterAction.CHASE : MonsterAction.CHASE : MonsterAction.STAND;
     }
 
@@ -178,7 +190,7 @@ public class Monster : MonoBehaviour
 
         //float dis = Vector3.Distance(transform.position, nav.destination);
         //if(dis < nav.stoppingDistance) SetAnimationBool("Walk", false);
-        if (nav.velocity.sqrMagnitude < 0.5f) { SetAnimationBool("Walk", false);}
+        if (nav.velocity.sqrMagnitude < 0.5f) { SetAnimationBool("Walk", false); }
         else SetAnimationBool("Walk", true);
     }
 
@@ -227,7 +239,7 @@ public class Monster : MonoBehaviour
         {
             if (num > 1) break;
 
-            for(int i=0; i<renderer.Length; i++)
+            for (int i = 0; i < renderer.Length; i++)
                 renderer[i].material.SetFloat("_DissolveAmount", num);
 
             num += 0.005f;
@@ -309,7 +321,6 @@ public class Monster : MonoBehaviour
     public void SetMonsterState(MonsterAction state)
     {
         action = state;
-        Debug.Log("B");
     }
 
     public MonsterAction GetMonsterState()
@@ -321,7 +332,25 @@ public class Monster : MonoBehaviour
     {
         return currentDamage;
     }
+
+    public void SetMonsterStand(IStand stand)
+    {
+        move = stand;
+    }
+
+    public bool GetMonsterAttackState()
+    {
+        return isAttack;
+    }
+
+    public void SetMonsterAttackState(bool active)
+    {
+        isAttack = active;
+    }
 }
+
+
+
 /// <summary>
 /// 몬스터 공격 범위 판별
 /// </summary>
@@ -378,7 +407,7 @@ public class MonsterCharacterCross
         Vector3 normal = (character.transform.position - monster.transform.position).normalized;
         dir = Vector3.Cross(monster.transform.up, normal);
         dir.y = 0;
-        dir = right ? dir.normalized: -dir.normalized;
+        dir = right ? dir.normalized : -dir.normalized;
     }
 
     public IEnumerator DirUpdate()
@@ -417,17 +446,49 @@ public class MonsterAttack : ISkill
     }
     public IEnumerator SkillCoolTime()
     {
-        if (!isActive) yield return null;
-        else
-        {
-            isActive = false;
-            yield return new WaitForSeconds(coolTime);
-        }
+        yield return null;
     }
 
     public float GetDamage()
     {
         return 0;
+    }
+
+    public Sprite GetImage() { return null; }
+}
+
+public class MonsterAttackStay : ISkill
+{
+
+    public bool isActive { get; set; }
+
+    public MonsterAttackStay() { }
+
+    public void Skill() { }
+    public IEnumerator SkillCoolTime()
+    {
+        yield return null;
+    }
+
+    public float GetDamage()
+    {
+        return 0;
+    }
+
+    public Sprite GetImage() { return null; }
+}
+
+public class MonsterMoveStay : IStand
+{
+
+    public MonsterMoveStay()
+    {
+
+    }
+
+    public void Stand(Vector3 dir)
+    {
+
     }
 }
 
