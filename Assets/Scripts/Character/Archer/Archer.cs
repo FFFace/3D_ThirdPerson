@@ -67,8 +67,6 @@ public class Archer : Character
         arrowActive = new ArcherArrowActive(this);
         activeArrow = arrowActive;
 
-        Debug.Log(mainSkill.GetImage().ToString());
-
         UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
     }
 

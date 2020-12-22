@@ -11,14 +11,14 @@ public class Monster : MonoBehaviour
     protected MonsterAction action;
     protected CharacterState state = new CharacterState();
 
-    protected IStand move;
+    protected IMove move;
     protected ISkill attack;
     protected IMove chase;
     protected IMove hit;
     protected IMove dead;
     protected IMove stay;
     protected IStand knockBack;
-    protected IStand stand;
+    protected IMove stand;
     protected ICharacterUpdate update;
 
     protected MonsterAttackStay monsterAttackStay = new MonsterAttackStay();
@@ -144,7 +144,7 @@ public class Monster : MonoBehaviour
 
     protected virtual void Stand()
     {
-        move.Stand(Vector3.zero);
+        move.Move();
         //action = !isAttack ? MonsterAction.CHASE : MonsterAction.STAND;
     }
 
@@ -333,7 +333,7 @@ public class Monster : MonoBehaviour
         return currentDamage;
     }
 
-    public void SetMonsterStand(IStand stand)
+    public void SetMonsterStand(IMove stand)
     {
         move = stand;
     }
@@ -386,45 +386,45 @@ public class MonsterAttackDirection
 /// <summary>
 /// 캐릭터 몬스터 외적 값
 /// </summary>
-public class MonsterCharacterCross
-{
-    private Character character;
-    private Monster monster;
-    private Vector3 dir;
-    private float time;
-    bool right;
+//public class MonsterCharacterCross
+//{
+//    private Character character;
+//    private Monster monster;
+//    private Vector3 dir;
+//    private float time;
+//    bool right;
 
-    public MonsterCharacterCross(Monster _monster, float _time)
-    {
-        monster = _monster;
-        character = Character.instance;
-        dir = Vector3.zero;
-        time = _time;
-    }
+//    public MonsterCharacterCross(Monster _monster, float _time)
+//    {
+//        monster = _monster;
+//        character = Character.instance;
+//        dir = Vector3.zero;
+//        time = _time;
+//    }
 
-    public void CrossUpdate()
-    {
-        Vector3 normal = (character.transform.position - monster.transform.position).normalized;
-        dir = Vector3.Cross(monster.transform.up, normal);
-        dir.y = 0;
-        dir = right ? dir.normalized : -dir.normalized;
-    }
+//    public void CrossUpdate()
+//    {
+//        Vector3 normal = (character.transform.position - monster.transform.position).normalized;
+//        dir = Vector3.Cross(monster.transform.up, normal);
+//        dir.y = 0;
+//        dir = right ? dir.normalized : -dir.normalized;
+//    }
 
-    public IEnumerator DirUpdate()
-    {
-        while (true)
-        {
-            right = Random.Range(0, 2) == 0 ? true : false;
+//    public IEnumerator DirUpdate()
+//    {
+//        while (true)
+//        {
+//            right = Random.Range(0, 2) == 0 ? true : false;
 
-            yield return new WaitForSeconds(time);
-        }
-    }
+//            yield return new WaitForSeconds(time);
+//        }
+//    }
 
-    public Vector3 GetCross()
-    {
-        return dir;
-    }
-}
+//    public Vector3 GetCross()
+//    {
+//        return dir;
+//    }
+//}
 
 public class MonsterAttack : ISkill
 {
@@ -478,7 +478,7 @@ public class MonsterAttackStay : ISkill
     public Sprite GetImage() { return null; }
 }
 
-public class MonsterMoveStay : IStand
+public class MonsterMoveStay : IMove
 {
 
     public MonsterMoveStay()
@@ -486,7 +486,7 @@ public class MonsterMoveStay : IStand
 
     }
 
-    public void Stand(Vector3 dir)
+    public void Move()
     {
 
     }

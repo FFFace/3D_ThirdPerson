@@ -11,18 +11,18 @@ public class Skeleton : Monster
     private float runChaseDistance;
     private bool isStand;
 
-    protected MonsterCharacterCross cross;
+    //protected MonsterCharacterCross cross;
     private SkeletonChase skeletonChase;
-    private SkeletonStand skeletonStand;
+    //private SkeletonStand skeletonStand;
     private MonsterAttack skeletonAttack;
 
     protected override void Start()
     {
         base.Start();
-        cross = new MonsterCharacterCross(this as Monster, 3.0f);
+        //cross = new MonsterCharacterCross(this as Monster, 3.0f);
 
         StartCoroutine(State());
-        StartCoroutine(cross.DirUpdate());
+        //StartCoroutine(cross.DirUpdate());
     }
 
     protected IEnumerator State()
@@ -45,29 +45,22 @@ public class Skeleton : Monster
                     yield return new WaitForSeconds(time);
                     isAttack = false;
                     attack = monsterAttackStay;
-                    move = skeletonStand;
+                    move = skeletonChase;
                 }
             }
-
-            if (isAttack && attack.isActive)
+            else
             {
-
-
+                attack = monsterAttackStay;
+                move = skeletonChase;
             }
 
             yield return new WaitForSeconds(0.1f);
         }
     }
 
-    protected override void Update()
-    {
-        base.Update();
-        cross.CrossUpdate();
-    }
-
     protected override void Stand()
     {
-        stand.Stand(cross.GetCross());
+        stand.Move();
     }
 
     protected override void InitData()
@@ -107,7 +100,7 @@ public class Skeleton : Monster
 
     public void SetSkeletonMoveStand()
     {
-        move = skeletonStand;
+        //move = skeletonStand;
     }
 
     public void SetSkeletonMoveChase()
@@ -116,7 +109,7 @@ public class Skeleton : Monster
     }
 }
 
-public class SkeletonChase : IStand
+public class SkeletonChase : IMove
 {
     private Skeleton skeleton;
     private Character character;
@@ -127,7 +120,7 @@ public class SkeletonChase : IStand
     private float distance;
 
     private IStand move;
-    private SkeletonStand skeletonStand;
+    //private SkeletonStand skeletonStand;
 
     public SkeletonChase(Skeleton _skeleton, NavMeshAgent _nav, float _speed, float _distance)
     {
@@ -139,7 +132,7 @@ public class SkeletonChase : IStand
         distance = _distance;
     }
 
-    public void Stand(Vector3 dir)
+    public void Move()
     {
         nav.isStopped = false;
         nav.destination = character.transform.position;
@@ -203,32 +196,32 @@ public class SkeletonChase : IStand
 //    }
 //}
 
-public class SkeletonStand : IStand
-{
-    private Skeleton skeleton;
-    private NavMeshAgent nav;
-    private float speed;
+//public class SkeletonStand : IStand
+//{
+//    private Skeleton skeleton;
+//    private NavMeshAgent nav;
+//    private float speed;
 
-    public SkeletonStand(Skeleton _skeleton, NavMeshAgent _nav, float _speed)
-    {
-        skeleton = _skeleton;
-        nav = _nav;
-        speed = _speed;
-    }
+//    public SkeletonStand(Skeleton _skeleton, NavMeshAgent _nav, float _speed)
+//    {
+//        skeleton = _skeleton;
+//        nav = _nav;
+//        speed = _speed;
+//    }
 
-    public void Stand(Vector3 dir)
-    {
-        nav.isStopped = false;
+//    public void Stand(Vector3 dir)
+//    {
+//        nav.isStopped = false;
 
-        skeleton.SetAnimationBool("Run", false);
-        skeleton.SetAnimationBool("Walk", true);
+//        skeleton.SetAnimationBool("Run", false);
+//        skeleton.SetAnimationBool("Walk", true);
 
-        // NavMeshAgent를 통해 목적지에 도착 시, 이동뿐만 아니라 회전도 멈추기 때문에 직접 회전
-        skeleton.transform.rotation = Quaternion.Lerp(skeleton.transform.rotation, Quaternion.LookRotation(dir), 15 * Time.deltaTime);
+//        // NavMeshAgent를 통해 목적지에 도착 시, 이동뿐만 아니라 회전도 멈추기 때문에 직접 회전
+//        skeleton.transform.rotation = Quaternion.Lerp(skeleton.transform.rotation, Quaternion.LookRotation(dir), 15 * Time.deltaTime);
 
-        // 이동하고자 하는 방향에 거리를 조금 더 두어 NevMeshAgent의 Stopping Distance의 영향을 받지 않음.
-        nav.destination = skeleton.transform.position + dir * 2;
+//        // 이동하고자 하는 방향에 거리를 조금 더 두어 NevMeshAgent의 Stopping Distance의 영향을 받지 않음.
+//        nav.destination = skeleton.transform.position + dir * 2;
 
-        if (!skeleton.GetMonsterAttackState()) skeleton.SetSkeletonMoveChase();
-    }
-}
+//        if (!skeleton.GetMonsterAttackState()) skeleton.SetSkeletonMoveChase();
+//    }
+//}
