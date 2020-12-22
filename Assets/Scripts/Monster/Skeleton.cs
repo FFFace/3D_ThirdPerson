@@ -15,6 +15,8 @@ public class Skeleton : Monster
     private SkeletonChase skeletonChase;
     //private SkeletonStand skeletonStand;
     private MonsterAttack skeletonAttack;
+    private MonsterHit hit;
+    private MonsterDead dead;
 
     protected override void Start()
     {
@@ -52,15 +54,13 @@ public class Skeleton : Monster
             {
                 attack = monsterAttackStay;
                 move = skeletonChase;
+
+                if (dis > runChaseDistance && nav.speed < currentSpeed * 1.5f) nav.speed = currentSpeed * 1.5f;
+                else nav.speed = currentSpeed;
             }
 
             yield return new WaitForSeconds(0.1f);
         }
-    }
-
-    protected override void Stand()
-    {
-        stand.Move();
     }
 
     protected override void InitData()
@@ -78,11 +78,15 @@ public class Skeleton : Monster
         currentDefense = state.defense;
         currentDamage = state.attackDamage;
 
-        attack = new MonsterAttack(this as Monster, 0);
+        skeletonChase = new SkeletonChase(this, nav, currentSpeed);
+        skeletonAttack = new MonsterAttack(this as Monster, 0);
         //chase = new SkeletonChase(this, nav, currentSpeed);
         //stand = new SkeletonStand(this, nav, currentSpeed);
         hit = new MonsterHit(this as Monster);
         dead = new MonsterDead(this as Monster);
+
+        move = skeletonChase;
+        attack = monsterAttackStay;
     }
 
     public float GetRunChaseDistance()
@@ -117,19 +121,19 @@ public class SkeletonChase : IMove
     private MonsterAttackDirection attackDirection;
 
     private float currentSpeed;
-    private float distance;
+   // private float distance;
 
     private IStand move;
     //private SkeletonStand skeletonStand;
 
-    public SkeletonChase(Skeleton _skeleton, NavMeshAgent _nav, float _speed, float _distance)
+    public SkeletonChase(Skeleton _skeleton, NavMeshAgent _nav, float _speed)
     {
         skeleton = _skeleton;
         nav = _nav;
         currentSpeed = _speed;
         character = Character.instance;
         attackDirection = new MonsterAttackDirection(skeleton);
-        distance = _distance;
+        //distance = _distance;
     }
 
     public void Move()

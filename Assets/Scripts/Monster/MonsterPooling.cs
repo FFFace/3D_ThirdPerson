@@ -28,15 +28,6 @@ public class MonsterPooling : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("skeletonPool Count : " + skeletonPool.Count.ToString());
-            Debug.Log("----------sekeltonPool List----------");
-            foreach (var skeleton in skeletonPool)
-            {
-                Debug.Log(skeleton.GetInstanceID());
-            }
-        }
     }
 
     public void MonsterEnqueue<T>(T monster) where T : Monster

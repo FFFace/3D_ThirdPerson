@@ -19,6 +19,7 @@ public class Chest : MonoBehaviour
     private void AddItem()
     {
         Item item = ItemList.instance.GetRandomItem();
+        if (item == null) return;
         Character.instance.AddItem(item);
     }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -14,6 +15,11 @@ public class Warrok : Monster
     private WarrokJumpSKill jumpSkill;
     private WarrokAttack nomalAttack;
 
+    private WarrokChase warrokChase;
+    private WarrokStand warrokStand;
+    private MonsterHit warrokHit;
+    private MonsterDead warrokDead;
+
     protected override void Start()
     {
         base.Start();
@@ -23,11 +29,30 @@ public class Warrok : Monster
         jumpSkill = new WarrokJumpSKill(this, 15.0f, 1.5f);
         nomalAttack = new WarrokAttack(this);
 
-        attack = nomalAttack;
-        chase = new WarrokChase(this, nav, currentSpeed);
-        stand = new WarrokStand(this, nav, currentSpeed);
-        hit = new MonsterHit(this);
-        dead = new MonsterDead(this);
+        //attack = nomalAttack;
+        //chase = new WarrokChase(this, nav, currentSpeed);
+        //stand = new WarrokStand(this, nav, currentSpeed);
+        //hit = new MonsterHit(this);
+        //dead = new MonsterDead(this);
+
+        warrokChase = new WarrokChase(this, nav, currentSpeed);
+        warrokStand = new WarrokStand(this, nav, currentSpeed);
+        warrokHit = new MonsterHit(this);
+        warrokDead = new MonsterDead(this);
+
+        move = warrokChase;
+
+        StartCoroutine(State());
+    }
+
+    private IEnumerator State()
+    {
+        while (true)
+        {
+            
+
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     protected override void InitData()
@@ -44,12 +69,6 @@ public class Warrok : Monster
         currentSpeed = state.moveSpeed;
         currentDefense = state.defense;
         currentDamage = state.attackDamage;
-    }
-
-    protected override void Stand()
-    {
-        stand.Stand(Vector3.zero);
-        base.Stand();
     }
 
     protected override void Attack()
@@ -73,31 +92,31 @@ public class Warrok : Monster
         }
     }
 
-    protected override void Chase()
-    {
-        nav.isStopped = false;
-        nav.destination = character.transform.position;
-        chase.Move();
+    //protected override void Chase()
+    //{
+    //    nav.isStopped = false;
+    //    nav.destination = character.transform.position;
+    //    chase.Move();
 
-        if (summonSkill.isActive)
-        {
-            attack = summonSkill;
-            action = MonsterAction.ATTACK;
-            return;
-        }
+    //    if (summonSkill.isActive)
+    //    {
+    //        attack = summonSkill;
+    //        action = MonsterAction.ATTACK;
+    //        return;
+    //    }
 
-        else if (buffSkill.isActive)
-        {
-            attack = buffSkill;
-            action = MonsterAction.ATTACK;
-            return;
-        }
+    //    else if (buffSkill.isActive)
+    //    {
+    //        attack = buffSkill;
+    //        action = MonsterAction.ATTACK;
+    //        return;
+    //    }
 
-        float dis = Vector3.Distance(transform.position, character.transform.position);
+    //    float dis = Vector3.Distance(transform.position, character.transform.position);
 
-        action = !isAttack ? dis < attackDistance ? monsterDirection.GetinDirection(attackDirection) ?
-            MonsterAction.ATTACK : MonsterAction.CHASE : MonsterAction.CHASE : MonsterAction.STAND;
-    }
+    //    action = !isAttack ? dis < attackDistance ? monsterDirection.GetinDirection(attackDirection) ?
+    //        MonsterAction.ATTACK : MonsterAction.CHASE : MonsterAction.CHASE : MonsterAction.STAND;
+    //}
 
     protected override IEnumerator DeadTime()
     {
@@ -141,7 +160,7 @@ public class WarrokChase : IMove
         nav.speed = currentSpeed;
     }
 }
-public class WarrokStand : IStand
+public class WarrokStand : IMove
 {
     private Monster monster;
     private NavMeshAgent nav;
@@ -154,7 +173,7 @@ public class WarrokStand : IStand
         speed = _speed;
     }
 
-    public void Stand(Vector3 dir)
+    public void Move()
     {
         nav.isStopped = true;
         monster.SetAnimationBool("Walk", false);

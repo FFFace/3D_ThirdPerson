@@ -11,14 +11,14 @@ public class ItemList : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null) instance = null;
+        if (instance == null) instance = this;
         else Destroy(gameObject);
     }
 
     public Item GetRandomItem()
     {
         int num = Random.Range(0, items.Count);
-
+        if (num == 0) return null;
         return items[num];
     }
 }

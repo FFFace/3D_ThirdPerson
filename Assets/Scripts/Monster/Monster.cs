@@ -13,12 +13,12 @@ public class Monster : MonoBehaviour
 
     protected IMove move;
     protected ISkill attack;
-    protected IMove chase;
-    protected IMove hit;
-    protected IMove dead;
-    protected IMove stay;
+    //protected IMove chase;
+    //protected IMove hit;
+    //protected IMove dead;
+    //protected IMove stay;
     protected IStand knockBack;
-    protected IMove stand;
+    //protected IMove stand;
     protected ICharacterUpdate update;
 
     protected MonsterAttackStay monsterAttackStay = new MonsterAttackStay();
@@ -167,15 +167,15 @@ public class Monster : MonoBehaviour
         //}
     }
 
-    protected virtual void Chase()
-    {
-        chase.Move();
+    //protected virtual void Chase()
+    //{
+    //    chase.Move();
 
-        float dis = Vector3.Distance(transform.position, character.transform.position);
+    //    float dis = Vector3.Distance(transform.position, character.transform.position);
 
-        action = !isAttack ? dis < attackDistance ? monsterDirection.GetinDirection(attackDirection) ?
-            MonsterAction.ATTACK : MonsterAction.CHASE : MonsterAction.CHASE : MonsterAction.STAND;
-    }
+    //    action = !isAttack ? dis < attackDistance ? monsterDirection.GetinDirection(attackDirection) ?
+    //        MonsterAction.ATTACK : MonsterAction.CHASE : MonsterAction.CHASE : MonsterAction.STAND;
+    //}
 
     protected void Stay()
     {
@@ -202,12 +202,12 @@ public class Monster : MonoBehaviour
         isStay = false;
     }
 
-    protected void Hit()
-    {
-        nav.isStopped = true;
-        action = MonsterAction.NULL;
-        hit.Move();
-    }
+    //protected void Hit()
+    //{
+    //    nav.isStopped = true;
+    //    action = MonsterAction.NULL;
+    //    hit.Move();
+    //}
 
     protected virtual void KnockBack(bool active, float power)
     {
@@ -217,17 +217,17 @@ public class Monster : MonoBehaviour
         rigid.AddForce(dir * power, ForceMode.Impulse);
     }
 
-    protected void Dead()
-    {
-        EventManager.instance.SubHitEvent(HitDamage);
+    //protected void Dead()
+    //{
+    //    EventManager.instance.SubHitEvent(HitDamage);
 
-        dead.Move();
-        StartCoroutine(DeadTime());
-        action = MonsterAction.NULL;
+    //    dead.Move();
+    //    StartCoroutine(DeadTime());
+    //    action = MonsterAction.NULL;
 
-        nav.isStopped = true;
-        nav.enabled = false;
-    }
+    //    nav.isStopped = true;
+    //    nav.enabled = false;
+    //}
 
     protected virtual IEnumerator DeadTime()
     {
