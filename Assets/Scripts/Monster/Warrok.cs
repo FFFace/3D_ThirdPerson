@@ -37,8 +37,8 @@ public class Warrok : Monster
 
         warrokChase = new WarrokChase(this, nav, currentSpeed);
         warrokStand = new WarrokStand(this, nav, currentSpeed);
-        warrokHit = new MonsterHit(this);
-        warrokDead = new MonsterDead(this);
+        warrokHit = new MonsterHit(this, nav);
+        warrokDead = new MonsterDead(this, nav);
 
         move = warrokChase;
 

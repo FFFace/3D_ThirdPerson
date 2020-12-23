@@ -122,7 +122,7 @@ public class Monster : MonoBehaviour
         Damage -= Damage * currentDefense;
         currentHP -= Damage;
 
-        action = currentHP <= 0 ? MonsterAction.DEAD : MonsterAction.HIT;
+        //action = currentHP <= 0 ? MonsterAction.DEAD : MonsterAction.HIT;
         KnockBack(knockBack, knockBackPower);
     }
 
@@ -495,25 +495,29 @@ public class MonsterMoveStay : IMove
 public class MonsterHit : IMove
 {
     private Monster monster;
+    private NavMeshAgent nav;
 
-    public MonsterHit(Monster _monster) { monster = _monster; }
+    public MonsterHit(Monster _monster, NavMeshAgent _nav) { monster = _monster; nav = _nav; }
 
     public void Move()
     {
-        monster.SetAnimationTrigger("Hit");
+        monster.SetAnimationBool("Hit", true);
+        nav.isStopped = true;
     }
 }
 
 public class MonsterDead : IMove
 {
     private Monster monster;
+    private NavMeshAgent nav;
 
-    public MonsterDead(Monster _monster) { monster = _monster; }
+    public MonsterDead(Monster _monster, NavMeshAgent _nav) { monster = _monster; nav = _nav; }
 
     public void Move()
     {
-        monster.SetAnimationTrigger("Dead");
+        monster.SetAnimationBool("Dead", false);
         monster.GetComponent<Collider>().enabled = false;
+        nav.isStopped = true;
         //monster.GetComponent<Rigidbody>().isKinematic = true;
     }
 }

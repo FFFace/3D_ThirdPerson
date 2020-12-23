@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Net.Mime;
 using TMPro;
 using UnityEngine;
@@ -31,32 +32,44 @@ public class Skeleton : Monster
     {
         while (true)
         {
-            float dis = Vector3.Distance(transform.position, character.transform.position);
-            if (!isAttack && dis < attackDistance)
+            if (move != hit && move != dead)
             {
-                if (monsterDirection.GetinDirection(attackDirection))
+                float dis = Vector3.Distance(transform.position, character.transform.position);
+                if (!isAttack && dis < attackDistance)
                 {
-                    attack = skeletonAttack;
-                    move = monsterMoveStay;
+                    if (monsterDirection.GetinDirection(attackDirection))
+                    {
+                        nav.isStopped = true;
+                        attack = skeletonAttack;
+                        move = monsterMoveStay;
 
-                    attack.Skill();
-                    StartCoroutine(attack.SkillCoolTime());
+                        attack.Skill();
+                        StartCoroutine(attack.SkillCoolTime());
 
-                    isAttack = true;
-                    float time = Random.Range(2.0f, 5.0f);
-                    yield return new WaitForSeconds(time);
-                    isAttack = false;
+                        isAttack = true;
+                        float time = Random.Range(2.0f, 5.0f);
+                        yield return new WaitForSeconds(time);
+                        isAttack = false;
+                        attack = monsterAttackStay;
+                        move = skeletonChase;
+                    }
+                }
+                else
+                {
                     attack = monsterAttackStay;
                     move = skeletonChase;
+
+                    if (dis > runChaseDistance && nav.speed < currentSpeed * 1.5f) nav.speed = currentSpeed * 1.5f;
+                    else nav.speed = currentSpeed;
                 }
             }
+
             else
             {
+                move = monsterMoveStay;
                 attack = monsterAttackStay;
-                move = skeletonChase;
 
-                if (dis > runChaseDistance && nav.speed < currentSpeed * 1.5f) nav.speed = currentSpeed * 1.5f;
-                else nav.speed = currentSpeed;
+                ResetAnimation();
             }
 
             yield return new WaitForSeconds(0.1f);
@@ -78,15 +91,33 @@ public class Skeleton : Monster
         currentDefense = state.defense;
         currentDamage = state.attackDamage;
 
-        skeletonChase = new SkeletonChase(this, nav, currentSpeed);
+        skeletonChase = new SkeletonChase(this, nav);
         skeletonAttack = new MonsterAttack(this as Monster, 0);
         //chase = new SkeletonChase(this, nav, currentSpeed);
         //stand = new SkeletonStand(this, nav, currentSpeed);
-        hit = new MonsterHit(this as Monster);
-        dead = new MonsterDead(this as Monster);
+        hit = new MonsterHit(this, nav);
+        dead = new MonsterDead(this, nav);
 
         move = skeletonChase;
         attack = monsterAttackStay;
+    }
+
+    protected override void HitDamage(float Damage, int instanceID, bool knockBack = false, float knockBackPower = 0)
+    {
+        base.HitDamage(Damage, instanceID, knockBack, knockBackPower);
+
+        attack = monsterAttackStay;
+
+        if (currentHP <= 0)
+        {
+            move = dead;
+            StartCoroutine(DeadTime());
+        }
+
+        else
+        {
+            move = hit;
+        }
     }
 
     public float GetRunChaseDistance()
@@ -97,7 +128,7 @@ public class Skeleton : Monster
     protected override IEnumerator DeadTime()
     {
         base.DeadTime();
-        MonsterPooling.instance.MonsterEnqueue<Skeleton>(this);
+        MonsterPooling.instance.MonsterEnqueue(this);
 
         yield return null;
     }
@@ -120,20 +151,20 @@ public class SkeletonChase : IMove
     private NavMeshAgent nav;
     private MonsterAttackDirection attackDirection;
 
-    private float currentSpeed;
+    //private float currentSpeed;
    // private float distance;
 
     private IStand move;
     //private SkeletonStand skeletonStand;
 
-    public SkeletonChase(Skeleton _skeleton, NavMeshAgent _nav, float _speed)
+    public SkeletonChase(Skeleton _skeleton, NavMeshAgent _nav)
     {
         skeleton = _skeleton;
         nav = _nav;
-        currentSpeed = _speed;
         character = Character.instance;
         attackDirection = new MonsterAttackDirection(skeleton);
         //distance = _distance;
+        //currentSpeed = _speed;
     }
 
     public void Move()
@@ -152,6 +183,7 @@ public class SkeletonChase : IMove
         //string name = (speed == currentSpeed) ? "Walk" : "Run";
 
         skeleton.SetAnimationBool("Walk", true);
+        skeleton.SetAnimationFloat("Speed", nav.speed);
 
         //nav.speed = speed;
 
