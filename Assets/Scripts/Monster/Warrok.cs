@@ -10,10 +10,13 @@ public class Warrok : Monster
     [SerializeField]
     private List<Monster> summonMonster = new List<Monster>();
 
+    [SerializeField]
+    private MonsterWeapon weapon;
+
     private WarrokSummonSkill summonSkill;
     private WarrokBuffSkill buffSkill;
     private WarrokJumpSKill jumpSkill;
-    private WarrokAttack nomalAttack;
+    private WarrokAttack normalAttack;
 
     private WarrokChase warrokChase;
     private WarrokStand warrokStand;
@@ -27,7 +30,7 @@ public class Warrok : Monster
         summonSkill = new WarrokSummonSkill(this, 5, 25.0f, summonMonster, room);
         buffSkill = new WarrokBuffSkill(this, room, 30.0f, 10.0f, 1.25f);
         jumpSkill = new WarrokJumpSKill(this, 15.0f, 1.5f);
-        nomalAttack = new WarrokAttack(this);
+        normalAttack = new WarrokAttack(this);
 
         //attack = nomalAttack;
         //chase = new WarrokChase(this, nav, currentSpeed);
@@ -49,8 +52,45 @@ public class Warrok : Monster
     {
         while (true)
         {
-            
+            if (move != warrokHit && move != warrokDead)
+            {
+                Debug.Log(attack);
+                float dis = Vector3.Distance(transform.position, character.transform.position);
 
+                if (dis < attackDistance && monsterDirection.GetinDirection(attackDirection)) attack = normalAttack;
+                else if (summonSkill.isActive) attack = summonSkill;
+                else if (buffSkill.isActive) attack = buffSkill;
+                else if (jumpSkill.isActive && dis < 7.0f) attack = jumpSkill;
+                else
+                {
+                    attack = monsterAttackStay;
+                    move = warrokChase;
+                }
+
+                if (attack.isActive)
+                {
+                    nav.isStopped = true;
+                    move = monsterMoveStay;
+
+                    attack.Skill();
+                    StartCoroutine(attack.SkillCoolTime());
+
+                    yield return new WaitForSeconds(5);
+                    nav.isStopped = false;
+                    move = warrokChase;
+                    attack = monsterAttackStay;
+                }
+            }
+
+            else
+            {
+                move = monsterMoveStay;
+                attack = monsterAttackStay;
+
+                ResetAnimation();
+            }
+
+            weapon.SetDamage(currentDamage);
             yield return new WaitForSeconds(0.1f);
         }
     }
@@ -71,26 +111,50 @@ public class Warrok : Monster
         currentDamage = state.attackDamage;
     }
 
-    protected override void Attack()
+    protected override void HitDamage(float Damage, int instanceID, bool knockBack = false, float knockBackPower = 0)
     {
-        if (!isAttack)
-        {
-            isAttack = true;
-            nav.isStopped = true;
-            attack.Skill();
-            float time = 2.5f;
-            StartCoroutine(AttackCoolTime(time));
-            StartCoroutine(attack.SkillCoolTime());
+        if (transform.GetInstanceID() != instanceID) return;
 
-            attack = nomalAttack;
+        base.HitDamage(Damage, instanceID, knockBack, knockBackPower);
+
+        attack = monsterAttackStay;
+
+        if (currentHP <= 0)
+        {
+            move = warrokDead;
+
+            EventManager.instance.SubHitEvent(base.HitDamage);
+            EventManager.instance.SubMonsterBuffDamageEvent(BuffDamage);
+
+            StartCoroutine(DeadTime());
         }
 
-        else if (isAttackDecision)
+        else
         {
-            character.Hit(currentDamage);
-            isAttackDecision = false;
+            move = warrokHit;
         }
     }
+
+    //protected override void Attack()
+    //{
+    //    if (!isAttack)
+    //    {
+    //        isAttack = true;
+    //        nav.isStopped = true;
+    //        attack.Skill();
+    //        float time = 2.5f;
+    //        StartCoroutine(AttackCoolTime(time));
+    //        StartCoroutine(attack.SkillCoolTime());
+
+    //        attack = nomalAttack;
+    //    }
+
+    //    else if (isAttackDecision)
+    //    {
+    //        character.Hit(currentDamage);
+    //        isAttackDecision = false;
+    //    }
+    //}
 
     //protected override void Chase()
     //{
@@ -126,13 +190,15 @@ public class Warrok : Monster
         yield return null;
     }
 
-    public void JumpSkillDamage()
+    public void EnableWeapon()
     {
-        float dis = Vector3.Distance(transform.position, character.transform.position);
+        weapon.SetActiveCollider(true);
+    }
 
-        if (dis <= 5.0f)
-            character.Hit(jumpSkill.GetDamage());
-        
+    public void DisableWeapon()
+    {
+        weapon.SetActiveCollider(false);
+        SetAnimationBool("JumpSkill", false);
     }
 }
 
@@ -153,6 +219,8 @@ public class WarrokChase : IMove
 
     public void Move()
     {
+        nav.isStopped = false;
+        nav.destination = character.transform.position;
         // NavMeshAgent를 통해 목적지에 도착 시, 이동뿐만 아니라 회전도 멈추기 때문에 직접 회전
         monster.transform.rotation = Quaternion.Lerp(monster.transform.rotation, Quaternion.LookRotation(monster.GetLookCharacterRotation()), 15 * Time.deltaTime);
 
@@ -194,6 +262,7 @@ public class WarrokAttack : ISkill
     public WarrokAttack(Monster _monster)
     {
         monster = _monster;
+        isActive = true;
     }
 
     public void Skill()
@@ -235,7 +304,7 @@ public class WarrokJumpSKill : ISkill
     public void Skill()
     {
         monster.SetAnimationBool("Walk", false);
-        monster.SetAnimationTrigger("JumpSkill");
+        monster.SetAnimationBool("JumpSkill", true);
     }
 
     public IEnumerator SkillCoolTime()

@@ -147,7 +147,6 @@ public class Arrow : MonoBehaviour
             GetComponent<Collider>().enabled = false;
             StartCoroutine(DisableTime());
             isHit = true;
-            Debug.Log(other.name);
         }
     }
 

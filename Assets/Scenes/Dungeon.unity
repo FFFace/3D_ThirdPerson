@@ -1551,7 +1551,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawn: {fileID: 539989905}
-  MonsterNum: 10
+  MonsterNum: 1
 --- !u!1001 &167021712
 PrefabInstance:
   m_ObjectHideFlags: 0

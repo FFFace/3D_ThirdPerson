@@ -266,7 +266,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: defaultsds
-    second: {fileID: 2100000, guid: b1494958bf9856a479bec1767c02878e, type: 2}
+    second: {fileID: 2100000, guid: f11df4a1dc0ea7b4a88d0bc62c0f2206, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
@@ -320,7 +320,15 @@ ModelImporter:
       curves: []
       events:
       - time: 0.8030303
-        functionName: AttackEnd
+        functionName: DisableWeapon
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: adb072ef60b015e41b230788bdc98aed,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.3488024
+        functionName: EnableWeapon
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: adb072ef60b015e41b230788bdc98aed,
           type: 3}

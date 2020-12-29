@@ -209,7 +209,7 @@ public class Character : MonoBehaviour
             return;
         }
 
-        SetAnimationTrigger("HIt");
+        SetAnimationTrigger("Hit");
     }
 
     public virtual void Jump()

@@ -34,7 +34,7 @@ public class Monster : MonoBehaviour
     protected float currentDamage;
 
     protected float attackTime;
-    protected bool isAttack;
+    //protected bool isAttack;
     protected bool isAttackDecision;
 
     protected NavMeshAgent nav;
@@ -64,7 +64,9 @@ public class Monster : MonoBehaviour
     protected virtual void Update()
     {
         Stand();
-        Attack();
+
+        
+        //Attack();
     }
 
     //protected virtual void State()
@@ -100,6 +102,7 @@ public class Monster : MonoBehaviour
     protected virtual void InitData()
     {
         EventManager.instance.AddHitEvent(HitDamage);
+        EventManager.instance.AddMonsterBuffDamageEvent(BuffDamage);
         character = Character.instance;
         nav = GetComponent<NavMeshAgent>();
 
@@ -117,8 +120,6 @@ public class Monster : MonoBehaviour
 
     protected virtual void HitDamage(float Damage, int instanceID, bool knockBack = false, float knockBackPower = 0)
     {
-        if (transform.GetInstanceID() != instanceID) return;
-
         Damage -= Damage * currentDefense;
         currentHP -= Damage;
 
@@ -130,16 +131,14 @@ public class Monster : MonoBehaviour
     {
         if (room != _room) return;
 
-        StartCoroutine(BuffTime(_time, _magnification));
+        StartCoroutine(IEnumBuffTime(_magnification,_time));
     }
 
-    protected virtual IEnumerator BuffTime(float _time, float _magnification)
+    protected virtual IEnumerator IEnumBuffTime(float _magnification, float _time)
     {
-        float beforeDamage = currentDamage;
-        currentDamage = currentDamage * _magnification;
+        currentDamage += state.attackDamage * _magnification;
         yield return new WaitForSeconds(_time);
-
-        currentDamage = beforeDamage;
+        currentDamage -= state.attackDamage;
     }
 
     protected virtual void Stand()
@@ -294,23 +293,24 @@ public class Monster : MonoBehaviour
 
     public void AttackEnd()
     {
-        action = MonsterAction.CHASE;
-    }
-
-    public void AttackDecisionOn()
-    {
-        isAttackDecision = true;
-    }
-
-    public void AttackDecisionOff()
-    {
+        //action = MonsterAction.CHASE;
         isAttackDecision = false;
     }
+
+    //public void AttackDecisionOn()
+    //{
+    //    isAttackDecision = true;
+    //}
+
+    //public void AttackDecisionOff()
+    //{
+    //    isAttackDecision = false;
+    //}
 
     protected IEnumerator AttackCoolTime(float time)
     {
         yield return new WaitForSeconds(time);
-        isAttack = false;
+        //isAttack = false;
     }
 
     public void SetMonsterRoom(MonsterSpawn _room)
@@ -336,16 +336,6 @@ public class Monster : MonoBehaviour
     public void SetMonsterStand(IMove stand)
     {
         move = stand;
-    }
-
-    public bool GetMonsterAttackState()
-    {
-        return isAttack;
-    }
-
-    public void SetMonsterAttackState(bool active)
-    {
-        isAttack = active;
     }
 }
 

@@ -12,6 +12,9 @@ public class Skeleton : Monster
     private float runChaseDistance;
     private bool isStand;
 
+    [SerializeField]
+    private MonsterWeapon weapon;
+
     //protected MonsterCharacterCross cross;
     private SkeletonChase skeletonChase;
     //private SkeletonStand skeletonStand;
@@ -35,7 +38,7 @@ public class Skeleton : Monster
             if (move != hit && move != dead)
             {
                 float dis = Vector3.Distance(transform.position, character.transform.position);
-                if (!isAttack && dis < attackDistance)
+                if (dis < attackDistance)
                 {
                     if (monsterDirection.GetinDirection(attackDirection))
                     {
@@ -46,10 +49,8 @@ public class Skeleton : Monster
                         attack.Skill();
                         StartCoroutine(attack.SkillCoolTime());
 
-                        isAttack = true;
                         float time = Random.Range(2.0f, 5.0f);
                         yield return new WaitForSeconds(time);
-                        isAttack = false;
                         attack = monsterAttackStay;
                         move = skeletonChase;
                     }
@@ -72,6 +73,7 @@ public class Skeleton : Monster
                 ResetAnimation();
             }
 
+            weapon.SetDamage(currentDamage);
             yield return new WaitForSeconds(0.1f);
         }
     }
@@ -104,6 +106,8 @@ public class Skeleton : Monster
 
     protected override void HitDamage(float Damage, int instanceID, bool knockBack = false, float knockBackPower = 0)
     {
+        if (transform.GetInstanceID() != instanceID) return;
+
         base.HitDamage(Damage, instanceID, knockBack, knockBackPower);
 
         attack = monsterAttackStay;
@@ -111,6 +115,10 @@ public class Skeleton : Monster
         if (currentHP <= 0)
         {
             move = dead;
+
+            EventManager.instance.SubHitEvent(base.HitDamage);
+            EventManager.instance.SubMonsterBuffDamageEvent(BuffDamage);
+
             StartCoroutine(DeadTime());
         }
 
@@ -141,6 +149,16 @@ public class Skeleton : Monster
     public void SetSkeletonMoveChase()
     {
         move = skeletonChase;
+    }
+
+    public void EnableWeapon()
+    {
+        weapon.SetActiveCollider(true);
+    }
+
+    public void DisableWeapon()
+    {
+        weapon.SetActiveCollider(false);
     }
 }
 

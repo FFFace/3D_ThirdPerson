@@ -30,7 +30,7 @@ public class Archer : Character
     {
         base.InitData();
 
-        state.hp = 5;
+        state.hp = 99999;
         state.attackDamage = 1;
         state.attackSpeed = 1;
         state.moveSpeed = 5;
