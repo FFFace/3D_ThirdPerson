@@ -21817,6 +21817,9 @@ MonoBehaviour:
   skill1: {fileID: 183418189}
   skill2: {fileID: 674637673}
   skill3: {fileID: 1670387181}
+  skill1Amount: {fileID: 0}
+  skill2Amount: {fileID: 0}
+  skill3Amount: {fileID: 0}
 --- !u!4 &1946623500
 Transform:
   m_ObjectHideFlags: 0
@@ -23285,6 +23288,11 @@ PrefabInstance:
     - target: {fileID: 1668037632694929070, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
         type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2531089241523518525, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
+        type: 3}
+      propertyPath: m_FillAmount
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3345534269894629706, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,

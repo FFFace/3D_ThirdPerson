@@ -445,6 +445,8 @@ public class MonsterAttack : ISkill
     }
 
     public Sprite GetImage() { return null; }
+
+    public float GetCoolTime() { return 0; }
 }
 
 public class MonsterAttackStay : ISkill
@@ -466,6 +468,8 @@ public class MonsterAttackStay : ISkill
     }
 
     public Sprite GetImage() { return null; }
+
+    public float GetCoolTime() { return 0; }
 }
 
 public class MonsterMoveStay : IMove

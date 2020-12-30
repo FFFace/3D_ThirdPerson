@@ -3750,9 +3750,9 @@ GameObject:
   - component: {fileID: 1726102931}
   - component: {fileID: 1726102930}
   - component: {fileID: 1726102929}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (2)
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

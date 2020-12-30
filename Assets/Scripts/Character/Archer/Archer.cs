@@ -13,6 +13,9 @@ public class Archer : Character
     private ArcherMultiArrow multiArrow;
     private ArcherSpreadArrow spreadArrow;
 
+    [SerializeField]
+    protected GameObject modelArrow;
+
     [Space]
     [Header("Skill Image")]
 
@@ -68,6 +71,7 @@ public class Archer : Character
         activeArrow = arrowActive;
 
         UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
+        UIManager.instance.SetSkillCoolTime(mainSkill.GetCoolTime(), subSkill.GetCoolTime(), subAttack.GetCoolTime());
     }
 
     public override void MainSkill()
@@ -76,6 +80,11 @@ public class Archer : Character
 
         if (mainSkill == multiArrow as ISkill || mainSkill == spreadArrow as ISkill)
             subSkill.isActive = mainSkill.isActive ? false : subSkill.isActive;
+
+        if (mainSkill.isActive) activeArrow = mainSkill as IActiveObj;
+        else if (!mainSkill.isActive && !subSkill.isActive) activeArrow = arrowActive;
+
+        Debug.Log(activeArrow);
     }
 
     public override void SubSkill()
@@ -84,6 +93,9 @@ public class Archer : Character
 
         if (subSkill == multiArrow as ISkill || subSkill == spreadArrow as ISkill)
             mainSkill.isActive = subSkill.isActive ? false : subSkill.isActive;
+
+        if (subSkill.isActive) activeArrow = subSkill as IActiveObj;
+        else if (!mainSkill.isActive && !subSkill.isActive) activeArrow = arrowActive;
     }
 
     public void BowStringPull()
@@ -106,9 +118,17 @@ public class Archer : Character
         archerKick.ColliderDisable();
     }
 
-    public override void AttackEnd()
+    public void ArrowDraw()
     {
-        base.AttackEnd();
+        modelArrow.SetActive(true);
+    }
+
+    public void ArrowDrawOut()
+    {
+        activeArrow.Active();
+        activeArrow = arrowActive;
+        modelArrow.SetActive(false);
+
         StartCoroutine(mainSkill.SkillCoolTime());
         StartCoroutine(subSkill.SkillCoolTime());
     }
@@ -236,10 +256,10 @@ public class ArcherSpreadArrow : ISkill, IActiveObj
         if (!isActive) yield return null;
         else
         {
-            isAttack = true;
             isActive = false;
             yield return new WaitForSeconds(coolTime);
             isAttack = false;
+            isActive = true;
         }
     }
 
@@ -252,6 +272,8 @@ public class ArcherSpreadArrow : ISkill, IActiveObj
     {
         return image;
     }
+
+    public float GetCoolTime() { return coolTime; }
 }
 
 public class ArcherMultiArrow : ISkill, IActiveObj
@@ -269,7 +291,7 @@ public class ArcherMultiArrow : ISkill, IActiveObj
     /// </summary>
     /// <param name="_coolTime">스킬 쿨타임</param>
     /// <param name="_damageMagnification">스킬 데미지 배율</param>
-    public ArcherMultiArrow(float _coolTime, float _damageMagnification, Sprite _image)
+    public ArcherMultiArrow(float _coolTime, float _damageMagnification, Sprite _image )
     {
         character = Character.instance;
         coolTime = _coolTime;
@@ -303,6 +325,7 @@ public class ArcherMultiArrow : ISkill, IActiveObj
                 arrows[i].transform.rotation = fireTR.rotation;
 
                 arrows[i].gameObject.SetActive(true);
+                Debug.Log(arrows[i]);
             }
         }
     }
@@ -312,10 +335,10 @@ public class ArcherMultiArrow : ISkill, IActiveObj
         if (!isActive) yield return null;
         else
         {
-            isAttack = true;
             isActive = false;
             yield return new WaitForSeconds(coolTime);
             isAttack = false;
+            isActive = true;
         }
     }
 
@@ -328,6 +351,8 @@ public class ArcherMultiArrow : ISkill, IActiveObj
     {
         return image;
     }
+
+    public float GetCoolTime() { return coolTime; }
 }
 
 public class ArcherUpdate : ICharacterUpdate
@@ -395,6 +420,8 @@ public class ArcherSubAttack : ISkill
     }
 
     public Sprite GetImage() { return image; }
+
+    public float GetCoolTime() { return coolTime; }
 }
 
 

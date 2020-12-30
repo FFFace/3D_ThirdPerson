@@ -36,8 +36,6 @@ public class Character : MonoBehaviour
     protected float mainSkillCoolTime;
     protected float subSkillCoolTime;
 
-    [SerializeField]
-    protected GameObject modelArrow;
 
     protected Dictionary<Item, int> items = new Dictionary<Item, int>();
     protected List<IItemEffect> itemEffects = new List<IItemEffect>();
@@ -101,17 +99,6 @@ public class Character : MonoBehaviour
         Arrow obj = arrows.Count > 0 ? arrows.Dequeue() : CreateArrow();
         obj.SetRecharge(isRecharge);
         return obj.gameObject.activeSelf ? CreateArrow() : obj;
-    }
-
-    public void ArrowDraw()
-    {
-        modelArrow.SetActive(true);
-    }
-
-    public void ArrowDrawOut()
-    {
-        activeArrow.Active();
-        modelArrow.SetActive(false);
     }
 
     public Transform GetArrowFireTR()

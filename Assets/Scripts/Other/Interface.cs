@@ -56,5 +56,7 @@ public interface ISkill
     float GetDamage();
 
     Sprite GetImage();
+
+    float GetCoolTime();
 }
 

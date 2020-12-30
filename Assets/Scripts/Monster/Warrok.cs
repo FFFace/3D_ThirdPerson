@@ -283,6 +283,8 @@ public class WarrokAttack : ISkill
     }
 
     public Sprite GetImage() { return null; }
+
+    public float GetCoolTime() { return 0; }
 }
 
 public class WarrokJumpSKill : ISkill
@@ -320,6 +322,8 @@ public class WarrokJumpSKill : ISkill
     }
 
     public Sprite GetImage() { return null; }
+
+    public float GetCoolTime() { return 0; }
 }
 
 public class WarrokBuffSkill : ISkill
@@ -364,6 +368,8 @@ public class WarrokBuffSkill : ISkill
     }
 
     public Sprite GetImage() { return null; }
+
+    public float GetCoolTime() { return 0; }
 }
 
 public class WarrokSummonSkill : ISkill
@@ -436,4 +442,6 @@ public class WarrokSummonSkill : ISkill
     }
 
     public Sprite GetImage() { return null; }
+
+    public float GetCoolTime() { return 0; }
 }
