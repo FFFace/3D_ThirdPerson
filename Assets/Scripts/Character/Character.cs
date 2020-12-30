@@ -48,11 +48,8 @@ public class Character : MonoBehaviour
     private Transform arrowFireTR;
 
     protected bool isJump;
-    protected bool isDodge;
     protected bool isAttack;
-    protected bool isSubAttack;
-    protected bool isMainSkill;
-    protected bool isSubSkill;
+    protected bool isAction;
     protected bool isRecharge;
 
     private Rigidbody rigid;
@@ -114,7 +111,7 @@ public class Character : MonoBehaviour
 
     public void Move()
     {
-        if (!isDodge)
+        if (!isAction)
         {
             float x = Input.GetAxis("Horizontal");
             float z = Input.GetAxis("Vertical");
@@ -131,7 +128,8 @@ public class Character : MonoBehaviour
 
     public virtual void AttackPressDown()
     {
-        recharge.Recharge();
+        if(!isAction)
+            recharge.Recharge();
     }
 
     public virtual void AttackPressUp()
@@ -157,9 +155,11 @@ public class Character : MonoBehaviour
         if (!subAttack.isActive)
         {
             isAttack = true;
+            isAction = true;
             ResetAnimation();
             subAttack.Skill();
             StartCoroutine(subAttack.SkillCoolTime());
+            UIManager.instance.SetSubAttackCoolTime();
         }
     }
 
@@ -175,9 +175,9 @@ public class Character : MonoBehaviour
 
     public virtual void Dodge()
     {
-        if (!isDodge)
+        if (!isAction)
         {
-            isDodge = true;
+            isAction = true;
             SetAnimationBool("Dodge", true);
         }
     }
@@ -230,6 +230,7 @@ public class Character : MonoBehaviour
     public virtual void AttackEnd()
     {
         isAttack = false;
+        isAction = false;
         SetAnimationBool("Recharge", false);
     }
     /// <summary>

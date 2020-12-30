@@ -8,14 +8,17 @@ public class UIManager : MonoBehaviour
     [Header("-Skill Image-")]
 
     [SerializeField]
-    private Image skill1;
-    private float skill1CoolTime;
+    private Image mainSKill;
+    private float mainSkillCoolTime = 1;
+    private float mainSkillCurrentTime=0;
     [SerializeField]
-    private Image skill2;
-    private float skill2CoolTime;
+    private Image subSkill;
+    private float subSkillCoolTime = 1;
+    private float subSkillCurrentTime=0;
     [SerializeField]
-    private Image skill3;
-    private float skill3CoolTime;
+    private Image subAttack;
+    private float subAttackCoolTime = 1;
+    private float subAttackCurrentTime=0;
 
     [Space, Header("-Skill AmountImage-")]
     [SerializeField]
@@ -36,20 +39,20 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        
+        StartCoroutine(SkillCoolTime());
     }
 
     private IEnumerator SkillCoolTime()
     {
         while(true)
         {
-            if (skill1CoolTime > 1) skill1CoolTime -= 0.1f;
-            if (skill2CoolTime > 1) skill2CoolTime -= 0.1f;
-            if (skill3CoolTime > 1) skill3CoolTime -= 0.1f;
+            if (mainSkillCurrentTime > 0) mainSkillCurrentTime -= 0.1f;
+            if (subSkillCurrentTime > 0) subSkillCurrentTime -= 0.1f;
+            if (subAttackCurrentTime > 0) subAttackCurrentTime -= 0.1f;
 
-            skill1Amount.fillAmount = 1 / skill1CoolTime;
-            skill2Amount.fillAmount = 1 / skill2CoolTime;
-            skill3Amount.fillAmount = 1 / skill3CoolTime;
+            skill1Amount.fillAmount = mainSkillCurrentTime / mainSkillCoolTime;
+            skill2Amount.fillAmount = subSkillCurrentTime / subSkillCoolTime;
+            skill3Amount.fillAmount = subAttackCurrentTime / subAttackCoolTime;
 
             yield return new WaitForSeconds(0.1f);
         }
@@ -57,15 +60,30 @@ public class UIManager : MonoBehaviour
 
     public void SetSkillImage(Sprite _skill1, Sprite _skill2, Sprite _skill3)
     {
-        skill1.sprite = _skill1;
-        skill2.sprite = _skill2;
-        skill3.sprite = _skill3;
+        mainSKill.sprite = _skill1;
+        subSkill.sprite = _skill2;
+        subAttack.sprite = _skill3;
     }
 
-    public void SetSkillCoolTime(float _skill1, float _skill2, float _skill3)
+    public void SetSkillCoolTime(float _mainSkill, float _subSkill, float _subAttack)
     {
-        skill1CoolTime = _skill1;
-        skill2CoolTime = _skill2;
-        skill3CoolTime = _skill3;
+        mainSkillCoolTime = _mainSkill;
+        subSkillCoolTime = _subSkill;
+        subAttackCoolTime = _subAttack;
+    }
+
+    public void SetMainSkillCoolTime()
+    {
+        mainSkillCurrentTime = mainSkillCoolTime;
+    }
+
+    public void SetSubSkillCoolTime()
+    {
+        subSkillCurrentTime = subSkillCoolTime;
+    }
+
+    public void SetSubAttackCoolTime( )
+    {
+        subAttackCurrentTime = subAttackCoolTime;
     }
 }

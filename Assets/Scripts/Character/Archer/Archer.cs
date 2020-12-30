@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class Archer : Character
 {
@@ -98,6 +99,7 @@ public class Archer : Character
         else if (!mainSkill.isActive && !subSkill.isActive) activeArrow = arrowActive;
     }
 
+
     public void BowStringPull()
     {
         archerUpdate.isStringPull = true;
@@ -126,6 +128,10 @@ public class Archer : Character
     public void ArrowDrawOut()
     {
         activeArrow.Active();
+
+        if (activeArrow == mainSkill as IActiveObj) UIManager.instance.SetMainSkillCoolTime();
+        if (activeArrow == subSkill as IActiveObj) UIManager.instance.SetSubSkillCoolTime();
+
         activeArrow = arrowActive;
         modelArrow.SetActive(false);
 
@@ -257,6 +263,7 @@ public class ArcherSpreadArrow : ISkill, IActiveObj
         else
         {
             isActive = false;
+            isAttack = true;
             yield return new WaitForSeconds(coolTime);
             isAttack = false;
             isActive = true;
@@ -336,6 +343,7 @@ public class ArcherMultiArrow : ISkill, IActiveObj
         else
         {
             isActive = false;
+            isAttack = true;
             yield return new WaitForSeconds(coolTime);
             isAttack = false;
             isActive = true;
