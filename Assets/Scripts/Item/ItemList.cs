@@ -6,6 +6,8 @@ public class ItemList : MonoBehaviour
 {
     [SerializeField]
     private List<Item> items = new List<Item>();
+    [SerializeField]
+    private GameObject itemSphere;
 
     public static ItemList instance;
 
@@ -20,5 +22,10 @@ public class ItemList : MonoBehaviour
         int num = Random.Range(0, items.Count);
         if (num == 0) return null;
         return items[num];
+    }
+
+    public void CreateItemSphere(Transform _transform)
+    {
+
     }
 }

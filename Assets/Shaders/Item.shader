@@ -1,4 +1,4 @@
-﻿Shader "Custom/Tile"
+﻿Shader "Custom/Item"
 {
     Properties
     {

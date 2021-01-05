@@ -137,7 +137,14 @@ public class Monster : MonoBehaviour
     protected virtual IEnumerator IEnumBuffTime(float _magnification, float _time)
     {
         currentDamage += state.attackDamage * _magnification;
+
+        Renderer[] renderer = GetComponentsInChildren<Renderer>();
+        for (int i = 0; i < renderer.Length; i++)
+            renderer[i].material.SetColor("_Color", new Color(255, 180, 180));
         yield return new WaitForSeconds(_time);
+
+        for (int i = 0; i < renderer.Length; i++)
+            renderer[i].material.SetColor("_Color", new Color(255, 255, 255));
         currentDamage -= state.attackDamage;
     }
 

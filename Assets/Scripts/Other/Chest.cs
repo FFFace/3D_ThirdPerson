@@ -34,4 +34,10 @@ public class Chest : MonoBehaviour
             }
         }
     }
+
+    private IEnumerator IEnumItemDrop()
+    {
+        yield return new WaitForSeconds(1.0f);
+
+    }
 }
