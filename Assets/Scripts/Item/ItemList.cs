@@ -24,8 +24,8 @@ public class ItemList : MonoBehaviour
         return items[num];
     }
 
-    public void CreateItemSphere(Transform _transform)
+    public void DropItem(Transform _transform)
     {
-
+        
     }
 }
