@@ -140,11 +140,11 @@ public class Monster : MonoBehaviour
 
         Renderer[] renderer = GetComponentsInChildren<Renderer>();
         for (int i = 0; i < renderer.Length; i++)
-            renderer[i].material.SetColor("_Color", new Color(255, 180, 180));
+            renderer[i].material.SetColor("_Color", new Color(1, 0.8f, 0.8f, 1));
         yield return new WaitForSeconds(_time);
 
         for (int i = 0; i < renderer.Length; i++)
-            renderer[i].material.SetColor("_Color", new Color(255, 255, 255));
+            renderer[i].material.SetColor("_Color", Color.white);
         currentDamage -= state.attackDamage;
     }
 
