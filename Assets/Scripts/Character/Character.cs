@@ -98,6 +98,11 @@ public class Character : MonoBehaviour
         return obj.gameObject.activeSelf ? CreateArrow() : obj;
     }
 
+    public Arrow GetArrow()
+    {
+        return arrow;
+    }
+
     public Transform GetArrowFireTR()
     {
         arrowFireTR.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
@@ -329,6 +334,10 @@ public class Character : MonoBehaviour
         currentCharacterHP += _item.GetItemHP();
         currentCharacterHP += state.hp * _item.GetItemHP();
         currentMoveSpeed += state.moveSpeed * _item.GetItemMoveSpeedMag();
+
+        IItemEffect effect = _item.GetItemEffect();
+        if (effect != null)
+            itemEffects.Add(effect);
     }
 
     public void DeleteItem(Item _item)
@@ -352,6 +361,11 @@ public class Character : MonoBehaviour
 
         else
             Debug.Log("존재하지 않는 아이템");
+    }
+
+    public List<IItemEffect> GetItemEffectList()
+    {
+        return itemEffects;
     }
 }
 

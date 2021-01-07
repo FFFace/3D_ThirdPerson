@@ -8,6 +8,9 @@ public class Item : MonoBehaviour
     protected ItemState itemState;
     protected IItemEffect effect;
 
+    [SerializeField]
+    protected Sprite itemImage;
+
     protected virtual void Start()
     {
         InitDate();   
@@ -73,5 +76,5 @@ public class ItemState
 
 public interface IItemEffect
 {
-    void Effect();
+    void Effect(Arrow _arrow);
 }

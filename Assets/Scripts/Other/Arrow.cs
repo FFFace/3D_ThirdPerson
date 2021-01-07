@@ -33,6 +33,7 @@ public class Arrow : MonoBehaviour
     {
         character = Character.instance;
         arrowMove = new ArcherArrow(this);
+        itemEffects = character.GetItemEffectList();
     }
 
     public void SetCharacter(Character _character)
@@ -112,14 +113,6 @@ public class Arrow : MonoBehaviour
 
             isSkillSpread = false;
         }
-
-        //TODO : 투사체 퍼짐 효과 아이템 만든 후 작성해야함
-        //else if (isSpread) 
-        //{
-
-
-        //    isSpread = false;
-        //}
     }
 
     private void OnTriggerEnter(Collider other)
@@ -136,7 +129,7 @@ public class Arrow : MonoBehaviour
             isHit = true;
 
             foreach (var effect in itemEffects)
-                effect.Effect();
+                effect.Effect(this);
 
             ArrowSpread();
         }
@@ -163,6 +156,11 @@ public class Arrow : MonoBehaviour
     public float GetArrowSpeed()
     {
         return speed;
+    }
+
+    public float GetArrowDamage()
+    {
+        return damage;
     }
 }
 

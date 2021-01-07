@@ -23214,90 +23214,15 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 66598230049431066, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 66598230049431066, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 66598230049431066, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 66598230049431069, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_RenderMode
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 66598230049431070, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
         type: 3}
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
-    - target: {fileID: 284810266411221288, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1668037632694929070, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1668037632694929070, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
+    - target: {fileID: 4269143928901358081, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2531089241523518525, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_FillAmount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2531089241523518525, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_FillClockwise
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2531089241523518525, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_PreserveAspect
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3345534269894629706, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3636745279683851754, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5874231843186546830, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5874231843186546830, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7306945843003341490, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7306945843003341490, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 427
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2030176b0bc6bfa4ea28f6fc9ef88dc1, type: 3}
