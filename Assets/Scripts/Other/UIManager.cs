@@ -28,6 +28,20 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Image skill3Amount;
 
+    [Space, Header("-Item-")]
+    [SerializeField]
+    private Image itemPanel;
+    [SerializeField]
+    private Image itemImageBG;
+    [SerializeField]
+    private Image itemImage;
+    [SerializeField]
+    private Text itemText;
+
+    private Queue<Item> items = new Queue<Item>();
+
+    private bool isGetItem;
+
     public static UIManager instance;
 
 
@@ -85,5 +99,50 @@ public class UIManager : MonoBehaviour
     public void SetSubAttackCoolTime( )
     {
         subAttackCurrentTime = subAttackCoolTime;
+    }
+
+    public void PlayerGetItem(Item _item)
+    {
+        items.Enqueue(_item);
+        if (!isGetItem) StartCoroutine(IEnumGetItem());
+    }
+
+    private IEnumerator IEnumGetItem()
+    {
+        isGetItem = true;
+
+        while (isGetItem)
+        {
+            if (items.Count > 0)
+            {
+                Item item = items.Dequeue();
+
+                itemImage.sprite = item.GetItemSprite;
+                itemText.text = item.GetItemEx;
+
+                itemPanel.color = Color.white;
+                itemImageBG.color = Color.white;
+                itemImage.color = Color.white;
+                itemText.color = Color.white;
+
+                yield return new WaitForSeconds(3.0f);
+
+                float time = 0;
+                Color color = new Color(1, 1, 1, 0);
+
+                while (time >= 2)
+                {
+                    itemPanel.color = Color.Lerp(itemPanel.color, color, Time.deltaTime);
+                    itemImageBG.color = Color.Lerp(itemImageBG.color, color, Time.deltaTime);
+                    itemImage.color = Color.Lerp(itemImage.color, color, Time.deltaTime);
+                    itemText.color = Color.Lerp(itemText.color, color, Time.deltaTime);
+
+                    time += Time.deltaTime;
+                    yield return null;
+                }
+            }
+            else
+                isGetItem = false;
+        }
     }
 }

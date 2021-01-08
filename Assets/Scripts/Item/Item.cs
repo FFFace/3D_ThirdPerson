@@ -1,77 +1,55 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class Item : MonoBehaviour
+[CreateAssetMenu(fileName = "New Item", menuName = "Item", order = 2)]
+public class Item : ScriptableObject
 {
-    protected ItemState itemState;
-    protected IItemEffect effect;
+    [SerializeField]
+    private string itemName;
+    [SerializeField]
+    private string explain;
+    [SerializeField]
+    private float hpMag;
+    [SerializeField]
+    private float HP;
+    [SerializeField]
+    private float damageMag;
+    [SerializeField]
+    private float damage;
+    [SerializeField]
+    private float attackSpeedMag;
+    [SerializeField]
+    private float moveSpeedMag;
+    [SerializeField]
+    private float knockback;
+
+    private IItemEffect effect;
 
     [SerializeField]
     protected Sprite itemImage;
 
-    protected virtual void Start()
-    {
-        InitDate();   
-    }
-
-    protected virtual void InitDate()
-    {
-
-    }
-
-    public float GetItemDamageMag()
-    {
-        return itemState.damageMag;
-    }
-
-    public float GetItemDamage()
-    {
-        return itemState.damage;
-    }
-
-    public float GetItemHPMag()
-    {
-        return itemState.hpMag;
-    }
-
-    public float GetItemHP()
-    {
-        return itemState.HP;
-    }
-
-    public string GetItemString()
-    {
-        return itemState.name;
-    }
-
-    public float GetItemMoveSpeedMag()
-    {
-        return itemState.moveSpeedMag;
-    }
-
-    public float GetItemAttackSpeedMag()
-    {
-        return itemState.attackSpeedMag;
-    }
-
+    public float GetItemDamageMag => damageMag;
+    public float GetItemDamage => damage;
+    public float GetItemHPMag => hpMag;
+    public float GetItemHP => HP;
+    public string GetItemName => itemName;
+    public string GetItemEx => explain;
+    public float GetItemMoveSpeedMag => moveSpeedMag;
+    public float GetItemAttackSpeedMag => attackSpeedMag;
+    public Sprite GetItemSprite => itemImage;
     public IItemEffect GetItemEffect()
     {
         return effect;
     }
-}
 
-public class ItemState
-{
-    public string name;
-    public float hpMag;
-    public float HP;
-    public float damageMag;
-    public float damage;
-    public float attackSpeedMag;
-    public float moveSpeedMag;
-    public float knockback;
+    public void SetItemEffect(IItemEffect _effect)
+    {
+        effect = _effect;
+    }
 }
 
 public interface IItemEffect

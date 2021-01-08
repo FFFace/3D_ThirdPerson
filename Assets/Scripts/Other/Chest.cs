@@ -21,6 +21,7 @@ public class Chest : MonoBehaviour
         Item item = ItemList.instance.GetRandomItem(transform.position);
         if (item == null) return;
         Character.instance.AddItem(item);
+        UIManager.instance.PlayerGetItem(item);
     }
 
     private void OnTriggerStay(Collider other)
@@ -33,11 +34,5 @@ public class Chest : MonoBehaviour
                 AddItem();
             }
         }
-    }
-
-    private IEnumerator IEnumItemDrop()
-    {
-        yield return new WaitForSeconds(1.0f);
-
     }
 }

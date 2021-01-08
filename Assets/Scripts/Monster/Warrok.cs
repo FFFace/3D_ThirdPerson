@@ -54,7 +54,6 @@ public class Warrok : Monster
         {
             if (move != warrokHit && move != warrokDead)
             {
-                Debug.Log(attack);
                 float dis = Vector3.Distance(transform.position, character.transform.position);
 
                 if (dis < attackDistance && monsterDirection.GetinDirection(attackDirection)) attack = normalAttack;

@@ -194,6 +194,7 @@ public class ArcherArrowActive : IActiveObj
 
         damage = character.GetCharacterCurrentDamage();
         arrow.SetArrowDamage(damage);
+        arrow.SetItemEffect(character.GetItemEffectList());
         arrow.gameObject.SetActive(true);
 
         arrow = null;
@@ -246,6 +247,7 @@ public class ArcherSpreadArrow : ISkill, IActiveObj
             arrow.SetSkillSpread(true);
             float damage = GetDamage();
             arrow.SetArrowDamage(damage);
+            arrow.SetItemEffect(character.GetItemEffectList());
 
             Transform fireTR = character.GetArrowFireTR();
             arrow.SetTarget(MonsterTR);
@@ -324,6 +326,7 @@ public class ArcherMultiArrow : ISkill, IActiveObj
                 arrows[i] = character.ArrowDequeue();
                 float damage = GetDamage();
                 arrows[i].SetArrowDamage(damage);
+                arrows[i].SetItemEffect(character.GetItemEffectList());
 
                 Transform fireTR = character.GetArrowFireTR();
                 arrows[i].SetTarget(MonsterTR);

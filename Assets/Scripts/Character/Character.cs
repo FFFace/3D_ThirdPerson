@@ -328,12 +328,12 @@ public class Character : MonoBehaviour
             itemEffects.Add(_item.GetItemEffect());
         }
 
-        currentAttackDamage += _item.GetItemDamage();
-        currentAttackDamage += state.attackDamage * _item.GetItemDamageMag();
-        currentAttackSpeed += state.attackSpeed * _item.GetItemAttackSpeedMag();
-        currentCharacterHP += _item.GetItemHP();
-        currentCharacterHP += state.hp * _item.GetItemHP();
-        currentMoveSpeed += state.moveSpeed * _item.GetItemMoveSpeedMag();
+        currentAttackDamage += _item.GetItemDamage;
+        currentAttackDamage += state.attackDamage * _item.GetItemDamageMag;
+        currentAttackSpeed += state.attackSpeed * _item.GetItemAttackSpeedMag;
+        currentCharacterHP += _item.GetItemHP;
+        currentCharacterHP += state.hp * _item.GetItemHP;
+        currentMoveSpeed += state.moveSpeed * _item.GetItemMoveSpeedMag;
 
         IItemEffect effect = _item.GetItemEffect();
         if (effect != null)
@@ -351,12 +351,12 @@ public class Character : MonoBehaviour
                 itemEffects.Remove(_item.GetItemEffect());
             }
 
-            currentAttackDamage -= _item.GetItemDamage();
-            currentAttackDamage -= state.attackDamage * _item.GetItemDamageMag();
-            currentAttackSpeed -= state.attackSpeed * _item.GetItemAttackSpeedMag();
-            currentCharacterHP -= _item.GetItemHP();
-            currentCharacterHP -= state.hp * _item.GetItemHP();
-            currentMoveSpeed -= state.moveSpeed * _item.GetItemMoveSpeedMag();
+            currentAttackDamage -= _item.GetItemDamage;
+            currentAttackDamage -= state.attackDamage * _item.GetItemDamageMag;
+            currentAttackSpeed -= state.attackSpeed * _item.GetItemAttackSpeedMag;
+            currentCharacterHP -= _item.GetItemHP;
+            currentCharacterHP -= state.hp * _item.GetItemHP;
+            currentMoveSpeed -= state.moveSpeed * _item.GetItemMoveSpeedMag;
         }
 
         else

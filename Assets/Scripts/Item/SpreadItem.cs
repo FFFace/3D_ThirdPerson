@@ -1,35 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class SpreadItem : Item
 {
-    private Spread item;
 
-    protected override void InitDate()
-    {
-        base.InitDate();
+    //protected void InitDate()
+    //{
+    //    name = "화살통";
+    //    explain = "투사체가 몬스터에게 적중 할 시, 사방으로 투사체를 더 날린다";
+    //    hpMag = 0;
+    //    HP = 0;
+    //    damage = 0;
+    //    damageMag = 1.1f;
+    //    attackSpeedMag = 0;
+    //    moveSpeedMag = 0;
+    //    knockback = 0;
 
-        effect = item;
-    }
+    //    effect = item;
+    //}
 }
 
 
-public class Spread : IItemEffect
-{
-    private Arrow[] arrows = new Arrow[10];
-
-    public void Effect(Arrow _arrow)
-    {
-        for (int i = 0; i < arrows.Length; i++)
-        {
-            arrows[i] = Character.instance.ArrowDequeue();
-            float num = (360 / arrows.Length) * i;
-            arrows[i].transform.rotation = Quaternion.Euler(new Vector3(0, num, 0));
-            arrows[i].transform.position = _arrow.transform.position + arrows[i].transform.forward * 2.5f;
-            arrows[i].SetArrowDamage(_arrow.GetArrowDamage());
-            arrows[i].SetSkillSpread(false);
-            arrows[i].gameObject.SetActive(true);
-        }
-    }
-}

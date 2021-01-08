@@ -33,7 +33,6 @@ public class Arrow : MonoBehaviour
     {
         character = Character.instance;
         arrowMove = new ArcherArrow(this);
-        itemEffects = character.GetItemEffectList();
     }
 
     public void SetCharacter(Character _character)
@@ -108,6 +107,7 @@ public class Arrow : MonoBehaviour
                 arrows[i].transform.position = transform.position + arrows[i].transform.forward * 2.5f;
                 arrows[i].SetArrowDamage(damage);
                 arrows[i].SetSkillSpread(false);
+                arrows[i].SetItemEffect(character.GetItemEffectList());
                 arrows[i].gameObject.SetActive(true);
             }
 
@@ -128,10 +128,17 @@ public class Arrow : MonoBehaviour
             StartCoroutine(DisableTime());
             isHit = true;
 
-            foreach (var effect in itemEffects)
-                effect.Effect(this);
-
             ArrowSpread();
+            foreach (var effect in itemEffects)
+            {
+                if (isSkillSpread)
+                {
+                    if (effect is SpreadItem)
+                        continue;
+                }
+
+                effect.Effect(this);
+            }
         }
 
         // 오브젝트에 회전값이 있고, parent의 scale의 비율이 1:1:1이 아닐 때, 메시가 깨지는 버그가 있음.
@@ -161,6 +168,11 @@ public class Arrow : MonoBehaviour
     public float GetArrowDamage()
     {
         return damage;
+    }
+
+    public void SetItemEffect(List<IItemEffect> _list)
+    {
+        itemEffects = _list;
     }
 }
 

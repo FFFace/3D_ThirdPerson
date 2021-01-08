@@ -18,7 +18,6 @@ public class ItemSphere : MonoBehaviour
 
     private IEnumerator IEnumDistance()
     {
-        Debug.Log("A");
         while (true)
         {
             yield return new WaitForSeconds(2f);
