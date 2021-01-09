@@ -696,8 +696,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 0.01998519, y: 0.018158874, z: 0.11332373}
-  m_Center: {x: -0.015458266, y: 0.0070946594, z: 0.04653466}
+  m_Size: {x: 0.01998519, y: 0.018158875, z: 0.13992658}
+  m_Center: {x: -0.015458267, y: 0.0070946566, z: 0.05983623}
 --- !u!114 &4033748116432252578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1248,7 +1248,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 0
-  m_StoppingDistance: 1.5
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -1269,7 +1269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   action: 0
-  attackDistance: 2
+  attackDistance: 1.5
   attackDirection: 60
   runChaseDistance: 5
   weapon: {fileID: 4033748116432252578}

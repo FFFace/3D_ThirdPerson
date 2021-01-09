@@ -21,7 +21,7 @@ public class Chest : MonoBehaviour
         Item item = ItemList.instance.GetRandomItem(transform.position);
         if (item == null) return;
         Character.instance.AddItem(item);
-        UIManager.instance.PlayerGetItem(item);
+        //UIManager.instance.PlayerGetItem(item);
     }
 
     private void OnTriggerStay(Collider other)
@@ -32,7 +32,25 @@ public class Chest : MonoBehaviour
             {
                 spawn.ChestOpen(MonsterNum);
                 AddItem();
+                isOpen = true;
+                StartCoroutine(IEnumChestOpen());
             }
         }
+    }
+
+    private IEnumerator IEnumChestOpen()
+    {
+        yield return new WaitForSeconds(1.0f);
+        Material[] materials = GetComponent<Renderer>().materials;
+        float time = 0;
+        while (time <= 3)
+        {
+            for (int i = 0; i < materials.Length; i++)
+                materials[i].color = Color.Lerp(materials[i].color, new Color(1, 1, 1, 0), 2 * Time.deltaTime);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        gameObject.SetActive(false);
     }
 }

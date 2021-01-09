@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArcherIdleBehaviour : StateMachineBehaviour
+public class ArcherBehavior_AimRecoil : StateMachineBehaviour
 {
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -21,6 +21,8 @@ public class ArcherIdleBehaviour : StateMachineBehaviour
     {
         if(!animator.GetBool("Recharge"))
             animator.SetLayerWeight(1, 0);
+
+        animator.GetComponent<Character>().AttackEnd();
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

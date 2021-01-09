@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class SpreadItem : Item
 {
-
     //protected void InitDate()
     //{
     //    name = "화살통";
@@ -22,5 +21,3 @@ public class SpreadItem : Item
     //    effect = item;
     //}
 }
-
-

@@ -12,55 +12,59 @@
 
 		SubShader
 		{
-			Tags { "Queue" = "Transparent" "RenderType" = "Opaque"}
+		//	Tags { "Queue" = "Transparent" "RenderType" = "Opaque"}
+		//	//blend SrcAlpha OneMinusSrcAlpha
+		//	cull front
+		//	Pass
+		//	{
+		//		CGPROGRAM
+		//		#pragma vertex _VertexFuc
+		//		#pragma fragment _FragmentFuc
+		//		#include "UnityCG.cginc"
 
-			cull front
-			Pass
-			{
-				CGPROGRAM
-				#pragma vertex _VertexFuc
-				#pragma fragment _FragmentFuc
-				#include "UnityCG.cginc"
+		//	float _Outline_Bold;
+		//	fixed4 _Color;
+		//	struct ST_VertexInput
+		//	{
+		//		float4 vertex : POSITION;
+		//		float3 normal : NORMAL;
+		//	};
 
-			float _Outline_Bold;
-			struct ST_VertexInput
-			{
-				float4 vertex : POSITION;
-				float3 normal : NORMAL;
-			};
+		//	struct ST_VertexOutput
+		//	{
+		//		float4 vertex : SV_POSITION;
+		//		float3 normal : NORMAL;
+		//	};
 
-			struct ST_VertexOutput
-			{
-				float4 vertex : SV_POSITION;
-				float3 normal : NORMAL;
-			};
+		//	ST_VertexOutput _VertexFuc(ST_VertexInput stInput)
+		//	{
+		//		ST_VertexOutput stOutput;
 
-			ST_VertexOutput _VertexFuc(ST_VertexInput stInput)
-			{
-				ST_VertexOutput stOutput;
+		//		stOutput.vertex = UnityObjectToClipPos(stInput.vertex);
 
-				stOutput.vertex = UnityObjectToClipPos(stInput.vertex);
+		//		float3 fNormalized_Normal = normalize(stInput.normal);
+		//		float3 fOutline_Position = stInput.vertex + fNormalized_Normal * (_Outline_Bold * 0.1f) * stOutput.vertex.w;
 
-				float3 fNormalized_Normal = normalize(stInput.normal);
-				float3 fOutline_Position = stInput.vertex + fNormalized_Normal * (_Outline_Bold * 0.1f) * stOutput.vertex.w;
+		//		stOutput.vertex = UnityObjectToClipPos(fOutline_Position);
+		//		stOutput.normal = UnityObjectToWorldNormal(stInput.normal);
 
-				stOutput.vertex = UnityObjectToClipPos(fOutline_Position);
-				stOutput.normal = UnityObjectToWorldNormal(stInput.normal);
+		//		return stOutput;
+		//	}
 
-				return stOutput;
-			}
+		//	fixed4 _FragmentFuc(ST_VertexOutput i) : SV_Target
+		//	{
+		//		fixed4 col = (0,0,0,1);
+		//		col.a = _Color.a;
+		//		return 0.0;
+		//	}
+		//	ENDCG
+		//}
 
-			fixed4 _FragmentFuc(ST_VertexOutput i) : SV_Target
-			{
-				return 0.0;
-			}
-			ENDCG
-		}
-
-		Tags { "RenderType" = "Opaque"}
+		Tags { "Queue" = "Transparent" "RenderType" = "Opaque"}
 		cull back
+		blend SrcAlpha OneMinusSrcAlpha
 		CGPROGRAM
-			#pragma surface surf _BandedLighting noforwardadd noambient //! 커스텀 라이트 사용
+			#pragma surface surf _BandedLighting noforwardadd noambient keepalpha //! 커스텀 라이트 사용
 			#pragma target 3.0
 
 			sampler2D _MainTex;

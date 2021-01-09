@@ -17,12 +17,11 @@ public class Monster : MonoBehaviour
     //protected IMove hit;
     //protected IMove dead;
     //protected IMove stay;
-    protected IStand knockBack;
     //protected IMove stand;
     protected ICharacterUpdate update;
 
     protected MonsterAttackStay monsterAttackStay = new MonsterAttackStay();
-    protected MonsterMoveStay monsterMoveStay = new MonsterMoveStay();
+    protected MonsterMoveStay monsterMoveStay;
 
     protected float skill1CoolTime;
     protected float skill2CoolTime;
@@ -115,6 +114,8 @@ public class Monster : MonoBehaviour
         //rigid.isKinematic = false;
         GetComponent<Collider>().enabled = true;
 
+        monsterMoveStay = new MonsterMoveStay();
+
         ResetAnimation();
     }
 
@@ -124,7 +125,6 @@ public class Monster : MonoBehaviour
         currentHP -= Damage;
 
         //action = currentHP <= 0 ? MonsterAction.DEAD : MonsterAction.HIT;
-        KnockBack(knockBack, knockBackPower);
     }
 
     protected virtual void BuffDamage(MonsterSpawn _room, float _time, float _magnification)
@@ -136,6 +136,7 @@ public class Monster : MonoBehaviour
 
     protected virtual IEnumerator IEnumBuffTime(float _magnification, float _time)
     {
+        yield return new WaitForSeconds(1.0f);
         currentDamage += state.attackDamage * _magnification;
 
         Renderer[] renderer = GetComponentsInChildren<Renderer>();
@@ -215,14 +216,6 @@ public class Monster : MonoBehaviour
     //    hit.Move();
     //}
 
-    protected virtual void KnockBack(bool active, float power)
-    {
-        if (!active) return;
-
-        Vector3 dir = (transform.position - character.transform.position).normalized;
-        rigid.AddForce(dir * power, ForceMode.Impulse);
-    }
-
     //protected void Dead()
     //{
     //    EventManager.instance.SubHitEvent(HitDamage);
@@ -237,6 +230,7 @@ public class Monster : MonoBehaviour
 
     protected virtual IEnumerator DeadTime()
     {
+        Debug.Log("DEAD");
         yield return new WaitForSeconds(5.0f);
 
         Renderer[] renderer = GetComponentsInChildren<Renderer>();
@@ -288,7 +282,7 @@ public class Monster : MonoBehaviour
         {
             if (obj.type == AnimatorControllerParameterType.Bool)
             {
-                anim.SetBool(obj.name, false);
+                SetAnimationBool(obj.name, false);
             }
         }
     }
@@ -498,12 +492,32 @@ public class MonsterHit : IMove
     private Monster monster;
     private NavMeshAgent nav;
 
+    private Vector3 knockbackDir;
+    private float knockbackPower;
+    public bool isKnockBack { get; set; }
+
     public MonsterHit(Monster _monster, NavMeshAgent _nav) { monster = _monster; nav = _nav; }
 
     public void Move()
     {
-        monster.SetAnimationBool("Hit", true);
+        //monster.SetAnimationBool("Hit", true);
         nav.isStopped = true;
+
+        if (isKnockBack)
+        {
+            monster.transform.Translate(knockbackDir * knockbackPower * Time.deltaTime, Space.World);
+            knockbackPower -= knockbackPower * 0.9f * Time.deltaTime;
+        }
+    }
+
+    public void SetKnockbackPower(float _power)
+    {
+        knockbackPower = _power;
+    }
+
+    public void SetKnockBackDir(Vector3 dir)
+    {
+        knockbackDir = dir;
     }
 }
 
@@ -516,9 +530,10 @@ public class MonsterDead : IMove
 
     public void Move()
     {
-        monster.SetAnimationBool("Dead", false);
+        //monster.SetAnimationBool("Dead", true);
         monster.GetComponent<Collider>().enabled = false;
-        nav.isStopped = true;
+        //nav.isStopped = true;
+        nav.enabled = false;
         //monster.GetComponent<Rigidbody>().isKinematic = true;
     }
 }

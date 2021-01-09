@@ -27,9 +27,6 @@ public class Archer : Character
     [SerializeField]
     private Sprite kickImage;
 
-    private ISkill skill1;
-    private ISkill skill2;
-
     protected override void InitData()
     {
         base.InitData();
@@ -57,7 +54,7 @@ public class Archer : Character
         Transform rightHandTR = GameObject.Find("FollowStringTR").transform;
 
         archerUpdate = new ArcherUpdate(bowStringTR, rightHandTR, modelArrow);
-        nomalAttack = attack;
+        normalAttack = attack;
         subAttack = new ArcherSubAttack(archerUpdate, kickImage);
         characterUpdate = archerUpdate;
         recharge = new ArcherRecharge(this, rechargeTime);
@@ -71,8 +68,8 @@ public class Archer : Character
         arrowActive = new ArcherArrowActive(this);
         activeArrow = arrowActive;
 
-        //UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
-        //UIManager.instance.SetSkillCoolTime(mainSkill.GetCoolTime(), subSkill.GetCoolTime(), subAttack.GetCoolTime());
+        UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
+        UIManager.instance.SetSkillCoolTime(mainSkill.GetCoolTime(), subSkill.GetCoolTime(), subAttack.GetCoolTime());
     }
 
     public override void MainSkill()
@@ -84,8 +81,6 @@ public class Archer : Character
 
         if (mainSkill.isActive) activeArrow = mainSkill as IActiveObj;
         else if (!mainSkill.isActive && !subSkill.isActive) activeArrow = arrowActive;
-
-        Debug.Log(activeArrow);
     }
 
     public override void SubSkill()
@@ -138,6 +133,12 @@ public class Archer : Character
         StartCoroutine(mainSkill.SkillCoolTime());
         StartCoroutine(subSkill.SkillCoolTime());
     }
+
+    public override void AttackEnd()
+    {
+        base.AttackEnd();
+        currentMoveSpeed = state.moveSpeed;
+    }
 }
 
 public class ArcherRangeAttack : IAttackAction
@@ -154,18 +155,19 @@ public class ArcherRangeAttack : IAttackAction
 
 public class ArcherRecharge : IRecharge
 {
-    protected Archer archer;
+    protected Character character;
     private float rechargeTime;
     private float currentRechargeTime;
 
-    public ArcherRecharge(Archer _archer, float _time) { archer = _archer; rechargeTime = _time; currentRechargeTime = 0; }
+    public ArcherRecharge(Character _character, float _time) { character = _character; rechargeTime = _time; currentRechargeTime = 0; }
 
     public void Recharge()
     {
         currentRechargeTime = currentRechargeTime < rechargeTime ? currentRechargeTime + Time.deltaTime : rechargeTime;
-        archer.SetAnimationBool("Recharge", true);
-        archer.SetAnimationLayerWeight(1, 1);
-        archer.SetRecharge(currentRechargeTime == rechargeTime ? true : false);
+        character.SetCharacterCurrentSpeed(character.GetCharacterState().moveSpeed * 0.5f);
+        character.SetAnimationBool("Recharge", true);
+        character.SetAnimationLayerWeight(1, 1);
+        character.SetRecharge(currentRechargeTime == rechargeTime ? true : false);
     }
 }
 
@@ -244,7 +246,7 @@ public class ArcherSpreadArrow : ISkill, IActiveObj
             Transform MonsterTR = character.MonsterInCrossHair();
 
             arrow = character.ArrowDequeue();
-            arrow.SetSkillSpread(true);
+            arrow.SetSpread(true);
             float damage = GetDamage();
             arrow.SetArrowDamage(damage);
             arrow.SetItemEffect(character.GetItemEffectList());
@@ -268,7 +270,6 @@ public class ArcherSpreadArrow : ISkill, IActiveObj
             isAttack = true;
             yield return new WaitForSeconds(coolTime);
             isAttack = false;
-            isActive = true;
         }
     }
 
@@ -335,7 +336,6 @@ public class ArcherMultiArrow : ISkill, IActiveObj
                 arrows[i].transform.rotation = fireTR.rotation;
 
                 arrows[i].gameObject.SetActive(true);
-                Debug.Log(arrows[i]);
             }
         }
     }
@@ -349,7 +349,6 @@ public class ArcherMultiArrow : ISkill, IActiveObj
             isAttack = true;
             yield return new WaitForSeconds(coolTime);
             isAttack = false;
-            isActive = true;
         }
     }
 

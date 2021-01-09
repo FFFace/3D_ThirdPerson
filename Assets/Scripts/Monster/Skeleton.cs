@@ -35,7 +35,22 @@ public class Skeleton : Monster
     {
         while (true)
         {
-            if (move != hit && move != dead)
+            if (move == hit)
+            {
+                yield return new WaitForSeconds(0.3f);
+                move = monsterMoveStay;
+                attack = monsterAttackStay;
+
+                ResetAnimation();
+                hit.isKnockBack = false;
+            }
+
+            else if (move == dead)
+            {
+                break;
+            }
+
+            else
             {
                 float dis = Vector3.Distance(transform.position, character.transform.position);
                 if (dis < attackDistance)
@@ -51,26 +66,25 @@ public class Skeleton : Monster
 
                         float time = Random.Range(2.0f, 5.0f);
                         yield return new WaitForSeconds(time);
-                        attack = monsterAttackStay;
-                        move = skeletonChase;
+
+                        if (move != hit && move != dead)
+                        {
+                            attack = monsterAttackStay;
+                            move = skeletonChase;
+                        }
                     }
                 }
                 else
                 {
-                    attack = monsterAttackStay;
-                    move = skeletonChase;
+                    if (move != hit && move != dead)
+                    {
+                        attack = monsterAttackStay;
+                        move = skeletonChase;
+                    }
 
-                    if (dis > runChaseDistance && nav.speed < currentSpeed * 1.5f) nav.speed = currentSpeed * 1.5f;
+                    if (dis > runChaseDistance && nav.speed < currentSpeed * 1.5f) nav.speed = currentSpeed * 3f;
                     else nav.speed = currentSpeed;
                 }
-            }
-
-            else
-            {
-                move = monsterMoveStay;
-                attack = monsterAttackStay;
-
-                ResetAnimation();
             }
 
             weapon.SetDamage(currentDamage);
@@ -110,10 +124,20 @@ public class Skeleton : Monster
 
         base.HitDamage(Damage, instanceID, knockBack, knockBackPower);
 
+        if (knockBack)
+        {
+            hit.isKnockBack = true;
+            hit.SetKnockbackPower(knockBackPower);
+
+            Vector3 dir = character.transform.forward;
+            hit.SetKnockBackDir(dir);
+        }
+
         attack = monsterAttackStay;
 
         if (currentHP <= 0)
         {
+            SetAnimationTrigger("Dead");
             move = dead;
 
             EventManager.instance.SubHitEvent(base.HitDamage);
@@ -122,8 +146,9 @@ public class Skeleton : Monster
             StartCoroutine(DeadTime());
         }
 
-        else
+        else if(move != hit)
         {
+            SetAnimationTrigger("Hit");
             move = hit;
         }
     }
@@ -135,10 +160,19 @@ public class Skeleton : Monster
 
     protected override IEnumerator DeadTime()
     {
-        base.DeadTime();
-        MonsterPooling.instance.MonsterEnqueue(this);
+        yield return new WaitForSeconds(5.0f);
 
-        yield return null;
+        Renderer[] renderer = GetComponentsInChildren<Renderer>();
+        float num = 0;
+        while (num < 1.5)
+        {
+            for (int i = 0; i < renderer.Length; i++)
+                renderer[i].material.SetFloat("_DissolveAmount", num);
+
+            num += Time.deltaTime;
+            yield return null;
+        }
+        gameObject.SetActive(false);
     }
 
     public void SetSkeletonMoveStand()

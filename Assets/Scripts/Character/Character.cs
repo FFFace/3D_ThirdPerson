@@ -13,7 +13,7 @@ public class Character : MonoBehaviour
     public static Character instance;
     protected CharacterState state = new CharacterState();
 
-    protected IAttackAction nomalAttack;
+    protected IAttackAction normalAttack;
     protected ISkill subAttack;
     protected ISkill mainSkill;
     protected ISkill subSkill;
@@ -36,10 +36,9 @@ public class Character : MonoBehaviour
     protected float mainSkillCoolTime;
     protected float subSkillCoolTime;
 
-
     protected Dictionary<Item, int> items = new Dictionary<Item, int>();
     protected List<IItemEffect> itemEffects = new List<IItemEffect>();
-
+   
     [SerializeField]
     protected Arrow arrow;
     private Queue<Arrow> arrows = new Queue<Arrow>();
@@ -133,7 +132,7 @@ public class Character : MonoBehaviour
 
     public virtual void AttackPressDown()
     {
-        if(!isAction)
+        if(!isAction && !isAttack)
             recharge.Recharge();
     }
 
@@ -142,7 +141,7 @@ public class Character : MonoBehaviour
         if (!isAttack)
         {
             isAttack = true;
-            nomalAttack.Attack();
+            normalAttack.Attack();
         }
     }
 
@@ -363,9 +362,20 @@ public class Character : MonoBehaviour
             Debug.Log("존재하지 않는 아이템");
     }
 
+    public bool GetItemInDictionary(Item _item)
+    {
+        if (items.ContainsKey(_item)) return true;
+        else return false;
+    }
+
     public List<IItemEffect> GetItemEffectList()
     {
         return itemEffects;
+    }
+
+    public void SetCharacterCurrentSpeed(float speed)
+    {
+        currentMoveSpeed = speed;
     }
 }
 

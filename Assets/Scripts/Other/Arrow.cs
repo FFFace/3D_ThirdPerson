@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Net.Sockets;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditorInternal;
@@ -14,8 +15,6 @@ public class Arrow : MonoBehaviour
     private bool isRecharge;
     private bool isKnockBack;
     private bool isSpread;
-    private bool isSkillSpread;
-
 
     private IArrowMove arrowMove;
     private List<IItemEffect> itemEffects = new List<IItemEffect>();
@@ -27,6 +26,25 @@ public class Arrow : MonoBehaviour
     private void OnEnable()
     {
         isHit = false;
+        GetComponent<TrailRenderer>().enabled = true;
+        StartCoroutine(IEnumEnableTime());
+    }
+
+    private IEnumerator IEnumEnableTime()
+    {
+        yield return new WaitForSeconds(5.0f);
+        if (!isHit)
+        {
+            isHit = true;
+            GetComponent<Renderer>().enabled = false;
+            transform.parent = null;
+            GetComponent<Collider>().enabled = true;
+            target = null;
+
+            yield return new WaitForSeconds(1.0f);
+            gameObject.SetActive(false);
+            character.ArrowEnqueue(this);
+        }
     }
 
     private void Start()
@@ -74,9 +92,9 @@ public class Arrow : MonoBehaviour
     /// 캐릭터 스킬효과에 의한 투사체 Spread 효과
     /// </summary>
     /// <param name="active"></param>
-    public void SetSkillSpread(bool active)
+    public void SetSpread(bool active)
     {
-        isSkillSpread = active;
+        isSpread = active;
     }
     /// <summary>
     /// 캐릭터 아이템효과에 의한 투사체 Spread 효과
@@ -95,24 +113,21 @@ public class Arrow : MonoBehaviour
 
     private void ArrowSpread()
     {
-        if (isSkillSpread) 
+        Arrow[] arrows = new Arrow[10];
+
+        for (int i = 0; i < arrows.Length; i++)
         {
-            Arrow[] arrows = new Arrow[10];
-
-            for (int i = 0; i < arrows.Length; i++)
-            {
-                arrows[i] = character.ArrowDequeue();
-                float num = (360 / arrows.Length) * i;
-                arrows[i].transform.rotation = Quaternion.Euler(new Vector3(0, num, 0));
-                arrows[i].transform.position = transform.position + arrows[i].transform.forward * 2.5f;
-                arrows[i].SetArrowDamage(damage);
-                arrows[i].SetSkillSpread(false);
-                arrows[i].SetItemEffect(character.GetItemEffectList());
-                arrows[i].gameObject.SetActive(true);
-            }
-
-            isSkillSpread = false;
+            arrows[i] = character.ArrowDequeue();
+            float num = (360 / arrows.Length) * i;
+            arrows[i].transform.rotation = Quaternion.Euler(new Vector3(0, num, 0));
+            arrows[i].transform.position = transform.position + arrows[i].transform.forward;
+            arrows[i].SetArrowDamage(damage);
+            arrows[i].SetSpread(false);
+            arrows[i].SetItemEffect(character.GetItemEffectList());
+            arrows[i].gameObject.SetActive(true);
         }
+
+        isSpread = false;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -127,18 +142,9 @@ public class Arrow : MonoBehaviour
             transform.SetParent(other.gameObject.transform.GetChild(0));
             StartCoroutine(DisableTime());
             isHit = true;
-
-            ArrowSpread();
-            foreach (var effect in itemEffects)
-            {
-                if (isSkillSpread)
-                {
-                    if (effect is SpreadItem)
-                        continue;
-                }
-
-                effect.Effect(this);
-            }
+            
+            if(isSpread)
+                ArrowSpread();
         }
 
         // 오브젝트에 회전값이 있고, parent의 scale의 비율이 1:1:1이 아닐 때, 메시가 깨지는 버그가 있음.
@@ -152,12 +158,16 @@ public class Arrow : MonoBehaviour
 
     private IEnumerator DisableTime()
     {
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(0.5f);
+        GetComponent<TrailRenderer>().enabled = false;
+
+        yield return new WaitForSeconds(4.5f);
 
         gameObject.SetActive(false);
         transform.parent = null;
         GetComponent<Collider>().enabled = true;
         character.ArrowEnqueue(this);
+        target = null;
     }
 
     public float GetArrowSpeed()

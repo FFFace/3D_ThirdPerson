@@ -101,48 +101,48 @@ public class UIManager : MonoBehaviour
         subAttackCurrentTime = subAttackCoolTime;
     }
 
-    public void PlayerGetItem(Item _item)
-    {
-        items.Enqueue(_item);
-        if (!isGetItem) StartCoroutine(IEnumGetItem());
-    }
+    //public void PlayerGetItem(Item _item)
+    //{
+    //    items.Enqueue(_item);
+    //    if (!isGetItem) StartCoroutine(IEnumGetItem());
+    //}
 
-    private IEnumerator IEnumGetItem()
-    {
-        isGetItem = true;
+    //private IEnumerator IEnumGetItem()
+    //{
+    //    isGetItem = true;
 
-        while (isGetItem)
-        {
-            if (items.Count > 0)
-            {
-                Item item = items.Dequeue();
+    //    while (isGetItem)
+    //    {
+    //        if (items.Count > 0)
+    //        {
+    //            Item item = items.Dequeue();
 
-                itemImage.sprite = item.GetItemSprite;
-                itemText.text = item.GetItemEx;
+    //            itemImage.sprite = item.GetItemSprite;
+    //            itemText.text = item.GetItemEx;
 
-                itemPanel.color = Color.white;
-                itemImageBG.color = Color.white;
-                itemImage.color = Color.white;
-                itemText.color = Color.white;
+    //            itemPanel.color = Color.white;
+    //            itemImageBG.color = Color.white;
+    //            itemImage.color = Color.white;
+    //            itemText.color = Color.white;
 
-                yield return new WaitForSeconds(3.0f);
+    //            yield return new WaitForSeconds(3.0f);
 
-                float time = 0;
-                Color color = new Color(1, 1, 1, 0);
+    //            float time = 0;
+    //            Color color = new Color(1, 1, 1, 0);
 
-                while (time >= 2)
-                {
-                    itemPanel.color = Color.Lerp(itemPanel.color, color, Time.deltaTime);
-                    itemImageBG.color = Color.Lerp(itemImageBG.color, color, Time.deltaTime);
-                    itemImage.color = Color.Lerp(itemImage.color, color, Time.deltaTime);
-                    itemText.color = Color.Lerp(itemText.color, color, Time.deltaTime);
+    //            while (time >= 2)
+    //            {
+    //                itemPanel.color = Color.Lerp(itemPanel.color, color, Time.deltaTime);
+    //                itemImageBG.color = Color.Lerp(itemImageBG.color, color, Time.deltaTime);
+    //                itemImage.color = Color.Lerp(itemImage.color, color, Time.deltaTime);
+    //                itemText.color = Color.Lerp(itemText.color, color, Time.deltaTime);
 
-                    time += Time.deltaTime;
-                    yield return null;
-                }
-            }
-            else
-                isGetItem = false;
-        }
-    }
+    //                time += Time.deltaTime;
+    //                yield return null;
+    //            }
+    //        }
+    //        else
+    //            isGetItem = false;
+    //    }
+    //}
 }
