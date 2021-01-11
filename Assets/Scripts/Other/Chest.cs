@@ -18,9 +18,9 @@ public class Chest : MonoBehaviour
 
     private void AddItem()
     {
-        Item item = ItemList.instance.GetRandomItem(transform.position);
-        if (item == null) return;
-        Character.instance.AddItem(item);
+        ItemList.instance.RespawnSphere(transform.position, new Color(1, 0.6640f, 0, 1));
+        //if (item == null) return;
+        //Character.instance.AddItem(item);
         //UIManager.instance.PlayerGetItem(item);
     }
 

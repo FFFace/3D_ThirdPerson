@@ -162,6 +162,10 @@ public class Skeleton : Monster
     {
         yield return new WaitForSeconds(5.0f);
 
+        Color color = isSummonBoss ? new Color(0, 0.78125f, 0.625f, 1) : new Color(0.5859f, 0.5859f, 0.5859f, 1);
+
+        ItemList.instance.RespawnSphere(transform.position, color);
+
         Renderer[] renderer = GetComponentsInChildren<Renderer>();
         float num = 0;
         while (num < 1.5)

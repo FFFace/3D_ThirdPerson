@@ -35,6 +35,7 @@ public class Monster : MonoBehaviour
     protected float attackTime;
     //protected bool isAttack;
     protected bool isAttackDecision;
+    protected bool isSummonBoss;
 
     protected NavMeshAgent nav;
     protected Rigidbody rigid;
@@ -337,6 +338,11 @@ public class Monster : MonoBehaviour
     public void SetMonsterStand(IMove stand)
     {
         move = stand;
+    }
+
+    public void SetSummonBoss(bool _active)
+    {
+        isSummonBoss = _active;
     }
 }
 

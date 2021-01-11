@@ -39,14 +39,12 @@ public class ItemList : MonoBehaviour
         return item;
     }
 
-    public Item GetRandomItem(Vector3 _pos)
+    public void RespawnSphere(Vector3 _pos, Color _color)
     {
         ItemSphere item = ItemSphereDequeue();
         item.transform.position = _pos;
+        item.SetColor(_color);
         item.gameObject.SetActive(true);
-
-        int num = Random.Range(0, items.Count);
-        return items[num];
     }
 }
 

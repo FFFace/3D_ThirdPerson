@@ -52,18 +52,35 @@ public class Warrok : Monster
     {
         while (true)
         {
-            if (move != warrokHit && move != warrokDead)
+            if (move == warrokHit)
+            {
+                yield return new WaitForSeconds(0.3f);
+                move = monsterMoveStay;
+                attack = monsterAttackStay;
+
+                ResetAnimation();
+                warrokHit.isKnockBack = false;
+            }
+
+            else if (move == warrokDead)
+            {
+                break;
+            }
+
+            else
             {
                 float dis = Vector3.Distance(transform.position, character.transform.position);
+                float time = 0;
 
                 if (dis < attackDistance && monsterDirection.GetinDirection(attackDirection)) attack = normalAttack;
-                else if (summonSkill.isActive) attack = summonSkill;
-                else if (buffSkill.isActive) attack = buffSkill;
-                else if (jumpSkill.isActive && dis < 7.0f) attack = jumpSkill;
+                else if (summonSkill.isActive) { attack = summonSkill; time = 3.0f; }
+                else if (buffSkill.isActive) { attack = buffSkill; time = 5.0f; }
+                else if (jumpSkill.isActive && dis < 7.0f) { attack = jumpSkill; time = 3.0f; }
                 else
                 {
                     attack = monsterAttackStay;
                     move = warrokChase;
+                    time = 2.0f;
                 }
 
                 if (attack.isActive)
@@ -74,19 +91,11 @@ public class Warrok : Monster
                     attack.Skill();
                     StartCoroutine(attack.SkillCoolTime());
 
-                    yield return new WaitForSeconds(5);
+                    yield return new WaitForSeconds(time);
                     nav.isStopped = false;
                     move = warrokChase;
                     attack = monsterAttackStay;
                 }
-            }
-
-            else
-            {
-                move = monsterMoveStay;
-                attack = monsterAttackStay;
-
-                ResetAnimation();
             }
 
             weapon.SetDamage(currentDamage);
@@ -420,6 +429,7 @@ public class WarrokSummonSkill : ISkill
             summon.transform.position = pos;
             summon.gameObject.SetActive(true);
             summon.SetMonsterRoom(spawn);
+            summon.SetSummonBoss(true);
             summon.SetMonsterState(Monster.MonsterAction.CHASE);
         }
 

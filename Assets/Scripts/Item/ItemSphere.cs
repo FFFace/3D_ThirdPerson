@@ -62,4 +62,10 @@ public class ItemSphere : MonoBehaviour
             yield return null;
         }
     }
+
+    public void SetColor(Color _color)
+    {
+        GetComponent<Renderer>().material.color = _color;
+        GetComponent<TrailRenderer>().material.color = _color;
+    }
 }

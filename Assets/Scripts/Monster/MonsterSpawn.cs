@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -117,6 +118,7 @@ public class MonsterSpawn : MonoBehaviour
             monster.SetMonsterRoom(this);
             monster.gameObject.SetActive(true);
             monsters.Add(monster);
+            monster.SetSummonBoss(false);
         }
 
         if (isBoss)
@@ -126,6 +128,7 @@ public class MonsterSpawn : MonoBehaviour
             Monster monster = MonsterPooling.instance.MonsterDequeue<Warrok>();
             monster.transform.position = pos;
             monster.SetMonsterRoom(this);
+            monster.SetSummonBoss(false);
             monster.gameObject.SetActive(true);
             monsters.Add(monster);
             isBoss = false;
