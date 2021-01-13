@@ -48,6 +48,9 @@ public class Monster : MonoBehaviour
     protected float attackDistance;
     [SerializeField]
     protected float attackDirection;
+    [SerializeField]
+    private ParticleSystem damageBuff;
+
 
     protected bool isStay;
 
@@ -138,6 +141,7 @@ public class Monster : MonoBehaviour
     protected virtual IEnumerator IEnumBuffTime(float _magnification, float _time)
     {
         yield return new WaitForSeconds(1.0f);
+        damageBuff.gameObject.SetActive(true);
         currentDamage += state.attackDamage * _magnification;
 
         Renderer[] renderer = GetComponentsInChildren<Renderer>();
@@ -148,6 +152,7 @@ public class Monster : MonoBehaviour
         for (int i = 0; i < renderer.Length; i++)
             renderer[i].material.SetColor("_Color", Color.white);
         currentDamage -= state.attackDamage;
+        damageBuff.gameObject.SetActive(false);
     }
 
     protected virtual void Stand()
@@ -156,24 +161,24 @@ public class Monster : MonoBehaviour
         //action = !isAttack ? MonsterAction.CHASE : MonsterAction.STAND;
     }
 
-    protected virtual void Attack()
-    {
-        //if (!isAttack)
-        //{
-        //    isAttack = true;
-        //    nav.isStopped = true;
-        //    attack.Skill();
-        //    float time = Random.Range(2.0f, 5.0f);
-        //    StartCoroutine(AttackCoolTime(time));
-        //    StartCoroutine(attack.SkillCoolTime());
-        //}
+    //protected virtual void Attack()
+    //{
+    //    //if (!isAttack)
+    //    //{
+    //    //    isAttack = true;
+    //    //    nav.isStopped = true;
+    //    //    attack.Skill();
+    //    //    float time = Random.Range(2.0f, 5.0f);
+    //    //    StartCoroutine(AttackCoolTime(time));
+    //    //    StartCoroutine(attack.SkillCoolTime());
+    //    //}
 
-        //else if (isAttackDecision)
-        //{
-        //    character.Hit(currentDamage);
-        //    isAttackDecision = false;
-        //}
-    }
+    //    //else if (isAttackDecision)
+    //    //{
+    //    //    character.Hit(currentDamage);
+    //    //    isAttackDecision = false;
+    //    //}
+    //}
 
     //protected virtual void Chase()
     //{
