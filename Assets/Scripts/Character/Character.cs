@@ -201,6 +201,7 @@ public class Character : MonoBehaviour
         }
 
         SetAnimationTrigger("Hit");
+        UIManager.instance.PlayerHit(currentCharacterHP);
     }
 
     public virtual void Jump()

@@ -31,7 +31,7 @@ public class Archer : Character
     {
         base.InitData();
 
-        state.hp = 99999;
+        state.hp = 30;
         state.attackDamage = 1;
         state.attackSpeed = 1;
         state.moveSpeed = 5;
@@ -70,6 +70,7 @@ public class Archer : Character
 
         UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
         UIManager.instance.SetSkillCoolTime(mainSkill.GetCoolTime(), subSkill.GetCoolTime(), subAttack.GetCoolTime());
+        UIManager.instance.SetPlayerMaxHPBar(state.hp);
     }
 
     public override void MainSkill()

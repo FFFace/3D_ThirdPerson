@@ -5,8 +5,19 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("-Skill Image-")]
+    [Header("-Player HP-")]
+    [SerializeField]
+    private Image hpBar;
+    [SerializeField]
+    private Image hpBarBG;
+    [SerializeField]
+    private float speed;
+    private float playerMaxHP = 1;
+    private float playerCurrentHP = 1;
+    private float playerCurrentHPBG;
+    private bool isHit;
 
+    [Space, Header("-Skill Image-")]
     [SerializeField]
     private Image mainSKill;
     private float mainSkillCoolTime = 1;
@@ -28,19 +39,19 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Image skill3Amount;
 
-    [Space, Header("-Item-")]
-    [SerializeField]
-    private Image itemPanel;
-    [SerializeField]
-    private Image itemImageBG;
-    [SerializeField]
-    private Image itemImage;
-    [SerializeField]
-    private Text itemText;
+    //[Space, Header("-Item-")]
+    //[SerializeField]
+    //private Image itemPanel;
+    //[SerializeField]
+    //private Image itemImageBG;
+    //[SerializeField]
+    //private Image itemImage;
+    //[SerializeField]
+    //private Text itemText;
 
-    private Queue<Item> items = new Queue<Item>();
+    //private Queue<Item> items = new Queue<Item>();
 
-    private bool isGetItem;
+    //private bool isGetItem;
 
     public static UIManager instance;
 
@@ -72,6 +83,30 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void PlayerHit(float _currentHP)
+    {
+        playerCurrentHP = _currentHP;
+        hpBar.fillAmount = playerCurrentHP / playerMaxHP;
+        if (!isHit) StartCoroutine(IEnumAmoutHP());
+    }
+
+    private IEnumerator IEnumAmoutHP()
+    {
+        isHit = true;
+        yield return new WaitForSeconds(1.0f);
+
+        while (playerCurrentHPBG > playerCurrentHP)
+        {
+            playerCurrentHPBG -= speed * Time.deltaTime;
+            hpBarBG.fillAmount = playerCurrentHPBG / playerMaxHP;
+
+            yield return null;
+        }
+
+        playerCurrentHPBG = playerCurrentHP;
+        isHit = false;
+    }
+
     public void SetSkillImage(Sprite _skill1, Sprite _skill2, Sprite _skill3)
     {
         mainSKill.sprite = _skill1;
@@ -100,6 +135,14 @@ public class UIManager : MonoBehaviour
     {
         subAttackCurrentTime = subAttackCoolTime;
     }
+
+    public void SetPlayerMaxHPBar(float _hp)
+    {
+        playerMaxHP = _hp;
+        playerCurrentHP = _hp;
+        playerCurrentHPBG = _hp;
+    }
+
 
     //public void PlayerGetItem(Item _item)
     //{

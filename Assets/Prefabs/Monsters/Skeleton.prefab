@@ -1272,6 +1272,7 @@ MonoBehaviour:
   action: 0
   attackDistance: 1.5
   attackDirection: 60
+  damageBuff: {fileID: 0}
   runChaseDistance: 5
   weapon: {fileID: 4033748116432252578}
 --- !u!1 &2456963707348102394
@@ -1569,6 +1570,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: DamageBuff
+      objectReference: {fileID: 0}
+    - target: {fileID: 4245165378163232789, guid: ec21f87194729db46a96c55b39c7fa57,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4245165378163232790, guid: ec21f87194729db46a96c55b39c7fa57,
+        type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 1.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 4245165378163232790, guid: ec21f87194729db46a96c55b39c7fa57,
+        type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4245165378163232790, guid: ec21f87194729db46a96c55b39c7fa57,
+        type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.67
+      objectReference: {fileID: 0}
+    - target: {fileID: 4245165378163232790, guid: ec21f87194729db46a96c55b39c7fa57,
+        type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 1.76
+      objectReference: {fileID: 0}
+    - target: {fileID: 4245165378163232790, guid: ec21f87194729db46a96c55b39c7fa57,
+        type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 1.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ec21f87194729db46a96c55b39c7fa57, type: 3}
