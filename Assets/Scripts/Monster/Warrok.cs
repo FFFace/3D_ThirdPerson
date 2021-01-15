@@ -27,8 +27,8 @@ public class Warrok : Monster
     {
         base.Start();
 
-        summonSkill = new WarrokSummonSkill(this, 5, 25.0f, summonMonster, room);
-        buffSkill = new WarrokBuffSkill(this, room, 30.0f, 10.0f, 1.25f);
+        summonSkill = new WarrokSummonSkill(this, 5, 300f, summonMonster, room);
+        buffSkill = new WarrokBuffSkill(this, room, 100f, 60.0f, 1.25f);
         jumpSkill = new WarrokJumpSKill(this, 15.0f, 1.5f);
         normalAttack = new WarrokAttack(this);
 
@@ -43,13 +43,15 @@ public class Warrok : Monster
         warrokHit = new MonsterHit(this, nav);
         warrokDead = new MonsterDead(this, nav);
 
-        move = warrokChase;
+        move = monsterMoveStay;
 
         StartCoroutine(State());
     }
 
     private IEnumerator State()
     {
+        yield return new WaitForSeconds(4f);
+
         while (true)
         {
             if (move == warrokHit)
@@ -207,6 +209,13 @@ public class Warrok : Monster
     {
         weapon.SetActiveCollider(false);
         SetAnimationBool("JumpSkill", false);
+    }
+
+    public void JumpSkillDamage()
+    {
+        float dis = Vector3.Distance(transform.position, character.transform.position);
+        if (dis <= 10.0f)
+            character.Hit(jumpSkill.GetDamage());
     }
 }
 

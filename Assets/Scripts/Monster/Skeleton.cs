@@ -26,13 +26,16 @@ public class Skeleton : Monster
     {
         base.Start();
         //cross = new MonsterCharacterCross(this as Monster, 3.0f);
-
         StartCoroutine(State());
         //StartCoroutine(cross.DirUpdate());
     }
 
+
+
     protected IEnumerator State()
     {
+        yield return new WaitForSeconds(4f);
+
         while (true)
         {
             if (move == hit)
@@ -114,7 +117,7 @@ public class Skeleton : Monster
         hit = new MonsterHit(this, nav);
         dead = new MonsterDead(this, nav);
 
-        move = skeletonChase;
+        move = monsterMoveStay;
         attack = monsterAttackStay;
     }
 
@@ -160,9 +163,12 @@ public class Skeleton : Monster
 
     protected override IEnumerator DeadTime()
     {
+        GetComponent<Collider>().enabled = false;
+        nav.enabled = false;
+
         yield return new WaitForSeconds(5.0f);
 
-        Color color = isSummonBoss ? new Color(0, 0.78125f, 0.625f, 1) : new Color(0.5859f, 0.5859f, 0.5859f, 1);
+        Color color = isSummonBoss ? new Color(0.5859f, 0.5859f, 0.5859f, 1) : new Color(0, 0.78125f, 0.625f, 1);
 
         ItemList.instance.RespawnSphere(transform.position, color);
 
@@ -173,7 +179,7 @@ public class Skeleton : Monster
             for (int i = 0; i < renderer.Length; i++)
                 renderer[i].material.SetFloat("_DissolveAmount", num);
 
-            num += Time.deltaTime;
+            num += 0.5f * Time.deltaTime;
             yield return null;
         }
         gameObject.SetActive(false);

@@ -62,6 +62,7 @@ public class Monster : MonoBehaviour
     protected virtual void Start()
     {
         InitData();
+        StartCoroutine(IEnumSummon());
     }
 
     protected virtual void Update()
@@ -70,6 +71,26 @@ public class Monster : MonoBehaviour
 
         
         //Attack();
+    }
+
+    private IEnumerator IEnumSummon()
+    {
+        float time = 1;
+        Renderer[] renderer = GetComponentsInChildren<Renderer>();
+        GetComponent<Collider>().enabled = false;
+
+        yield return new WaitForSeconds(2f);
+
+        while (time > 0)
+        {
+            for (int i = 0; i < renderer.Length; i++)
+                renderer[i].material.SetFloat("_DissolveAmount", time);
+
+            time -= 0.5f * Time.deltaTime;
+            yield return null;
+        }
+
+        GetComponent<Collider>().enabled = true;
     }
 
     //protected virtual void State()
@@ -114,13 +135,17 @@ public class Monster : MonoBehaviour
         monsterDirection = new MonsterAttackDirection(this);
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody>();
+        GetComponent<Collider>().enabled = true;
         attack = monsterAttackStay;
         //rigid.isKinematic = false;
-        GetComponent<Collider>().enabled = true;
 
-        monsterMoveStay = new MonsterMoveStay();
+        monsterMoveStay = new MonsterMoveStay(nav);
 
         ResetAnimation();
+
+        Renderer[] renderer = GetComponentsInChildren<Renderer>();
+        for (int i = 0; i < renderer.Length; i++)
+            renderer[i].material.SetFloat("_DissolveAmount", 1);
     }
 
     protected virtual void HitDamage(float Damage, int instanceID, bool knockBack = false, float knockBackPower = 0)
@@ -236,21 +261,19 @@ public class Monster : MonoBehaviour
 
     protected virtual IEnumerator DeadTime()
     {
-        Debug.Log("DEAD");
         yield return new WaitForSeconds(5.0f);
 
         Renderer[] renderer = GetComponentsInChildren<Renderer>();
         float num = 0;
-        while (true)
+        while (num < 1)
         {
-            if (num > 1) break;
-
             for (int i = 0; i < renderer.Length; i++)
                 renderer[i].material.SetFloat("_DissolveAmount", num);
 
-            num += 0.005f;
+            num += 0.5f * Time.deltaTime;
             yield return null;
         }
+
         gameObject.SetActive(false);
     }
 
@@ -486,15 +509,15 @@ public class MonsterAttackStay : ISkill
 
 public class MonsterMoveStay : IMove
 {
-
-    public MonsterMoveStay()
+    private NavMeshAgent nav;
+    public MonsterMoveStay(NavMeshAgent _nav)
     {
-
+        nav = _nav;
     }
 
     public void Move()
     {
-
+        nav.isStopped = true;
     }
 }
 
