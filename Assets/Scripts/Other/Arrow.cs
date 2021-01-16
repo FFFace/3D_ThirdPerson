@@ -20,7 +20,7 @@ public class Arrow : MonoBehaviour
     private List<IItemEffect> itemEffects = new List<IItemEffect>();
     private bool isHit = false;
 
-    private Character character;
+    private Archer character;
     private Transform target;
 
     private void OnEnable()
@@ -49,11 +49,11 @@ public class Arrow : MonoBehaviour
 
     private void Start()
     {
-        character = Character.instance;
+        character = Character.instance as Archer;
         arrowMove = new ArcherArrow(this);
     }
 
-    public void SetCharacter(Character _character)
+    public void SetCharacter(Archer _character)
     {
         character = _character;
     }

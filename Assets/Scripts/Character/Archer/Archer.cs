@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,15 +7,28 @@ using UnityEngine.UIElements;
 
 public class Archer : Character
 {
-    private ArcherUpdate archerUpdate;
+    //private ArcherUpdate archerUpdate;
     private ArcherKick archerKick;
     private ArcherArrowActive arrowActive;
+    private ArcherRecharge recharge;
+    private ArcherRangeAttack attack;
 
     private ArcherMultiArrow multiArrow;
     private ArcherSpreadArrow spreadArrow;
 
     [SerializeField]
     protected GameObject modelArrow;
+
+    [SerializeField]
+    protected Arrow arrow;
+    private Queue<Arrow> arrows = new Queue<Arrow>();
+
+    [SerializeField]
+    private Transform arrowFireTR;
+    private Transform targetMonster;
+
+    [SerializeField]
+    protected float rechargeTime;
 
     [Space]
     [Header("Skill Image")]
@@ -26,6 +39,43 @@ public class Archer : Character
     private Sprite spreadArrowImage;
     [SerializeField]
     private Sprite kickImage;
+
+    private bool isStringPull;
+    private Transform bowStringTR;
+    private Transform rightHandTR;
+    private Vector3 originPos;
+
+    protected override void Start()
+    {
+        base.Start();
+        StartCoroutine(IEnumUpdate());
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        TargetMonster();
+    }
+
+    private IEnumerator IEnumUpdate()
+    {
+        while (true)
+        {
+            if (isStringPull)
+                bowStringTR.position = rightHandTR.position;
+            else
+                bowStringTR.localPosition = originPos;
+
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    public void BowStringReSet()
+    {
+        isStringPull = false;
+        bowStringTR.localPosition = originPos;
+        modelArrow.SetActive(false);
+    }
 
     protected override void InitData()
     {
@@ -47,16 +97,16 @@ public class Archer : Character
 
         subAttackCoolTime = 3.0f;
 
-        ArcherRangeAttack attack = new ArcherRangeAttack(this);
+        attack = new ArcherRangeAttack(this);
         archerKick = transform.Find("KickDistance").GetComponent<ArcherKick>();
 
-        Transform bowStringTR = GameObject.Find("WB.string").transform;
-        Transform rightHandTR = GameObject.Find("FollowStringTR").transform;
+        //Transform bowStringTR = GameObject.Find("WB.string").transform;
+        //Transform rightHandTR = GameObject.Find("FollowStringTR").transform;
 
-        archerUpdate = new ArcherUpdate(bowStringTR, rightHandTR, modelArrow);
-        normalAttack = attack;
-        subAttack = new ArcherSubAttack(archerUpdate, kickImage);
-        characterUpdate = archerUpdate;
+        //archerUpdate = new ArcherUpdate(bowStringTR, rightHandTR, modelArrow);
+        normalAttack = recharge;
+        subAttack = new ArcherSubAttack(kickImage);
+        //characterUpdate = archerUpdate;
         recharge = new ArcherRecharge(this, rechargeTime);
 
         multiArrow = new ArcherMultiArrow(10.0f, 1.5f, multiArrowImage);
@@ -68,9 +118,26 @@ public class Archer : Character
         arrowActive = new ArcherArrowActive(this);
         activeArrow = arrowActive;
 
+        bowStringTR = GameObject.Find("WB.string").transform;
+        rightHandTR = GameObject.Find("FollowStringTR").transform;
+        originPos = bowStringTR.localPosition;
+
         UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
         UIManager.instance.SetSkillCoolTime(mainSkill.GetCoolTime(), subSkill.GetCoolTime(), subAttack.GetCoolTime());
         UIManager.instance.SetPlayerMaxHPBar(state.hp);
+    }
+
+    public override void AttackPressDown()
+    {
+        normalAttack = recharge;
+        base.AttackPressDown();
+        isAttack = false;
+    }
+
+    public override void AttackPressUp()
+    {
+        normalAttack = attack;
+        base.AttackPressUp();
     }
 
     public override void MainSkill()
@@ -98,12 +165,12 @@ public class Archer : Character
 
     public void BowStringPull()
     {
-        archerUpdate.isStringPull = true;
+        isStringPull = true;
     }
 
     public void BowStringPullOut()
     {
-        archerUpdate.isStringPull = false;
+        isStringPull = false;
     }
 
     public void KickColliderEnable()
@@ -138,7 +205,67 @@ public class Archer : Character
     public override void AttackEnd()
     {
         base.AttackEnd();
+        SetAnimationBool("Recharge", false);
         currentMoveSpeed = state.moveSpeed;
+    }
+
+    public Arrow GetArrow()
+    {
+        return arrow;
+    }
+
+    protected virtual Arrow CreateArrow()
+    {
+        Arrow obj = Instantiate(arrow, transform.position, transform.rotation) as Arrow;
+        obj.gameObject.SetActive(false);
+        return obj;
+    }
+
+    public void ArrowEnqueue(Arrow obj)
+    {
+        arrows.Enqueue(obj);
+    }
+
+    public Arrow ArrowDequeue()
+    {
+        Arrow obj = arrows.Count > 0 ? arrows.Dequeue() : CreateArrow();
+        obj.SetRecharge(isRecharge);
+        return obj.gameObject.activeSelf ? CreateArrow() : obj;
+    }
+
+    public Transform GetArrowFireTR()
+    {
+        arrowFireTR.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+
+        Vector3 rot = arrowFireTR.rotation.eulerAngles;
+        rot += new Vector3(-Random.Range(10.0f, 20.0f), Random.Range(-15.0f, 15.0f), 0);
+        arrowFireTR.rotation = Quaternion.Euler(rot);
+
+        return arrowFireTR;
+    }
+
+    private void TargetMonster()
+    {
+        Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 5));
+        Ray ray = new Ray(pos, Camera.main.transform.forward);
+        RaycastHit hit = new RaycastHit();
+        LayerMask layer = 1 << LayerMask.NameToLayer("Monster");
+
+        Physics.BoxCast(pos, new Vector3(0.25f, 0.25f, 0.25f), transform.forward, out hit, transform.rotation, 20, layer);
+        targetMonster = hit.transform;
+    }
+
+    public Transform MonsterInCrossHair()
+    {
+        //Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 5));
+        //Ray ray = new Ray(pos, Camera.main.transform.forward);
+        //RaycastHit hit;
+        //LayerMask layer = 1 << LayerMask.NameToLayer("Monster");
+
+        //return Physics.BoxCast(pos, new Vector3(0.25f, 0.25f, 0.25f), transform.forward, out hit, transform.rotation, 20, layer) ? hit.transform : null;
+        //return Physics.Raycast(ray, out hit, 20, layer) ? hit.transform : null;
+
+        return targetMonster;
     }
 }
 
@@ -154,15 +281,15 @@ public class ArcherRangeAttack : IAttackAction
     }
 }
 
-public class ArcherRecharge : IRecharge
+public class ArcherRecharge : IAttackAction
 {
-    protected Character character;
+    protected Archer character;
     private float rechargeTime;
     private float currentRechargeTime;
 
-    public ArcherRecharge(Character _character, float _time) { character = _character; rechargeTime = _time; currentRechargeTime = 0; }
+    public ArcherRecharge(Archer _character, float _time) { character = _character; rechargeTime = _time; currentRechargeTime = 0; }
 
-    public void Recharge()
+    public void Attack()
     {
         currentRechargeTime = currentRechargeTime < rechargeTime ? currentRechargeTime + Time.deltaTime : rechargeTime;
         character.SetCharacterCurrentSpeed(character.GetCharacterState().moveSpeed * 0.5f);
@@ -174,11 +301,11 @@ public class ArcherRecharge : IRecharge
 
 public class ArcherArrowActive : IActiveObj
 {
-    private Character character;
+    private Archer character;
     private Arrow arrow;
     private float damage;
 
-    public ArcherArrowActive(Character _character)
+    public ArcherArrowActive(Archer _character)
     {
         character = _character;
     }
@@ -213,7 +340,7 @@ public class ArcherArrowActive : IActiveObj
 
 public class ArcherSpreadArrow : ISkill, IActiveObj
 {
-    private Character character;
+    private Archer character;
     private Arrow arrow;
     private float coolTime;
     private float damageMagnification;
@@ -228,7 +355,7 @@ public class ArcherSpreadArrow : ISkill, IActiveObj
     /// <param name="_damageMagnification">스킬 데미지 배율</param>
     public ArcherSpreadArrow(float _coolTime, float _damageMagnification, Sprite _image)
     {
-        character = Character.instance;
+        character = Character.instance as Archer;
         coolTime = _coolTime;
         damageMagnification = _damageMagnification;
         image = _image;
@@ -289,7 +416,7 @@ public class ArcherSpreadArrow : ISkill, IActiveObj
 
 public class ArcherMultiArrow : ISkill, IActiveObj
 {
-    private Character character;
+    private Archer character;
     private Arrow[] arrows;
     private float coolTime;
     private float damageMagnification;
@@ -304,7 +431,7 @@ public class ArcherMultiArrow : ISkill, IActiveObj
     /// <param name="_damageMagnification">스킬 데미지 배율</param>
     public ArcherMultiArrow(float _coolTime, float _damageMagnification, Sprite _image )
     {
-        character = Character.instance;
+        character = Character.instance as Archer;
         coolTime = _coolTime;
         damageMagnification = _damageMagnification;
         image = _image;
@@ -313,7 +440,7 @@ public class ArcherMultiArrow : ISkill, IActiveObj
 
     public void Skill()
     {
-        if (isAttack == false)
+        if (!isAttack)
             isActive = !isActive;
     }
 
@@ -401,21 +528,20 @@ public class ArcherUpdate : ICharacterUpdate
 
 public class ArcherSubAttack : ISkill
 {
-    private Character character;
-    private ArcherUpdate update;
+    private Archer character;
     private Sprite image;
 
     private float coolTime = 3.0f;
 
     public bool isActive { get; set; }
 
-    public ArcherSubAttack(ArcherUpdate _update, Sprite _image) { character = Character.instance; update = _update; image = _image; }
+    public ArcherSubAttack(Sprite _image) { character = Character.instance as Archer; image = _image; }
 
     public void Skill()
     {
         character.ResetAnimation();
         character.SetAnimationTrigger("SubAttack");
-        update.BowStringReSet();
+        character.BowStringReSet();
     }
 
     public IEnumerator SkillCoolTime()

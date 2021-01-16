@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -17,8 +18,8 @@ public class Character : MonoBehaviour
     protected ISkill subAttack;
     protected ISkill mainSkill;
     protected ISkill subSkill;
-    protected IRecharge recharge;
-    protected ICharacterUpdate characterUpdate;
+    //protected IRecharge recharge;
+    //protected ICharacterUpdate characterUpdate;
     protected IActiveObj activeArrow;
     protected IItemEffect effect;
 
@@ -30,21 +31,12 @@ public class Character : MonoBehaviour
     protected float currentDefense;
     protected float currentKnockBackPower;
 
-    [SerializeField]
-    protected float rechargeTime;
     protected float subAttackCoolTime;
     protected float mainSkillCoolTime;
     protected float subSkillCoolTime;
 
     protected Dictionary<Item, int> items = new Dictionary<Item, int>();
     protected List<IItemEffect> itemEffects = new List<IItemEffect>();
-   
-    [SerializeField]
-    protected Arrow arrow;
-    private Queue<Arrow> arrows = new Queue<Arrow>();
-
-    [SerializeField]
-    private Transform arrowFireTR;
 
     protected bool isJump;
     protected bool isAttack;
@@ -63,54 +55,18 @@ public class Character : MonoBehaviour
     protected virtual void Start()
     {
         InitData();
-        StartCoroutine(CharacterUpdate());
+        //StartCoroutine(CharacterUpdate());
     }
 
-    private void Update()
+    protected virtual void Update()
     {
-        Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 5));
-        Ray ray = new Ray(pos, Camera.main.transform.forward);
+        
     }
 
     protected virtual void InitData()
     {
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-    }
-
-    protected virtual Arrow CreateArrow()
-    {
-        Arrow obj = Instantiate(arrow, transform.position, transform.rotation) as Arrow;
-        obj.gameObject.SetActive(false);
-        return obj;
-    }
-
-    public void ArrowEnqueue(Arrow obj)
-    {
-        arrows.Enqueue(obj);
-    }
-
-    public Arrow ArrowDequeue()
-    {
-        Arrow obj = arrows.Count > 0 ? arrows.Dequeue() : CreateArrow();
-        obj.SetRecharge(isRecharge);
-        return obj.gameObject.activeSelf ? CreateArrow() : obj;
-    }
-
-    public Arrow GetArrow()
-    {
-        return arrow;
-    }
-
-    public Transform GetArrowFireTR()
-    {
-        arrowFireTR.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
-
-        Vector3 rot = arrowFireTR.rotation.eulerAngles;
-        rot += new Vector3(-Random.Range(10.0f, 20.0f), Random.Range(-15.0f, 15.0f), 0);
-        arrowFireTR.rotation = Quaternion.Euler(rot);
-
-        return arrowFireTR;
     }
 
     public void Move()
@@ -132,8 +88,11 @@ public class Character : MonoBehaviour
 
     public virtual void AttackPressDown()
     {
-        if(!isAction && !isAttack)
-            recharge.Recharge();
+        if (!isAction && !isAttack)
+        {
+            isAttack = true;
+            normalAttack.Attack();
+        }
     }
 
     public virtual void AttackPressUp()
@@ -223,35 +182,36 @@ public class Character : MonoBehaviour
         }
     }
 
-    private IEnumerator CharacterUpdate()
-    {
-        while (true)
-        {
-            characterUpdate.CharacterUpdate();
-            yield return new WaitForSeconds(0.1f);
-        }
-    }
+    //private IEnumerator CharacterUpdate()
+    //{
+    //    while (true)
+    //    {
+    //        characterUpdate.CharacterUpdate();
+    //        yield return new WaitForSeconds(0.1f);
+    //    }
+    //}
 
     public virtual void AttackEnd()
     {
         isAttack = false;
-        isAction = false;
-        SetAnimationBool("Recharge", false);
+        StartCoroutine(ActionOff());
     }
+
+    private IEnumerator ActionOff()
+    {
+        yield return new WaitForSeconds(1f);
+        isAction = false;
+    }
+
+    public void SetisAction(bool active)
+    {
+        isAction = active;
+    }
+
     /// <summary>
     /// 크로스 헤어에 잡히는 첫번째 몬스터 Transform 리턴
     /// </summary>
     /// <returns></returns>
-    public Transform MonsterInCrossHair()
-    {
-        Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 5));
-        Ray ray = new Ray(pos, Camera.main.transform.forward);
-        RaycastHit hit;
-        LayerMask layer = 1 << LayerMask.NameToLayer("Monster");
-
-        return Physics.BoxCast(pos, new Vector3(0.25f, 0.25f, 0.25f), transform.forward, out hit, transform.rotation, 20, layer) ? hit.transform : null;
-        //return Physics.Raycast(ray, out hit, 20, layer) ? hit.transform : null;
-    }
 
     public CharacterState GetCharacterState()
     {

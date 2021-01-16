@@ -56,7 +56,7 @@ public class Spread : IItemEffect
     {
         for (int i = 0; i < arrows.Length; i++)
         {
-            arrows[i] = Character.instance.ArrowDequeue();
+            arrows[i] = (Character.instance as Archer).ArrowDequeue();
             float num = (360 / arrows.Length) * i;
             arrows[i].transform.rotation = Quaternion.Euler(new Vector3(0, num, 0));
             arrows[i].transform.position = _arrow.transform.position + arrows[i].transform.forward * 2.5f;
