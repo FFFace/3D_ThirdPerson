@@ -23,6 +23,9 @@ public class Warrok : Monster
     private MonsterHit warrokHit;
     private MonsterDead warrokDead;
 
+    [Space, Header("-Warrok Effect-"), SerializeField]
+    private ParticleSystem groundImpace;
+
     protected override void Start()
     {
         base.Start();
@@ -216,6 +219,8 @@ public class Warrok : Monster
         float dis = Vector3.Distance(transform.position, character.transform.position);
         if (dis <= 10.0f)
             character.Hit(jumpSkill.GetDamage());
+
+        groundImpace.Play();
     }
 }
 

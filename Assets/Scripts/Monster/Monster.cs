@@ -48,7 +48,7 @@ public class Monster : MonoBehaviour
     protected float attackDistance;
     [SerializeField]
     protected float attackDirection;
-    [SerializeField]
+    [Space, Header("-Monster Effect-"), SerializeField]
     private ParticleSystem damageBuff;
 
 
