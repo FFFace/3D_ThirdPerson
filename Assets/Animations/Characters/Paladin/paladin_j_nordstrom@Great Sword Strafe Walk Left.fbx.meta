@@ -1,14 +1,11 @@
 fileFormatVersion: 2
-guid: 837362edefaf6b749b3c100c1cc45a85
+guid: b1f82aa6cf2f57d419f8a83da5a5ac97
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Great Sword Strafe (2)
-  - first:
-      74: 6189458957935003898
-    second: Great Sword Strafe
+    second: Great Sword Strafe Walk Left
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -38,11 +35,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Great Sword Strafe
+      name: Great Sword Strafe Walk Left
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 19
+      lastFrame: 33
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -54,7 +51,7 @@ ModelImporter:
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0
-      keepOriginalOrientation: 1
+      keepOriginalOrientation: 0
       keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
       heightFromFeet: 1

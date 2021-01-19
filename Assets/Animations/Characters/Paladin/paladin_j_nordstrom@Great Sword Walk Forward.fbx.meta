@@ -1,14 +1,11 @@
 fileFormatVersion: 2
-guid: 837362edefaf6b749b3c100c1cc45a85
+guid: 27ba07566fdd6cc47930d4fac2236f7d
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Great Sword Strafe (2)
-  - first:
-      74: 6189458957935003898
-    second: Great Sword Strafe
+    second: Great Sword Walk Forward
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -38,11 +35,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Great Sword Strafe
+      name: Great Sword Walk Forward
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 19
+      lastFrame: 41
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

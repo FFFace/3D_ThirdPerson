@@ -142,7 +142,7 @@ public class Archer : Character
 
     public override void MainSkill()
     {
-        base.MainSkill();
+        mainSkill.Skill();
 
         if (mainSkill == multiArrow as ISkill || mainSkill == spreadArrow as ISkill)
             subSkill.isActive = mainSkill.isActive ? false : subSkill.isActive;
@@ -153,7 +153,7 @@ public class Archer : Character
 
     public override void SubSkill()
     {
-        base.SubSkill();
+        subSkill.Skill();
 
         if (subSkill == multiArrow as ISkill || subSkill == spreadArrow as ISkill)
             mainSkill.isActive = subSkill.isActive ? false : subSkill.isActive;
@@ -206,7 +206,6 @@ public class Archer : Character
     {
         base.AttackEnd();
         SetAnimationBool("Recharge", false);
-        currentMoveSpeed = state.moveSpeed;
     }
 
     public Arrow GetArrow()
@@ -292,7 +291,6 @@ public class ArcherRecharge : IAttackAction
     public void Attack()
     {
         currentRechargeTime = currentRechargeTime < rechargeTime ? currentRechargeTime + Time.deltaTime : rechargeTime;
-        character.SetCharacterCurrentSpeed(character.GetCharacterState().moveSpeed * 0.5f);
         character.SetAnimationBool("Recharge", true);
         character.SetAnimationLayerWeight(1, 1);
         character.SetRecharge(currentRechargeTime == rechargeTime ? true : false);
@@ -493,38 +491,38 @@ public class ArcherMultiArrow : ISkill, IActiveObj
     public float GetCoolTime() { return coolTime; }
 }
 
-public class ArcherUpdate : ICharacterUpdate
-{
-    public bool isStringPull { get; set; }
-    private Transform bowStringTR;
-    private Transform rightHandTR;
-    private GameObject modelArrow;
+//public class ArcherUpdate : ICharacterUpdate
+//{
+//    public bool isStringPull { get; set; }
+//    private Transform bowStringTR;
+//    private Transform rightHandTR;
+//    private GameObject modelArrow;
 
-    private Vector3 originPos;
+//    private Vector3 originPos;
 
-    public ArcherUpdate(Transform bow, Transform rightHand, GameObject _modelArrow)
-    {
-        bowStringTR = bow;
-        rightHandTR = rightHand;
-        originPos = bowStringTR.localPosition;
-        modelArrow = _modelArrow;
-    }
+//    public ArcherUpdate(Transform bow, Transform rightHand, GameObject _modelArrow)
+//    {
+//        bowStringTR = bow;
+//        rightHandTR = rightHand;
+//        originPos = bowStringTR.localPosition;
+//        modelArrow = _modelArrow;
+//    }
 
-    public void CharacterUpdate()
-    {
-        if (isStringPull)
-            bowStringTR.position = rightHandTR.position;
-        else
-            bowStringTR.localPosition = originPos;
-    }
+//    public void CharacterUpdate()
+//    {
+//        if (isStringPull)
+//            bowStringTR.position = rightHandTR.position;
+//        else
+//            bowStringTR.localPosition = originPos;
+//    }
 
-    public void BowStringReSet()
-    {
-        isStringPull = false;
-        bowStringTR.localPosition = originPos;
-        modelArrow.SetActive(false);
-    }
-}
+//    public void BowStringReSet()
+//    {
+//        isStringPull = false;
+//        bowStringTR.localPosition = originPos;
+//        modelArrow.SetActive(false);
+//    }
+//}
 
 public class ArcherSubAttack : ISkill
 {

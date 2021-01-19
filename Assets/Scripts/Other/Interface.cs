@@ -14,10 +14,10 @@ public interface IRecharge
     void Recharge();
 }
 
-public interface ICharacterUpdate
-{
-    void CharacterUpdate();
-}
+//public interface ICharacterUpdate
+//{
+//    void CharacterUpdate();
+//}
 
 
 public interface IAttackAction

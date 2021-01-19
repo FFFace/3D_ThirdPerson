@@ -65,21 +65,24 @@ ModelImporter:
       - time: 0.3415638
         functionName: AttackColliderOn
         data: 
-        objectReferenceParameter: {instanceID: 0}
+        objectReferenceParameter: {fileID: 11500000, guid: 501a5b39807ebb04ca558a4df20d8e28,
+          type: 3}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.5144033
+      - time: 0.501202
         functionName: AttackEnd
         data: 
-        objectReferenceParameter: {instanceID: 0}
+        objectReferenceParameter: {fileID: 11500000, guid: 501a5b39807ebb04ca558a4df20d8e28,
+          type: 3}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.5254237
         functionName: AttackColliderOff
         data: 
-        objectReferenceParameter: {instanceID: 0}
+        objectReferenceParameter: {fileID: 11500000, guid: 501a5b39807ebb04ca558a4df20d8e28,
+          type: 3}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0

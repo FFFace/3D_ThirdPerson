@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 6c6509b02fa933b419e38edbb3efa7c7
+guid: 65eac600b938de544b606c3d0fde05e2
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Great Sword Power Up
+    second: Great Sword Walk Back
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -35,18 +35,18 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Great Sword Power Up
+      name: Great Sword Walk Back
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 105
+      lastFrame: 39
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1

@@ -61,7 +61,47 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.4270833
+        functionName: AttackColliderOn
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 501a5b39807ebb04ca558a4df20d8e28,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.5744184
+        functionName: AttackColliderOff
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 501a5b39807ebb04ca558a4df20d8e28,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.7617443
+        functionName: OnChainAttack
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 501a5b39807ebb04ca558a4df20d8e28,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.8224268
+        functionName: AttackEnd
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 501a5b39807ebb04ca558a4df20d8e28,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.91051877
+        functionName: OffChainAttack
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 501a5b39807ebb04ca558a4df20d8e28,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

@@ -18,7 +18,7 @@ public class Monster : MonoBehaviour
     //protected IMove dead;
     //protected IMove stay;
     //protected IMove stand;
-    protected ICharacterUpdate update;
+    //protected ICharacterUpdate update;
 
     protected MonsterAttackStay monsterAttackStay = new MonsterAttackStay();
     protected MonsterMoveStay monsterMoveStay;

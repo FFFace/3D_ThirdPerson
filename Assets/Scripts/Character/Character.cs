@@ -39,7 +39,7 @@ public class Character : MonoBehaviour
     protected List<IItemEffect> itemEffects = new List<IItemEffect>();
 
     protected bool isJump;
-    protected bool isAttack;
+    public bool isAttack;
     protected bool isAction;
     protected bool isRecharge;
 
@@ -79,7 +79,10 @@ public class Character : MonoBehaviour
             Vector3 dir = new Vector3(x, 0, z);
             dir = dir.magnitude > 1 ? dir.normalized : dir;
 
-            transform.Translate(dir * currentMoveSpeed * Time.deltaTime);
+            if (isAttack)
+                transform.Translate(dir * currentMoveSpeed * 0.5f * Time.deltaTime);
+            else
+                transform.Translate(dir * currentMoveSpeed * Time.deltaTime);
 
             SetAnimationFloat("Horizontal", dir.x);
             SetAnimationFloat("Vertical", dir.z);
@@ -115,12 +118,13 @@ public class Character : MonoBehaviour
         //    StartCoroutine(SubAttackCoolTime(subAttackCoolTime));
         //}
 
-        if (!subAttack.isActive)
+        if (!subAttack.isActive && !isAction)
         {
             isAttack = true;
             isAction = true;
             ResetAnimation();
             subAttack.Skill();
+
             StartCoroutine(subAttack.SkillCoolTime());
             UIManager.instance.SetSubAttackCoolTime();
         }
@@ -128,12 +132,30 @@ public class Character : MonoBehaviour
 
     public virtual void MainSkill()
     {
-        mainSkill.Skill();
+        if (!mainSkill.isActive && !isAction)
+        {
+            isAttack = true;
+            isAction = true;
+            ResetAnimation();
+            mainSkill.Skill();
+
+            StartCoroutine(mainSkill.SkillCoolTime());
+            UIManager.instance.SetMainSkillCoolTime();
+        }
     }
 
     public virtual void SubSkill()
     {
-        subSkill.Skill();
+        if (!subSkill.isActive && !isAction)
+        {
+            isAttack = true;
+            isAction = true;
+            ResetAnimation();
+            subSkill.Skill();
+
+            StartCoroutine(subSkill.SkillCoolTime());
+            UIManager.instance.SetSubSkillCoolTime();
+        }
     }
 
     public virtual void Dodge()
@@ -332,11 +354,6 @@ public class Character : MonoBehaviour
     public List<IItemEffect> GetItemEffectList()
     {
         return itemEffects;
-    }
-
-    public void SetCharacterCurrentSpeed(float speed)
-    {
-        currentMoveSpeed = speed;
     }
 }
 
