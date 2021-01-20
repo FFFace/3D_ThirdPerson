@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PaladinBehaviour_Idle : StateMachineBehaviour
+public class PaladinBehaviour_baseIdle : StateMachineBehaviour
 {
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.SetLayerWeight(layerIndex, 0);
+        Paladin paladin = animator.GetComponent<Paladin>();
+        AnimatorTransitionInfo info = animator.GetAnimatorTransitionInfo(layerIndex);
+
+        paladin.EndAction(info.duration);
+        paladin.AttackEnd();
+
+        if (info.IsUserName("EndChain")) paladin.ChainCoolTime();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

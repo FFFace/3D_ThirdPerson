@@ -51,8 +51,8 @@ public class PlayerControll : MonoBehaviour
     {
         mouseLeftClick = new NomalAttackPressDown(character);
         mouseLeftUp = new NomalAttackPressUp(character);
-        mouseRightClick = new SubAttack(character);
-        mouseRightUp = new SubAttack(character);
+        mouseRightClick = new SubAttackPressDown(character);
+        mouseRightUp = new SubAttackPressUp(character);
         leftShift = new Dodge(character);
 
         alpha1 = new MainSkill(character);
@@ -95,9 +95,12 @@ public class PlayerControll : MonoBehaviour
 
     private void PlayerAxis()
     {
-        mouseX += Input.GetAxis("Mouse X") * mouseAxisSensitive;
-        Vector3 camAngle = new Vector3(0, mouseX, 0);
-        character.transform.rotation = Quaternion.Euler(camAngle);
+        if (!isDead)
+        {
+            mouseX += Input.GetAxis("Mouse X") * mouseAxisSensitive;
+            Vector3 camAngle = new Vector3(0, mouseX, 0);
+            character.transform.rotation = Quaternion.Euler(camAngle);
+        }
     }
 
     public void SetDeathState(bool active)
@@ -132,13 +135,23 @@ public class NomalAttackPressUp : KeyCommand
     }
 }
 
-public class SubAttack : KeyCommand
+public class SubAttackPressDown : KeyCommand
 {
     private Character character;
-    public SubAttack(Character _character) { character = _character; }
+    public SubAttackPressDown(Character _character) { character = _character; }
     public void command()
     {
-        character.SubAttack();
+        character.SubAttackPressDown();
+    }
+}
+
+public class SubAttackPressUp : KeyCommand
+{
+    private Character character;
+    public SubAttackPressUp(Character _character) { character = _character; }
+    public void command()
+    {
+        character.SubAttackPressUp();
     }
 }
 

@@ -107,7 +107,7 @@ public class Character : MonoBehaviour
         }
     }
 
-    public virtual void SubAttack()
+    public virtual void SubAttackPressDown()
     {
         //if (!isSubAttack)
         //{
@@ -118,6 +118,20 @@ public class Character : MonoBehaviour
         //    StartCoroutine(SubAttackCoolTime(subAttackCoolTime));
         //}
 
+        if (!subAttack.isActive && !isAction)
+        {
+            isAttack = true;
+            isAction = true;
+            ResetAnimation();
+            subAttack.Skill();
+
+            StartCoroutine(subAttack.SkillCoolTime());
+            UIManager.instance.SetSubAttackCoolTime();
+        }
+    }
+
+    public virtual void SubAttackPressUp()
+    {
         if (!subAttack.isActive && !isAction)
         {
             isAttack = true;
@@ -216,12 +230,17 @@ public class Character : MonoBehaviour
     public virtual void AttackEnd()
     {
         isAttack = false;
-        StartCoroutine(ActionOff());
     }
 
-    private IEnumerator ActionOff()
+    public virtual void EndAction(float _time)
     {
-        yield return new WaitForSeconds(1f);
+        //isAction = false;
+        StartCoroutine(IEnumEndAction(_time));
+    }
+
+    protected virtual IEnumerator IEnumEndAction(float _time)
+    {
+        yield return new WaitForSeconds(_time);
         isAction = false;
     }
 
