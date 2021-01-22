@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using UnityEditor;
-using UnityEditor.Animations;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 public class Character : MonoBehaviour
@@ -60,7 +53,7 @@ public class Character : MonoBehaviour
 
     protected virtual void Update()
     {
-        
+
     }
 
     protected virtual void InitData()
@@ -181,7 +174,7 @@ public class Character : MonoBehaviour
         }
     }
 
-    public virtual void Hit(float damage)
+    public virtual void Hit(float damage, Vector3 direction)
     {
         damage -= damage * currentDefense;
         damage = damage < 1 ? 1 : damage;
@@ -267,6 +260,11 @@ public class Character : MonoBehaviour
     public float GetCharacterCurrentDamage()
     {
         return currentAttackDamage;
+    }
+
+    public void SetCharacterCurrentDamage(float _damage)
+    {
+        currentAttackDamage = _damage;
     }
 
     public void SetAnimationBool(string name, bool active)

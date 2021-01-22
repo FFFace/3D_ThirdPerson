@@ -25,7 +25,9 @@ public class MonsterWeapon : MonoBehaviour
     {
         if (other.CompareTag("Character"))
         {
-            character.Hit(damage);
+            Vector3 dir = other.transform.position - transform.position;
+            dir.y = 0;
+            character.Hit(damage, dir.normalized);
             GetComponent<Collider>().enabled = false;
         }
     }

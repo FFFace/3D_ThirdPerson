@@ -218,7 +218,11 @@ public class Warrok : Monster
     {
         float dis = Vector3.Distance(transform.position, character.transform.position);
         if (dis <= 10.0f)
-            character.Hit(jumpSkill.GetDamage());
+        {
+            Vector3 dir = character.transform.position - transform.position;
+            dir.y = 0;
+            character.Hit(jumpSkill.GetDamage(), dir.normalized);
+        }
 
         groundImpace.Play();
     }
