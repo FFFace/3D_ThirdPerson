@@ -13,6 +13,7 @@ Shader "Custom/test"
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _BumpMap("NormalMap", 2D) = "white" {}
+        _OutlineBold("Outline Bold", Range(-1,1)) = 0.1
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
     }
@@ -43,6 +44,7 @@ Shader "Custom/test"
 
         half _Glossiness;
         half _Metallic;
+        half _OutlineBold;
         fixed4 _Color;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
@@ -70,13 +72,14 @@ Shader "Custom/test"
             col.x = x;*/
 
             float Dot = dot(IN.lightDir, IN.normal);
-            float cel = ceil(Dot * 2) / 2;
-            //float ol = saturate(dot(IN.viewDir, IN.normal));
-            //ol = ceil(ol * 2) / 2;
+            float ol = saturate(dot(IN.viewDir, IN.normal));
 
-            //float cel = ceil(Dot * 3) / 3;
+            ol -= _OutlineBold;
+            ol = ceil(ol);
 
-            o.Albedo = c * cel;
+            float cel = ceil(Dot * 3) / 3;
+
+            o.Albedo = c * ol * cel;
             // Metallic and smoothness come from slider variables
             //o.Metallic = _Metallic;
             //o.Smoothness = _Glossiness;
