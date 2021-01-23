@@ -14,6 +14,8 @@
 		_DissolveWidth("DissolveWidth", Range(0,0.1)) = 0.05
 		_Color("Color", Color) = (1,1,1,1)
 		_Bright("Bright", Range(0, 1)) = 0
+		_Specular("Specular", Range(0,1)) = 0.0
+		_SpecularColor("Specular Color", Color) = (1,1,1,1)
 	}
 
 		SubShader
@@ -95,8 +97,11 @@
 			half _DissolveEmission;
 			half _DissolveWidth;
 			half _Bright;
+			half _Glossiness;
+			half _Specular;
 			fixed4 _Color;
 			fixed4 _DissolveColor;
+			fixed4 _SpecularColor;
 
 			struct Input
 			{
@@ -115,6 +120,8 @@
 
 				o.Albedo = c;
 				o.Emission = c * _Bright;
+				o.Specular = _Specular;
+				o.Gloss = _Glossiness;
 
 				if (mask.r < _DissolveAmount + _DissolveWidth) {
 					o.Albedo = _DissolveColor;
@@ -122,7 +129,6 @@
 				}
 
 				o.Alpha = _Color.a;
-
 				o.Normal = UnpackScaleNormal(tex2D(_NormalMap, IN.uv_NormalMap), _NormalStrenght);
 			}
 
@@ -137,10 +143,24 @@
 				float fBandNum = 3.0f;
 				fBandedDiffuse = ceil(fNDotL * fBandNum) / fBandNum;
 
+				//float3 fSpecularColor;
+				//float3 fReflectVector = reflect(lightDir, s.Normal);
+				//float fRDotV = saturate(dot(fReflectVector, viewDir));
+				//fSpecularColor = pow(fRDotV, _Specular) * _SpecularColor.rgb;
+
+				//float3 fSpecular;
+				//float3 fHalfVector = normalize(lightDir + viewDir);
+				//float fHDotN = saturate(dot(fHalfVector, s.Normal));
+				//fSpecular = pow(fHDotN, _Specular);
+
+				float3 fSpecular;
+				float3 fHalfVector = normalize(lightDir + viewDir);
+				float fHDotN = dot(fHalfVector, s.Normal);
+				fSpecular = pow(fHDotN, _Specular);
 
 				//! 최종 컬러 출력
 				float4 fFinalColor;
-				fFinalColor.rgb = (s.Albedo) * fBandedDiffuse * _Color.rgb *_LightColor0.rgb;
+				fFinalColor.rgb = (s.Albedo) * (fBandedDiffuse + fSpecular) * _Color.rgb *_LightColor0.rgb;
 				fFinalColor.a = s.Alpha;
 
 				return fFinalColor;

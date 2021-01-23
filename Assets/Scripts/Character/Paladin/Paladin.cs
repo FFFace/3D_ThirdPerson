@@ -11,6 +11,9 @@ public class Paladin : Character
     private PaladinBlock block;
 
     [SerializeField]
+    private ParticleSystem buff;
+
+    [SerializeField]
     private Sprite SlashImage;
     [SerializeField]
     private Sprite ChainImage;
@@ -45,7 +48,7 @@ public class Paladin : Character
         attack = new PaladinNormalAttack(this, weapon);
         slash = new PaladinSlashAttack(this, weapon, 10.0f, 1.5f, SlashImage);
         chain = new PaladinChainAttack(this, weapon, 3.0f, 1.7f, ChainImage);
-        block = new PaladinBlock(this, 1.5f, 10.0f, BlockImage);
+        block = new PaladinBlock(this, 1.5f, 10.0f, buff, BlockImage);
 
         normalAttack = attack;
         subSkill = slash;
@@ -399,15 +402,17 @@ public class PaladinBlock : ISkill
     private Paladin character;
     private float damageMagnification;
     private float buffTime;
+    private ParticleSystem particle;
     private Sprite image;
     public IEnumerator buff { get; }
     public bool isActive { get; set; }
 
-    public PaladinBlock(Paladin _character, float _damageMagnification, float _buffTime, Sprite _sprite)
+    public PaladinBlock(Paladin _character, float _damageMagnification, float _buffTime, ParticleSystem _particle, Sprite _sprite)
     {
         character = _character;
         damageMagnification = _damageMagnification;
         buffTime = _buffTime;
+        particle = _particle;
         image = _sprite;
         buff = JustBlockBuff();
     }
@@ -428,10 +433,13 @@ public class PaladinBlock : ISkill
 
     public IEnumerator JustBlockBuff()
     {
-        float damage = character.GetCharacterCurrentDamage();
+        float damage = character.GetCharacterState().attackDamage;
+
         character.SetCharacterCurrentDamage(damage * damageMagnification);
+        particle.gameObject.SetActive(true);
         yield return new WaitForSeconds(buffTime);
         character.SetCharacterCurrentDamage(damage);
+        particle.gameObject.SetActive(false);
     }
 
     public IEnumerator SkillCoolTime()
