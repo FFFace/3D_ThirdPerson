@@ -32,6 +32,15 @@
 
 				Blend DstColor Zero
 
+				Stencil
+				{
+					ref 2
+					Comp always
+					Pass Replace
+					Zfail keep
+					Fail keep
+				}
+
 				CGPROGRAM
 				#pragma vertex _VertexFuc
 				#pragma fragment _FragmentFuc
@@ -84,6 +93,14 @@
 			}
 			Tags { "RenderType" = "Opaque" }
 			cull back
+			Stencil
+			{
+				ref 2
+				Comp Equal
+				Pass keep
+				Zfail keep
+				Fail decrWrap
+			}
 			CGPROGRAM
 			#pragma surface surf _BandedLighting fullforwardshadows  //! 커스텀 라이트 사용
 			#pragma target 3.0
@@ -144,7 +161,7 @@
 				fBandedDiffuse = ceil(fNDotL * fBandNum) / fBandNum;
 
 				//float3 fSpecularColor;
-				//float3 fReflectVector = reflect(lightDir, s.Normal);
+				//float3 fReflectVector = reflect(-lightDir, s.Normal);
 				//float fRDotV = saturate(dot(fReflectVector, viewDir));
 				//fSpecularColor = pow(fRDotV, _Specular) * _SpecularColor.rgb;
 
@@ -155,7 +172,7 @@
 
 				float3 fSpecular;
 				float3 fHalfVector = normalize(lightDir + viewDir);
-				float fHDotN = dot(fHalfVector, s.Normal);
+				float fHDotN = saturate(dot(fHalfVector, s.Normal));
 				fSpecular = pow(fHDotN, _Specular);
 
 				//! 최종 컬러 출력

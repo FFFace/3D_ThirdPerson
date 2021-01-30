@@ -1,4 +1,6 @@
-﻿
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+
 Shader "Custom/test"
 {
     Properties
@@ -12,8 +14,8 @@ Shader "Custom/test"
         _DissolveWidth("DissolveWidth", Range(0,1)) = 0
         _AlphaTest("Alpha", Range(0,1)) = 0
         _OutlineBold("Outline Bold", Range(-1,1)) = 0.1
-        _Glossiness ("Smoothness", Range(0,1)) = 0.5
-        _Metallic ("Metallic", Range(0,1)) = 0.0
+        _Specular("Specular", Range(0,1)) = 0.0
+        _SpecularColor("SpecularColor", Color) = (1,1,1,1)
     }
     SubShader
     {
@@ -39,7 +41,8 @@ Shader "Custom/test"
             float3 viewDir;
             float3 lightDir;
             float3 vertex;
-            float3 normal;
+            float3 worldNormal;
+            //float outline;
         };
 
         half _Glossiness;
@@ -47,8 +50,10 @@ Shader "Custom/test"
         half _OutlineBold;
         half _DissolveAmount;
         half _DissolveWidth;
+        half _Specular;
         fixed4 _Color;
         fixed4 _DissolveColor;
+        fixed4 _SpecularColor;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
         // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -57,12 +62,20 @@ Shader "Custom/test"
             // put more per-instance properties here
         UNITY_INSTANCING_BUFFER_END(Props)
 
-        void vertex(inout appdata_base i, out Input o)
+        void vertex(inout appdata_tan i, out Input o)
         {
             UNITY_INITIALIZE_OUTPUT(Input, o);
             o.lightDir = WorldSpaceLightDir(i.vertex);
-            o.vertex = UnityObjectToClipPos(i.vertex);
-            o.normal = i.normal;
+
+            //float3 worldPos = mul(unity_ObjectToWorld, i.vertex).xyz;
+            //float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
+            //float3 worldNormal = UnityObjectToWorldNormal(i.normal);
+
+            //float outline = dot(worldViewDir, worldNormal) * 0.5f + 0.5f;
+            //outline -= _OutlineBold;
+            //outline = ceil(outline * 5) / 5;
+
+            //o.outline = outline;
         }
 
         void surf (Input IN, inout SurfaceOutput o)
@@ -70,18 +83,17 @@ Shader "Custom/test"
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
             fixed4 mask = tex2D(_DissolveMap, IN.uv_DissolveMap);
-            //o.Normal = UnpackScaleNormal(tex2D(_BumpMap, IN.uv_BumpMap), 0.5f);
+            //o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
             
             /*float x = ceil(IN.vertex * 5) / 5;
             col.x = x;*/
 
-            float dissolve = ceil(mask.r - (_DissolveAmount + _DissolveWidth));
+            half dissolve = ceil(mask.r - (_DissolveAmount + _DissolveWidth));
 
-            float Dot = dot(IN.lightDir, IN.normal) * 0.5f + 0.5f;
-            float tone = ceil(Dot * 3) / 3;
+            half toneDot = dot(IN.lightDir, IN.worldNormal) * 0.5f + 0.5f;
+            half tone = ceil(toneDot * 3) / 3;
 
-            float outline = dot(IN.viewDir, IN.normal) * 0.5f + 0.5f;
-
+            half outline = dot(IN.viewDir, IN.worldNormal) * 0.5f + 0.5f;
             outline -= _OutlineBold;
             outline = ceil(outline);
 
@@ -94,14 +106,19 @@ Shader "Custom/test"
             //o.Metallic = _Metallic;
             //o.Smoothness = _Glossiness;
             //o.Alpha = c.a;
-            //o.Emission = c;
+            o.Emission = o.Albedo;
         }
 
         float4 Lighting_BandedLighting(SurfaceOutput s, float3 lightDir, float3 viewDir, float atten)
         {
+            float3 fSpecularColor;
+            float3 fReflectVector = reflect(-lightDir, s.Normal);
+            float fRDotV = saturate(dot(fReflectVector, viewDir));
+            fSpecularColor = pow(fRDotV, _Specular) * _SpecularColor.rgb;
+
             ////! 최종 컬러 출력
             float4 fFinalColor;
-            fFinalColor.rgb = (s.Albedo);
+            fFinalColor.rgb = (s.Albedo) + fSpecularColor;
             fFinalColor.a = s.Alpha;
 
             return fFinalColor;

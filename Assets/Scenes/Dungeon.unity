@@ -4589,12 +4589,27 @@ PrefabInstance:
       propertyPath: m_IsKinematic
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1601211827282774147, guid: 3c1f46d383108ec419c10a4b31f22b90,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5388592814104879724, guid: 3c1f46d383108ec419c10a4b31f22b90,
         type: 3}
       propertyPath: m_Name
       value: Archer
       objectReference: {fileID: 0}
     - target: {fileID: 5388592814104879724, guid: 3c1f46d383108ec419c10a4b31f22b90,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5388856944395174212, guid: 3c1f46d383108ec419c10a4b31f22b90,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784803041190906416, guid: 3c1f46d383108ec419c10a4b31f22b90,
         type: 3}
       propertyPath: m_IsActive
       value: 1

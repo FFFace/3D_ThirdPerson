@@ -80,7 +80,7 @@ Material:
     - _Mode: 0
     - _NormalStrenght: 1.5
     - _OcclusionStrength: 1
-    - _OutlineBold: 0.7
+    - _OutlineBold: 0.27
     - _Outline_Bold: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
