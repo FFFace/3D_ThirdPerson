@@ -85,6 +85,18 @@ public class PlayerControll : MonoBehaviour
             if (Input.GetKey(KeyCode.LeftShift))
                 leftShift.command();
         }
+
+        if (Input.GetKey(KeyCode.LeftAlt))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     private void PlayerJumpInput()

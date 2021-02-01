@@ -77,29 +77,33 @@ public class Warrok : Monster
                 float dis = Vector3.Distance(transform.position, character.transform.position);
                 float time = 0;
 
-                if (dis < attackDistance && monsterDirection.GetinDirection(attackDirection)) attack = normalAttack;
+                if (dis < attackDistance && monsterDirection.GetinDirection(attackDirection)) { attack = normalAttack; time = 2.0f; }
                 else if (summonSkill.isActive) { attack = summonSkill; time = 3.0f; }
-                else if (buffSkill.isActive) { attack = buffSkill; time = 5.0f; }
-                else if (jumpSkill.isActive && dis < 7.0f) { attack = jumpSkill; time = 3.0f; }
+                else if (buffSkill.isActive) { attack = buffSkill; time = 8.0f; }
+                else if (jumpSkill.isActive && dis < 7.0f) { attack = jumpSkill; time = 5.0f; }
                 else
                 {
-                    attack = monsterAttackStay;
-                    move = warrokChase;
-                    time = 2.0f;
+                    if (move != warrokHit && move != warrokDead)
+                    {
+                        attack = monsterAttackStay;
+                        move = warrokChase;
+                    }
                 }
 
                 if (attack.isActive)
                 {
                     nav.isStopped = true;
+                    attack.Skill();
                     move = monsterMoveStay;
 
-                    attack.Skill();
                     StartCoroutine(attack.SkillCoolTime());
 
                     yield return new WaitForSeconds(time);
-                    nav.isStopped = false;
-                    move = warrokChase;
-                    attack = monsterAttackStay;
+                    if (move != warrokHit && move != warrokDead)
+                    {
+                        move = warrokChase;
+                        attack = monsterAttackStay;
+                    }
                 }
             }
 
@@ -112,7 +116,7 @@ public class Warrok : Monster
     {
         base.InitData();
 
-        state.hp = 100;
+        state.hp = 15;
         state.moveSpeed = 3;
         state.jumpPower = 5;
         state.attackDamage = 1;
@@ -126,8 +130,10 @@ public class Warrok : Monster
 
     protected override void HitDamage(float Damage, int instanceID, bool knockBack = false, float knockBackPower = 0)
     {
+        Debug.Log("A");
         if (transform.GetInstanceID() != instanceID) return;
 
+        Debug.Log("B");
         base.HitDamage(Damage, instanceID, knockBack, knockBackPower);
 
         attack = monsterAttackStay;
@@ -135,6 +141,7 @@ public class Warrok : Monster
         if (currentHP <= 0)
         {
             move = warrokDead;
+            SetAnimationTrigger("Dead");
 
             EventManager.instance.SubHitEvent(base.HitDamage);
             EventManager.instance.SubMonsterBuffDamageEvent(BuffDamage);
@@ -145,6 +152,7 @@ public class Warrok : Monster
         else
         {
             move = warrokHit;
+            SetAnimationTrigger("Hit");
         }
     }
 
@@ -197,10 +205,35 @@ public class Warrok : Monster
 
     protected override IEnumerator DeadTime()
     {
-        base.DeadTime();
-        MonsterPooling.instance.MonsterEnqueue<Warrok>(this);
+        GetComponent<Collider>().enabled = false;
+        nav.enabled = false;
 
-        yield return null;
+        yield return new WaitForSeconds(5.0f);
+
+        Color color = new Color(0, 0.78125f, 0.625f, 1);
+
+        ItemList.instance.RespawnSphere(transform.position, color);
+
+        Renderer[] renderer = GetComponentsInChildren<Renderer>();
+        float num = 0;
+        while (num < 1.5)
+        {
+            for (int i = 0; i < renderer.Length; i++)
+                renderer[i].material.SetFloat("_DissolveAmount", num);
+
+            num += 0.5f * Time.deltaTime;
+            yield return null;
+        }
+        gameObject.SetActive(false);
+
+        for (int i = 0; i < renderer.Length; i++)
+            renderer[i].material.SetFloat("_DissolveAmount", 0);
+        GetComponent<Collider>().enabled = true;
+        nav.enabled = true;
+        StopCoroutine(buff);
+        buffParticle.gameObject.SetActive(false);
+
+        MonsterPooling.instance.MonsterEnqueue(this);
     }
 
     public void EnableWeapon()
@@ -300,7 +333,9 @@ public class WarrokAttack : ISkill
 
     public IEnumerator SkillCoolTime()
     {
-        yield return null;
+        isActive = false;
+        yield return new WaitForSeconds(2.0f);
+        isActive = true;
     }
 
     public float GetDamage()

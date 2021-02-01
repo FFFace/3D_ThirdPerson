@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class PaladinBehaviour_AttackEnd : StateMachineBehaviour
 {
-    private MonoBehaviour mono;
-
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (mono == null)
-            mono = animator.GetComponent<MonoBehaviour>();
-
         float time = animator.GetAnimatorTransitionInfo(layerIndex).duration;
-        mono.StartCoroutine(IEnumStay(animator, layerIndex, time));
+        animator.GetComponent<Paladin>().SetEnumStay(animator, layerIndex, time);
     }
 
     private IEnumerator IEnumStay(Animator _anim, int _layerIndex, float _time)

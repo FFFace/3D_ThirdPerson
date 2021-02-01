@@ -183,6 +183,14 @@ public class Skeleton : Monster
             yield return null;
         }
         gameObject.SetActive(false);
+        for (int i = 0; i < renderer.Length; i++)
+            renderer[i].material.SetFloat("_DissolveAmount", 0);
+        GetComponent<Collider>().enabled = true;
+        nav.enabled = true;
+        StopCoroutine(buff);
+        buffParticle.gameObject.SetActive(false);
+
+        MonsterPooling.instance.MonsterEnqueue(this);
     }
 
     public void SetSkeletonMoveStand()

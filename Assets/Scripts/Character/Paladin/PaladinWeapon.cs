@@ -7,6 +7,9 @@ public class PaladinWeapon : MonoBehaviour
     private Paladin paladin;
     private Collider col;
     private float damage;
+
+    private bool isKnockBack;
+    private float knockBackPower;
     [SerializeField]
     private TrailRenderer trail;
 
@@ -20,7 +23,7 @@ public class PaladinWeapon : MonoBehaviour
     {
         if (other.CompareTag("Monster"))
         {
-            EventManager.instance.AttackEnemy(damage, other.transform.GetInstanceID());
+            EventManager.instance.AttackEnemy(damage, other.transform.GetInstanceID(), isKnockBack, knockBackPower);
         }
     }
 
@@ -39,5 +42,11 @@ public class PaladinWeapon : MonoBehaviour
     public void SetDamage(float _damage)
     {
         damage = _damage;
+    }
+
+    public void KnockBack(bool _active, float _power = 0)
+    {
+        isKnockBack = _active;
+        knockBackPower = _power;
     }
 }

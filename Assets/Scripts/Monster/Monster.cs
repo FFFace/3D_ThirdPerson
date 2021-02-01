@@ -49,8 +49,8 @@ public class Monster : MonoBehaviour
     [SerializeField]
     protected float attackDirection;
     [Space, Header("-Monster Effect-"), SerializeField]
-    private ParticleSystem damageBuff;
-
+    protected ParticleSystem buffParticle;
+    protected IEnumerator buff;
 
     protected bool isStay;
 
@@ -160,24 +160,25 @@ public class Monster : MonoBehaviour
     {
         if (room != _room) return;
 
-        StartCoroutine(IEnumBuffTime(_magnification,_time));
+        buff = IEnumBuffTime(_magnification, _time);
+        StartCoroutine(buff);
     }
 
     protected virtual IEnumerator IEnumBuffTime(float _magnification, float _time)
     {
         yield return new WaitForSeconds(1.0f);
-        damageBuff.gameObject.SetActive(true);
+        buffParticle.gameObject.SetActive(true);
         currentDamage += state.attackDamage * _magnification;
 
         Renderer[] renderer = GetComponentsInChildren<Renderer>();
         for (int i = 0; i < renderer.Length; i++)
-            renderer[i].material.SetColor("_Color", new Color(1, 0.8f, 0.8f, 1));
+            renderer[i].material.SetColor("_Color", new Color(0.5859f, 0.3125f, 0.3125f, 1));
         yield return new WaitForSeconds(_time);
 
         for (int i = 0; i < renderer.Length; i++)
-            renderer[i].material.SetColor("_Color", Color.white);
+            renderer[i].material.SetColor("_Color", new Color(0.5859f, 0.5859f, 0.5859f, 1));
         currentDamage -= state.attackDamage;
-        damageBuff.gameObject.SetActive(false);
+        buffParticle.gameObject.SetActive(false);
     }
 
     protected virtual void Stand()
@@ -261,6 +262,9 @@ public class Monster : MonoBehaviour
 
     protected virtual IEnumerator DeadTime()
     {
+        GetComponent<Collider>().enabled = false;
+        nav.enabled = false;
+
         yield return new WaitForSeconds(5.0f);
 
         Renderer[] renderer = GetComponentsInChildren<Renderer>();

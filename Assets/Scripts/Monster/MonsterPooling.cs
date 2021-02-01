@@ -35,20 +35,6 @@ public class MonsterPooling : MonoBehaviour
         Type type = typeof(T);
 
         monsterPool[type].Enqueue(monster);
-        //switch (monster)
-        //{
-        //    case Skeleton skeleton:
-        //        skeletonPool.Enqueue(skeleton);
-        //        break;
-
-        //    case Warrok warrok:
-        //        warrokPool.Enqueue(warrok);
-        //        break;
-
-        //    default:
-        //        Debug.Log("존재하지 않는 몬스터");
-        //        break;
-        //}
     }
 
     public Monster MonsterDequeue<T>() where T : Monster
@@ -59,25 +45,6 @@ public class MonsterPooling : MonoBehaviour
 
         Monster monster = CreateMonster<T>();
         return monster;
-
-
-        //T monster = new T();
-        //switch (monster)
-        //{
-        //    case Skeleton skeleton:
-        //        monster = skeletonPool.Dequeue() as T;
-        //        break;
-
-        //    case Warrok warrok:
-        //        monster = warrokPool.Dequeue() as T;
-        //        break;
-
-        //    default:
-        //        Debug.Log("존재하지 않는 몬스터");
-        //        break;
-        //}
-
-        //return monster;
     }
 
     private Monster CreateMonster<T>() where T : Monster
@@ -97,18 +64,4 @@ public class MonsterPooling : MonoBehaviour
 
         return monster;
     }
-
-    //public Monster SkeletonDequeue()
-    //{
-    //    Monster monster = skeletonPool.Count > 0 ? skeletonPool.Dequeue() : CreateSkeleton();
-
-    //    return monster;
-    //}
-
-    //private Monster CreateSkeleton()
-    //{
-    //    Monster monster = Instantiate(skeleton).GetComponent<Monster>();
-    //    monster.gameObject.SetActive(false);
-    //    return monster;
-    //}
 }

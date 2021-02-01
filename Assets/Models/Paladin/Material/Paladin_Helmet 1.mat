@@ -63,6 +63,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SpecularMap:
+        m_Texture: {fileID: 2800000, guid: 77d3f92b0d087a04abb980a80dce4164, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AlphaTest: 0
     - _Bright: 0.619
@@ -71,7 +75,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DissolveAmount: 0
     - _DissolveEmission: 1
-    - _DissolveWidth: 0.05
+    - _DissolveWidth: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0
@@ -85,7 +89,7 @@ Material:
     - _Parallax: 0.02
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
-    - _Specular: 1
+    - _Specular: 0.28
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
@@ -95,4 +99,4 @@ Material:
     - _DissolveColor: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutLineColor: {r: 0.122641504, g: 0.122641504, b: 0.122641504, a: 1}
-    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecularColor: {r: 0.3301887, g: 0.3301887, b: 0.3301887, a: 1}

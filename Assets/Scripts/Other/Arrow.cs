@@ -190,7 +190,6 @@ public class ArcherArrow : IArrowMove
 {
     private Arrow arrow;
     private float speed;
-    private bool isSpread;
     public ArcherArrow(Arrow _arrow) { arrow = _arrow; speed = arrow.GetArrowSpeed(); }
 
     public void Move()
