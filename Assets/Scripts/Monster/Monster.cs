@@ -6,9 +6,6 @@ using UnityEngine.UI;
 
 public class Monster : MonoBehaviour
 {
-    public enum MonsterAction { CHASE, ATTACK, STAND, DEAD, HIT, STAY, NULL }
-    [SerializeField]
-    protected MonsterAction action;
     protected CharacterState state = new CharacterState();
 
     protected IMove move;
@@ -22,10 +19,6 @@ public class Monster : MonoBehaviour
 
     protected MonsterAttackStay monsterAttackStay = new MonsterAttackStay();
     protected MonsterMoveStay monsterMoveStay;
-
-    protected float skill1CoolTime;
-    protected float skill2CoolTime;
-    protected float skill3CoolTime;
 
     protected float currentHP;
     protected float currentSpeed;
@@ -42,7 +35,7 @@ public class Monster : MonoBehaviour
     protected Animator anim;
     protected Character character;
     protected MonsterAttackDirection monsterDirection;
-    protected MonsterSpawn room;
+    public MonsterSpawn room;
 
     [SerializeField]
     protected float attackDistance;
@@ -50,19 +43,18 @@ public class Monster : MonoBehaviour
     protected float attackDirection;
     [Space, Header("-Monster Effect-"), SerializeField]
     protected ParticleSystem buffParticle;
-    protected IEnumerator buff;
 
     protected bool isStay;
 
     protected virtual void OnEnable()
     {
-        action = MonsterAction.CHASE;
+        InitData();
+        StartCoroutine(IEnumSummon());
     }
 
     protected virtual void Start()
     {
-        InitData();
-        StartCoroutine(IEnumSummon());
+
     }
 
     protected virtual void Update()
@@ -160,8 +152,7 @@ public class Monster : MonoBehaviour
     {
         if (room != _room) return;
 
-        buff = IEnumBuffTime(_magnification, _time);
-        StartCoroutine(buff);
+        StartCoroutine(IEnumBuffTime(_magnification, _time));
     }
 
     protected virtual IEnumerator IEnumBuffTime(float _magnification, float _time)
@@ -301,11 +292,6 @@ public class Monster : MonoBehaviour
         anim.SetFloat(name, num);
     }
 
-    public void AnimationEndEvent(MonsterAction _action)
-    {
-        action = _action;
-    }
-
     /// <summary>
     /// 애니메이터의 모든 Bool paramerter false
     /// </summary>
@@ -350,16 +336,6 @@ public class Monster : MonoBehaviour
     public void SetMonsterRoom(MonsterSpawn _room)
     {
         room = _room;
-    }
-
-    public void SetMonsterState(MonsterAction state)
-    {
-        action = state;
-    }
-
-    public MonsterAction GetMonsterState()
-    {
-        return action;
     }
 
     public float GetMonsterDamage()

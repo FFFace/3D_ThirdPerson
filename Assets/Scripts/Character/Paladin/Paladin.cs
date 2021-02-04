@@ -32,7 +32,7 @@ public class Paladin : Character
         base.InitData();
 
         state.hp = 50;
-        state.attackDamage = 100;
+        state.attackDamage = 2;
         state.attackSpeed = 1;
         state.moveSpeed = 5;
         state.jumpPower = 5;

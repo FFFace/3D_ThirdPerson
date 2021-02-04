@@ -20,7 +20,6 @@ public class MonsterAnimState : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.GetComponent<Monster>().ResetAnimation();
-        animator.GetComponent<Monster>().AnimationEndEvent(Monster.MonsterAction.STAND);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

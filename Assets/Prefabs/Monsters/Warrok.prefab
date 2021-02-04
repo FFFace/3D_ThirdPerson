@@ -839,7 +839,7 @@ MonoBehaviour:
   action: 0
   attackDistance: 2.5
   attackDirection: 60
-  damageBuff: {fileID: 8559839152943868011}
+  buffParticle: {fileID: 8559839152943868011}
   summonMonster:
   - {fileID: 7240514153137443451, guid: 130bd2a178874904e96c73356fe07180, type: 3}
   weapon: {fileID: 1468415726987060101}
@@ -2573,7 +2573,7 @@ PrefabInstance:
     - target: {fileID: 1123939617780003867, guid: 69b00c837ed1d0a489e004aaec2cc3ea,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.64
+      value: -0.004
       objectReference: {fileID: 0}
     - target: {fileID: 1123939617780003867, guid: 69b00c837ed1d0a489e004aaec2cc3ea,
         type: 3}
@@ -2583,7 +2583,7 @@ PrefabInstance:
     - target: {fileID: 1123939617780003867, guid: 69b00c837ed1d0a489e004aaec2cc3ea,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0
+      value: 0.93
       objectReference: {fileID: 0}
     - target: {fileID: 1123939617780003867, guid: 69b00c837ed1d0a489e004aaec2cc3ea,
         type: 3}

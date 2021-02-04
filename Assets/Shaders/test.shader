@@ -88,9 +88,7 @@ Shader "Custom/test"
             fixed4 mask = tex2D(_DissolveMap, IN.uv_DissolveMap);
             fixed4 smap = tex2D(_SpecularMap, IN.uv_SpecularMap);
             //o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
-            
-            /*float x = ceil(IN.vertex * 5) / 5;
-            col.x = x;*/
+           
 
             half dissolve = ceil(mask.r - (_DissolveAmount + _DissolveWidth));
 
@@ -101,15 +99,10 @@ Shader "Custom/test"
             outline -= _OutlineBold;
             outline = ceil(outline);
 
-            //outline* tone
             o.Albedo = (c * tone * outline * dissolve) + (_DissolveColor * (ceil(mask.r) - dissolve));
             dissolve = ceil(mask.r - _DissolveAmount);
             o.Alpha = dissolve;            
 
-            // Metallic and smoothness come from slider variables
-            //o.Metallic = _Metallic;
-            //o.Smoothness = _Glossiness;
-            //o.Alpha = c.a;
             o.Emission = o.Albedo;
             o.Gloss = smap.a;
         }

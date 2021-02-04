@@ -20,7 +20,7 @@
 
 		SubShader
 		{
-			Tags {"Queue" = "Transparent" "RenderType" = "Opaque"}
+			Tags {"Queue" = "Overlay" "RenderType" = "Opaque"}
 
 			Pass
 			{
@@ -31,15 +31,6 @@
 				ColorMask RGB
 
 				Blend DstColor Zero
-
-				Stencil
-				{
-					ref 2
-					Comp always
-					Pass Replace
-					Zfail keep
-					Fail keep
-				}
 
 				CGPROGRAM
 				#pragma vertex _VertexFuc
@@ -93,14 +84,7 @@
 			}
 			Tags { "RenderType" = "Opaque" }
 			cull back
-			Stencil
-			{
-				ref 2
-				Comp Equal
-				Pass keep
-				Zfail keep
-				Fail decrWrap
-			}
+
 			CGPROGRAM
 			#pragma surface surf _BandedLighting fullforwardshadows  //! 커스텀 라이트 사용
 			#pragma target 3.0
@@ -149,33 +133,19 @@
 				o.Normal = UnpackScaleNormal(tex2D(_NormalMap, IN.uv_NormalMap), _NormalStrenght);
 			}
 
-			//! 커스텀 라이트 함수
 			float4 Lighting_BandedLighting(SurfaceOutput s, float3 lightDir, float3 viewDir, float atten)
 			{
-				//! BandedDiffuse 조명 처리 연산
 				float3 fBandedDiffuse;
-				float fNDotL = dot(s.Normal, lightDir) * 0.5f + 0.5f;    //! Half Lambert 공식
+				float fNDotL = dot(s.Normal, lightDir) * 0.5f + 0.5f; 
 
-				//! 0~1로 이루어진 fNDotL값을 3개의 값으로 고정함 <- Banded Lighting 작업
 				float fBandNum = 3.0f;
 				fBandedDiffuse = ceil(fNDotL * fBandNum) / fBandNum;
-
-				//float3 fSpecularColor;
-				//float3 fReflectVector = reflect(-lightDir, s.Normal);
-				//float fRDotV = saturate(dot(fReflectVector, viewDir));
-				//fSpecularColor = pow(fRDotV, _Specular) * _SpecularColor.rgb;
-
-				//float3 fSpecular;
-				//float3 fHalfVector = normalize(lightDir + viewDir);
-				//float fHDotN = saturate(dot(fHalfVector, s.Normal));
-				//fSpecular = pow(fHDotN, _Specular);
 
 				float3 fSpecular;
 				float3 fHalfVector = normalize(lightDir + viewDir);
 				float fHDotN = saturate(dot(fHalfVector, s.Normal));
 				fSpecular = pow(fHDotN, _Specular);
 
-				//! 최종 컬러 출력
 				float4 fFinalColor;
 				fFinalColor.rgb = (s.Albedo) * (fBandedDiffuse + fSpecular) * _Color.rgb *_LightColor0.rgb;
 				fFinalColor.a = s.Alpha;

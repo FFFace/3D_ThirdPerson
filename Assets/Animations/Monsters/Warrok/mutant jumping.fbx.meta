@@ -62,14 +62,16 @@ ModelImporter:
       - time: 0.6961078
         functionName: DisableWeapon
         data: 
-        objectReferenceParameter: {instanceID: 0}
+        objectReferenceParameter: {fileID: 11500000, guid: 946112c9106f8c54889a162e7188b422,
+          type: 3}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.61126006
         functionName: JumpSkillDamage
         data: 
-        objectReferenceParameter: {instanceID: 0}
+        objectReferenceParameter: {fileID: 11500000, guid: 946112c9106f8c54889a162e7188b422,
+          type: 3}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0

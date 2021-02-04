@@ -26,9 +26,9 @@ public class Warrok : Monster
     [Space, Header("-Warrok Effect-"), SerializeField]
     private ParticleSystem groundImpace;
 
-    protected override void Start()
+    protected override void OnEnable()
     {
-        base.Start();
+        base.OnEnable();
 
         summonSkill = new WarrokSummonSkill(this, 5, 300f, summonMonster, room);
         buffSkill = new WarrokBuffSkill(this, room, 100f, 60.0f, 1.25f);
@@ -116,7 +116,7 @@ public class Warrok : Monster
     {
         base.InitData();
 
-        state.hp = 15;
+        state.hp = 30;
         state.moveSpeed = 3;
         state.jumpPower = 5;
         state.attackDamage = 1;
@@ -130,7 +130,6 @@ public class Warrok : Monster
 
     protected override void HitDamage(float Damage, int instanceID, bool knockBack = false, float knockBackPower = 0)
     {
-        Debug.Log("A");
         if (transform.GetInstanceID() != instanceID) return;
 
         Debug.Log("B");
@@ -227,10 +226,12 @@ public class Warrok : Monster
         gameObject.SetActive(false);
 
         for (int i = 0; i < renderer.Length; i++)
+        {
             renderer[i].material.SetFloat("_DissolveAmount", 0);
+            renderer[i].material.SetColor("_Color", new Color(0.5859f, 0.5859f, 0.5859f, 1));
+        }
         GetComponent<Collider>().enabled = true;
         nav.enabled = true;
-        StopCoroutine(buff);
         buffParticle.gameObject.SetActive(false);
 
         MonsterPooling.instance.MonsterEnqueue(this);
@@ -483,7 +484,6 @@ public class WarrokSummonSkill : ISkill
             summon.gameObject.SetActive(true);
             summon.SetMonsterRoom(spawn);
             summon.SetSummonBoss(true);
-            summon.SetMonsterState(Monster.MonsterAction.CHASE);
         }
 
         monster.ResetAnimation();

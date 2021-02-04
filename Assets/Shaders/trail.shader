@@ -47,8 +47,6 @@
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
                 UNITY_TRANSFER_FOG(o,o.vertex);
-                //o.normal = UnityObjectToWorldNormal(v.normal);
-                //o.posWorld = mul(unity_ObjectToWorld, v.vertex);
                 return o;
             }
 
@@ -56,15 +54,12 @@
             {
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv) *_Color;
-                // apply fog
-                //float num1 = (cos(i.uv.y * 3.141592 * 2)+1)*0.5;
                 float num2 = sin(i.uv.y * 3.141592);
-                //col.rgb = col.rgb + num1/2;
                 col.a = num2;
 
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
-        }
+            }
         ENDCG
     }
     }

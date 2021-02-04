@@ -22,15 +22,13 @@ public class Skeleton : Monster
     private MonsterHit hit;
     private MonsterDead dead;
 
-    protected override void Start()
+    protected override void OnEnable()
     {
-        base.Start();
+        base.OnEnable();
         //cross = new MonsterCharacterCross(this as Monster, 3.0f);
         StartCoroutine(State());
         //StartCoroutine(cross.DirUpdate());
     }
-
-
 
     protected IEnumerator State()
     {
@@ -184,10 +182,12 @@ public class Skeleton : Monster
         }
         gameObject.SetActive(false);
         for (int i = 0; i < renderer.Length; i++)
+        {
             renderer[i].material.SetFloat("_DissolveAmount", 0);
+            renderer[i].material.SetColor("_Color", new Color(0.5859f, 0.5859f, 0.5859f, 1));
+        }
         GetComponent<Collider>().enabled = true;
         nav.enabled = true;
-        StopCoroutine(buff);
         buffParticle.gameObject.SetActive(false);
 
         MonsterPooling.instance.MonsterEnqueue(this);

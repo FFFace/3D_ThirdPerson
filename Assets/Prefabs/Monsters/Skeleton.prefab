@@ -1273,7 +1273,7 @@ MonoBehaviour:
   action: 0
   attackDistance: 1.5
   attackDirection: 60
-  damageBuff: {fileID: 8660897889437065114}
+  buffParticle: {fileID: 8660897889437065114}
   runChaseDistance: 5
   weapon: {fileID: 4033748116432252578}
 --- !u!1 &2456963707348102394
