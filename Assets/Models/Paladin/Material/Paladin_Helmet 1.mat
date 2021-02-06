@@ -88,9 +88,9 @@ Material:
     - _Outline_Bold: 0.05
     - _Parallax: 0.02
     - _RedColor: 0
-    - _Smoothness: 0
+    - _Smoothness: 0.635
     - _SmoothnessTextureChannel: 0
-    - _Specular: 0.28
+    - _Specular: 0.069
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
@@ -100,4 +100,4 @@ Material:
     - _DissolveColor: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutLineColor: {r: 0.122641504, g: 0.122641504, b: 0.122641504, a: 1}
-    - _SpecularColor: {r: 0.3301887, g: 0.3301887, b: 0.3301887, a: 1}
+    - _SpecularColor: {r: 0.6226415, g: 0.6226415, b: 0.6226415, a: 1}

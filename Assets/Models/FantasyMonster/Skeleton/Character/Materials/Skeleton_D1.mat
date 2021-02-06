@@ -83,6 +83,7 @@ Material:
     - _OcclusionStrength: 1
     - _OutlineBold: 0.7
     - _Parallax: 0.02
+    - _RedColor: 1
     - _SmoothnessTextureChannel: 0
     - _Specular: 1
     - _SpecularHighlights: 1

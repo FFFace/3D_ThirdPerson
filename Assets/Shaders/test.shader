@@ -10,6 +10,7 @@ Shader "Custom/test"
         _BumpMap("NormalMap", 2D) = "white" {}
         _SpecularMap("SpecularMap", 2D) = "white" {}
         _Specular("Specular", Range(0,1)) = 0.0
+        _Smoothness("Smoothness", Range(0,1)) = 0.0
         _SpecularColor("SpecularColor", Color) = (1,1,1,1)
         _DissolveMap("DissolveMap", 2D) = "whtie" {}
         _DissolveColor("DissolveColor", Color) = (1,1,1,1)
@@ -23,6 +24,7 @@ Shader "Custom/test"
     {
         Tags { "Queue" = "Geometry" "RenderType"="Transparent" }
         LOD 200
+            cull off
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
@@ -45,7 +47,7 @@ Shader "Custom/test"
             float3 viewDir;
             float3 lightDir;
             float3 vertex;
-            float3 worldNormal;
+            //float3 worldNormal; INTERNAL_DATA
             //float outline;
         };
 
@@ -67,6 +69,7 @@ Shader "Custom/test"
         half _DissolveWidth;
         half _Specular;
         half _RedColor;
+        half _Smoothness;
         fixed4 _Color;
         fixed4 _DissolveColor;
         fixed4 _SpecularColor;
@@ -100,38 +103,40 @@ Shader "Custom/test"
             _Color.g = _Color.g - _Color.g * (saturate((_SinTime.w +1)* 0.5)) * _RedColor;
             _Color.b = _Color.b - _Color.b * (saturate((_SinTime.w +1)* 0.5)) * _RedColor;
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-            fixed4 mask = tex2D(_DissolveMap, IN.uv_DissolveMap);
+            fixed4 mask = tex2D(_DissolveMap, IN.uv_DissolveMap + _Time.x);
             fixed4 smap = tex2D(_SpecularMap, IN.uv_SpecularMap);
             //o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 
             half dissolve = ceil(mask.r - (_DissolveAmount + _DissolveWidth));
 
-            half toneDot = dot(IN.lightDir, IN.worldNormal) * 0.5f + 0.5f;
+            half toneDot = dot(IN.lightDir, o.Normal) * 0.5f + 0.5f;
             half tone = ceil(toneDot * 2) / 2;
 
-            half outline = dot(IN.viewDir, IN.worldNormal) * 0.5f + 0.5f;
+            half outline = dot(IN.viewDir, o.Normal) * 0.5f + 0.5f;
             outline -= _OutlineBold;
             outline = ceil(outline);
 
-            o.Albedo = (c * tone * outline * dissolve) + (_DissolveColor * (ceil(mask.r) - dissolve));
+            float3 fSpecularColor;
+            float3 fReflectVector = reflect(IN.lightDir, IN.viewDir);
+            float fRDotV = saturate(dot(fReflectVector, o.Normal));
+            float spec = ceil(pow(fRDotV, _Specular) * _Smoothness * _SpecularColor.rgb * smap.r -0.3);
+            fSpecularColor = spec * _Smoothness * _SpecularColor.rgb * smap.a;
+            //fSpecularColor = pow(fRDotV, _Specular) * _Smoothness * _SpecularColor.rgb * smap.a;
+
+            o.Albedo = ((c + fSpecularColor) * tone * outline * dissolve) + (_DissolveColor * (ceil(mask.r) - dissolve));
             dissolve = ceil(mask.r - _DissolveAmount);
             o.Alpha = dissolve;            
 
             o.Emission = o.Albedo;
-            o.Gloss = smap.a;
-            o.Outline = outline;
+            o.Gloss = smap.r;
+            //o.Outline = outline;
         }
 
         float4 Lighting_BandedLighting(SurfaceOutputCustom s, float3 lightDir, float3 viewDir, float atten)
         {
-            float3 fSpecularColor;
-            float3 fReflectVector = reflect(-lightDir, s.Normal);
-            float fRDotV = saturate(dot(fReflectVector, viewDir));
-            fSpecularColor = pow(fRDotV, _Specular) * _SpecularColor.rgb * s.Gloss;
-
             ////! 최종 컬러 출력
             float4 fFinalColor;
-            fFinalColor.rgb = (s.Albedo) +fSpecularColor * s.Outline;
+            fFinalColor.rgb = (s.Albedo);// *s.Outline;
             fFinalColor.a = s.Alpha;
 
             return fFinalColor;
