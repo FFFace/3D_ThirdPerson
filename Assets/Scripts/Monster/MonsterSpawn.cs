@@ -1,8 +1,6 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class MonsterSpawn : MonoBehaviour
 {
@@ -18,7 +16,7 @@ public class MonsterSpawn : MonoBehaviour
     private bool isWarrok;
     private bool isBattle;
 
-    private List<Monster> monsters = new List<Monster>();
+    //private List<Monster> monsters = new List<Monster>();
     //private bool isActive = true;
 
     private void Start()
@@ -99,46 +97,32 @@ public class MonsterSpawn : MonoBehaviour
         }
     }
 
-    public void ChestOpen(int summonMonsterNum)
+    public void ChestOpen<T>(int summonMonsterNum) where T : Monster
     {
-        SummonMonsters(summonMonsterNum);
+        SummonMonsters<T>(summonMonsterNum);
     }
 
-    private void SummonMonsters(int summonMonsterNum)
+    private void SummonMonsters<T>(int summonMonsterNum) where T : Monster
     {
-        int num = Random.Range(Mathf.CeilToInt(summonMonsterNum / 2), summonMonsterNum + 1);
+        int num = UnityEngine.Random.Range(Mathf.CeilToInt(summonMonsterNum / 2), summonMonsterNum + 1);
+        Type type = typeof(T);
 
         for(int i=0; i<num; i++)
         {
             Vector3 pos = GetMoveTile();
 
-            //Monster monster = MonsterPooling.instance.SkeletonDequeue();
-            Monster monster = MonsterPooling.instance.MonsterDequeue<Skeleton>();
+            Monster monster = MonsterPooling.instance.MonsterDequeue<T>();
             monster.transform.position = pos;
             monster.SetMonsterRoom(this);
             monster.gameObject.SetActive(true);
-            monsters.Add(monster);
             monster.SetSummonBoss(false);
-        }
-
-        if (isWarrok)
-        {
-            Vector3 pos = GetMoveTile();
-
-            Monster monster = MonsterPooling.instance.MonsterDequeue<Warrok>();
-            monster.transform.position = pos;
-            monster.SetMonsterRoom(this);
-            monster.SetSummonBoss(false);
-            monster.gameObject.SetActive(true);
-            monsters.Add(monster);
-            isWarrok = false;
         }
     }
 
     public Vector3 GetMoveTile()
     {
-        int x = Random.Range(0, tileXNum);
-        int z = Random.Range(0, tileZNum);
+        int x = UnityEngine.Random.Range(0, tileXNum);
+        int z = UnityEngine.Random.Range(0, tileZNum);
 
         //Debug.Log("시작 좌표 : " + x.ToString() + ", " + z.ToString());
 

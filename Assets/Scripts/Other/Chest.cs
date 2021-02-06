@@ -7,7 +7,9 @@ public class Chest : MonoBehaviour
     [SerializeField]
     private MonsterSpawn spawn;
     [SerializeField]
-    private int MonsterNum;
+    private int skeletonNum;
+    [SerializeField]
+    private int warrokNum;
 
     private bool isOpen;
 
@@ -30,7 +32,8 @@ public class Chest : MonoBehaviour
         {
             if (!isOpen && Input.GetKeyDown(KeyCode.E))
             {
-                spawn.ChestOpen(MonsterNum);
+                spawn.ChestOpen<Skeleton>(skeletonNum);
+                spawn.ChestOpen<Warrok>(warrokNum);
                 AddItem();
                 isOpen = true;
                 StartCoroutine(IEnumChestOpen());

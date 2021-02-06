@@ -836,7 +836,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 946112c9106f8c54889a162e7188b422, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  action: 0
+  room: {fileID: 0}
   attackDistance: 2.5
   attackDirection: 60
   buffParticle: {fileID: 8559839152943868011}
@@ -2573,7 +2573,7 @@ PrefabInstance:
     - target: {fileID: 1123939617780003867, guid: 69b00c837ed1d0a489e004aaec2cc3ea,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.004
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1123939617780003867, guid: 69b00c837ed1d0a489e004aaec2cc3ea,
         type: 3}
@@ -2583,7 +2583,7 @@ PrefabInstance:
     - target: {fileID: 1123939617780003867, guid: 69b00c837ed1d0a489e004aaec2cc3ea,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.93
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1123939617780003867, guid: 69b00c837ed1d0a489e004aaec2cc3ea,
         type: 3}

@@ -17,6 +17,7 @@ Shader "Custom/test"
         _DissolveWidth("DissolveWidth", Range(0,1)) = 0
         _AlphaTest("Alpha", Range(0,1)) = 0
         _OutlineBold("Outline Bold", Range(-1,1)) = 0.1
+        _RedColor("Color RedControll", Range(0,1)) = 0
     }
     SubShader
     {
@@ -48,12 +49,24 @@ Shader "Custom/test"
             //float outline;
         };
 
+        struct SurfaceOutputCustom
+        {
+            fixed3 Albedo;
+            fixed3 Normal;
+            fixed3 Emission;
+            half Specular;
+            fixed Gloss;
+            fixed Alpha;
+            half Outline;
+        };
+
         half _Glossiness;
         half _Metallic;
         half _OutlineBold;
         half _DissolveAmount;
         half _DissolveWidth;
         half _Specular;
+        half _RedColor;
         fixed4 _Color;
         fixed4 _DissolveColor;
         fixed4 _SpecularColor;
@@ -81,14 +94,15 @@ Shader "Custom/test"
             //o.outline = outline;
         }
 
-        void surf (Input IN, inout SurfaceOutput o)
+        void surf (Input IN, inout SurfaceOutputCustom o)
         {
             // Albedo comes from a texture tinted by color
+            _Color.g = _Color.g - _Color.g * (saturate((_SinTime.w +1)* 0.5)) * _RedColor;
+            _Color.b = _Color.b - _Color.b * (saturate((_SinTime.w +1)* 0.5)) * _RedColor;
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
             fixed4 mask = tex2D(_DissolveMap, IN.uv_DissolveMap);
             fixed4 smap = tex2D(_SpecularMap, IN.uv_SpecularMap);
             //o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
-           
 
             half dissolve = ceil(mask.r - (_DissolveAmount + _DissolveWidth));
 
@@ -105,9 +119,10 @@ Shader "Custom/test"
 
             o.Emission = o.Albedo;
             o.Gloss = smap.a;
+            o.Outline = outline;
         }
 
-        float4 Lighting_BandedLighting(SurfaceOutput s, float3 lightDir, float3 viewDir, float atten)
+        float4 Lighting_BandedLighting(SurfaceOutputCustom s, float3 lightDir, float3 viewDir, float atten)
         {
             float3 fSpecularColor;
             float3 fReflectVector = reflect(-lightDir, s.Normal);
@@ -116,7 +131,7 @@ Shader "Custom/test"
 
             ////! 최종 컬러 출력
             float4 fFinalColor;
-            fFinalColor.rgb = (s.Albedo) +fSpecularColor;
+            fFinalColor.rgb = (s.Albedo) +fSpecularColor * s.Outline;
             fFinalColor.a = s.Alpha;
 
             return fFinalColor;

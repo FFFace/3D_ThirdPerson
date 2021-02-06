@@ -20,7 +20,7 @@
 
 		SubShader
 		{
-			Tags {"Queue" = "Overlay" "RenderType" = "Opaque"}
+			Tags {"Queue" = "Transparent" "RenderType" = "Opaque"}
 
 			Pass
 			{
@@ -147,7 +147,7 @@
 				fSpecular = pow(fHDotN, _Specular);
 
 				float4 fFinalColor;
-				fFinalColor.rgb = (s.Albedo) * (fBandedDiffuse + fSpecular) * _Color.rgb *_LightColor0.rgb;
+				fFinalColor.rgb = (s.Albedo) * (fBandedDiffuse + fSpecular) * _Color.rgb *_LightColor0.rgb * atten;
 				fFinalColor.a = s.Alpha;
 
 				return fFinalColor;

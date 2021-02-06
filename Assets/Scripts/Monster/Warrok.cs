@@ -78,9 +78,9 @@ public class Warrok : Monster
                 float time = 0;
 
                 if (dis < attackDistance && monsterDirection.GetinDirection(attackDirection)) { attack = normalAttack; time = 2.0f; }
-                else if (summonSkill.isActive) { attack = summonSkill; time = 3.0f; }
-                else if (buffSkill.isActive) { attack = buffSkill; time = 8.0f; }
                 else if (jumpSkill.isActive && dis < 7.0f) { attack = jumpSkill; time = 5.0f; }
+                else if (summonSkill.isActive) { attack = summonSkill; time = 3.0f; }
+                else if (buffSkill.isActive) { attack = buffSkill; time = 6.0f; }
                 else
                 {
                     if (move != warrokHit && move != warrokDead)

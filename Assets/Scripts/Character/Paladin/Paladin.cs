@@ -472,12 +472,12 @@ public class PaladinBlock : ISkill
         character.SetCharacterCurrentDamage(damage * damageMagnification);
         Renderer[] renderer = character.GetComponentsInChildren<Renderer>();
         for(int i=0; i<renderer.Length; i++)
-            renderer[i].material.SetColor("_Color", new Color(1, 0.4687f, 0.4687f, 1));
+            renderer[i].material.SetFloat("_RedColor", 1);
         particle.gameObject.SetActive(true);
         yield return new WaitForSeconds(buffTime);
         character.SetCharacterCurrentDamage(damage);
         for (int i = 0; i < renderer.Length; i++)
-            renderer[i].material.SetColor("_Color", new Color(1, 1, 1, 1));
+            renderer[i].material.SetFloat("_RedColor", 0);
         particle.gameObject.SetActive(false);
     }
 

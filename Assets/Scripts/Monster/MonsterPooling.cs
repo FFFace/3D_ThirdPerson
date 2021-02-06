@@ -61,7 +61,6 @@ public class MonsterPooling : MonoBehaviour
                 break;
             }
         }
-
         return monster;
     }
 }

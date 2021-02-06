@@ -184,7 +184,7 @@ public class Skeleton : Monster
         for (int i = 0; i < renderer.Length; i++)
         {
             renderer[i].material.SetFloat("_DissolveAmount", 0);
-            renderer[i].material.SetColor("_Color", new Color(0.5859f, 0.5859f, 0.5859f, 1));
+            renderer[i].material.SetFloat("_RedColor", 0);
         }
         GetComponent<Collider>().enabled = true;
         nav.enabled = true;
