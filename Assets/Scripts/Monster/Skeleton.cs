@@ -17,6 +17,7 @@ public class Skeleton : Monster
 
     //protected MonsterCharacterCross cross;
     private SkeletonChase skeletonChase;
+    //private MonsterStay stay;
     //private SkeletonStand skeletonStand;
     private MonsterAttack skeletonAttack;
     private MonsterHit hit;
@@ -33,7 +34,7 @@ public class Skeleton : Monster
     protected IEnumerator State()
     {
         yield return new WaitForSeconds(4f);
-
+       // move = stay;
         while (true)
         {
             if (move == hit)
@@ -51,8 +52,21 @@ public class Skeleton : Monster
                 break;
             }
 
+            //else if (move == stay)
+            //{
+            //    Debug.Log("C");
+            //    StartCoroutine(stay.stay);
+            //    nav.angularSpeed = 180;
+            //    float dis = Vector3.Distance(transform.position, nav.destination);
+            //    if (dis > 1)
+            //        SetAnimationBool("Walk", true);
+            //    else
+            //        SetAnimationBool("Walk", false);
+            //}
+
             else
             {
+                nav.angularSpeed = 0;
                 float dis = Vector3.Distance(transform.position, character.transform.position);
                 if (dis < attackDistance)
                 {
@@ -114,6 +128,7 @@ public class Skeleton : Monster
         //stand = new SkeletonStand(this, nav, currentSpeed);
         hit = new MonsterHit(this, nav);
         dead = new MonsterDead(this, nav);
+       // stay = new MonsterStay(nav, room);
 
         move = monsterMoveStay;
         attack = monsterAttackStay;
@@ -152,6 +167,8 @@ public class Skeleton : Monster
             SetAnimationTrigger("Hit");
             move = hit;
         }
+
+        //StopCoroutine(stay.stay);
     }
 
     public float GetRunChaseDistance()

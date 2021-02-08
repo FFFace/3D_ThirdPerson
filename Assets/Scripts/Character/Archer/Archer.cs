@@ -131,13 +131,16 @@ public class Archer : Character
     {
         normalAttack = recharge;
         base.AttackPressDown();
-        isAttack = false;
+        isAttack = true;
     }
 
     public override void AttackPressUp()
     {
         normalAttack = attack;
-        base.AttackPressUp();
+        if (!isAction && isAttack)
+        {
+            normalAttack.Attack();
+        }
     }
 
     public override void MainSkill()

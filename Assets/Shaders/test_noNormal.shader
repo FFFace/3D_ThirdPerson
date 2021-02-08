@@ -1,7 +1,7 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 
-Shader "Custom/test"
+Shader "Custom/test_noNormal"
 {
     Properties
     {
@@ -85,16 +85,6 @@ Shader "Custom/test"
         {
             UNITY_INITIALIZE_OUTPUT(Input, o);
             o.lightDir = WorldSpaceLightDir(i.vertex);
-
-            //float3 worldPos = mul(unity_ObjectToWorld, i.vertex).xyz;
-            //float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
-            //float3 worldNormal = UnityObjectToWorldNormal(i.normal);
-
-            //float outline = dot(worldViewDir, worldNormal) * 0.5f + 0.5f;
-            //outline -= _OutlineBold;
-            //outline = ceil(outline * 5) / 5;
-
-            //o.outline = outline;
         }
 
         void surf (Input IN, inout SurfaceOutputCustom o)
@@ -104,7 +94,7 @@ Shader "Custom/test"
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
             fixed4 mask = tex2D(_DissolveMap, IN.uv_DissolveMap + _Time.x);
             fixed4 smap = tex2D(_SpecularMap, IN.uv_SpecularMap);
-            o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
+            //o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 
             half dissolve = ceil(mask.r - (_DissolveAmount + _DissolveWidth));
 

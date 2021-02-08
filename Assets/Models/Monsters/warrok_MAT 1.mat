@@ -75,7 +75,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DissolveAmount: 0
     - _DissolveEmission: 1
-    - _DissolveWidth: 0.019
+    - _DissolveWidth: 0.06
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0
@@ -88,6 +88,7 @@ Material:
     - _Outline_Bold: 0.06
     - _Parallax: 0.02
     - _RedColor: 0
+    - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
     - _Specular: 1
     - _SpecularHighlights: 1

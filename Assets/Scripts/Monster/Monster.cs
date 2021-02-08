@@ -551,3 +551,36 @@ public class MonsterDead : IMove
         //monster.GetComponent<Rigidbody>().isKinematic = true;
     }
 }
+
+public class MonsterStay : IMove
+{
+    private NavMeshAgent nav;
+    private MonsterSpawn room;
+    private bool isStay;
+    public IEnumerator stay;
+
+    public MonsterStay(NavMeshAgent _nav, MonsterSpawn _room)
+    {
+        nav = _nav;
+        room = _room;
+        isStay = false;
+        stay = IEnumStay();
+    }
+
+    public void Move()
+    {
+        nav.isStopped = false;
+    }
+
+    private IEnumerator IEnumStay()
+    {
+        Debug.Log("A");
+        if (isStay) yield return null;
+        Debug.Log("B");
+        isStay = true;
+        float time = Random.Range(10.0f, 20.0f);
+        nav.destination = room.GetMoveTile();
+        yield return new WaitForSeconds(2);
+        isStay = false;
+    }
+}
