@@ -1,96 +1,74 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Dragon : Monster
 {
-    private DragonMove dragonMove;
-    private DragonChase dragonChase;
+    [SerializeField]
+    private bool isHead;
+
+    [SerializeField]
+    private int bodyMaxNum;
+    private int bodyNum;
+
+    [SerializeField]
+    private GameObject body;
+    private Transform front;
+
+    private static DragonHeadMove headMove;
+    private static DragonHeadMoveStay headMoveStay;
+    private DragonBodyMove bodyMove;
 
     protected override void OnEnable()
     {
         InitData();
         StartCoroutine(State());
-        StartCoroutine(IEnumSummon());
     }
 
     protected override void Start()
     {
-        base.Start();
+        if (headMove == null)
+        {
+            headMove = new DragonHeadMove(this);
+            headMove.SetTarget();
+            headMoveStay = new DragonHeadMoveStay();
+        }
+
+        else
+            bodyMove = new DragonBodyMove(this, front);
+
+        if (isHead)
+        {
+            move = headMove;
+            bodyNum = 1;
+        }
+        else
+        {
+            move = bodyMove;
+        }
+
+        if (bodyNum < bodyMaxNum)
+        {
+            GameObject obj = Instantiate(body);
+            Dragon dragon = obj.GetComponent<Dragon>();
+
+            dragon.bodyMaxNum = bodyMaxNum;
+            dragon.bodyNum = bodyNum + 1;
+            dragon.front = transform;
+            dragon.body = body;
+            dragon.isHead = false;
+        }
     }
 
     private IEnumerator State()
     {
-        yield return new WaitForSeconds(4.0f);
-        nav.isStopped = false;
-
-        move = dragonChase;
-        float time = 0;
-
         while (true)
         {
-            Debug.Log("State");
-            float distance = Vector3.Distance(transform.position, nav.destination);
 
-            if (move == dragonMove)
-            {
-                Debug.Log("Move");
-                time += 0.1f;
-                if (distance < 1 && time <= 5.0f)
-                    nav.destination = room.GetMoveTile();
-
-                if (time > 5.0f)
-                {
-                    move = dragonChase;
-                    Debug.Log("Change Chase");
-                }
-            }
-
-            else if (move == dragonChase)
-            {
-                Debug.Log("Chase");
-                if (distance > 2)
-                {
-                    dragonChase.Chase();
-                }
-
-                else if (distance < 1.5f)
-                {
-                    Debug.Log("Change Move");
-;                    move = dragonMove;
-                    time = 0;
-                }
-            }
 
             yield return new WaitForSeconds(0.1f);
-        }
-    }
-
-    private IEnumerator IEnumSummon()
-    {
-        float time = 1;
-        Renderer[] renderer = GetComponentsInChildren<Renderer>();
-        Collider[] collider = GetComponentsInChildren<Collider>();
-
-        for (int i = 0; i < collider.Length; i++)
-        {
-            collider[i].enabled = false;
-        }
-
-        yield return new WaitForSeconds(2f);
-
-        while (time > 0)
-        {
-            for (int i = 0; i < renderer.Length; i++)
-                renderer[i].material.SetFloat("_DissolveAmount", time);
-
-            time -= 0.5f * Time.deltaTime;
-            yield return null;
-        }
-
-        for (int i = 0; i < collider.Length; i++)
-        {
-            collider[i].enabled = true;
         }
     }
 
@@ -99,97 +77,92 @@ public class Dragon : Monster
         EventManager.instance.AddHitEvent(HitDamage);
         EventManager.instance.AddMonsterBuffDamageEvent(BuffDamage);
         character = Character.instance;
-        nav = GetComponent<NavMeshAgent>();
+        //nav = GetComponent<NavMeshAgent>();
 
-        nav.destination = Character.instance.transform.position;
-        nav.enabled = true;
-        monsterDirection = new MonsterAttackDirection(this);
-        anim = GetComponentInChildren<Animator>();
+        //nav.destination = Character.instance.transform.position;
+        //nav.enabled = true;
+        //monsterDirection = new MonsterAttackDirection(this);
+        anim = GetComponent<Animator>();
+        rigid = GetComponent<Rigidbody>();
+        GetComponent<Collider>().enabled = true;
         attack = monsterAttackStay;
         //rigid.isKinematic = false;
 
         monsterMoveStay = new MonsterMoveStay(nav);
 
-        ResetAnimation();
-
-        Renderer[] renderer = GetComponentsInChildren<Renderer>();
-        for (int i = 0; i < renderer.Length; i++)
-            renderer[i].material.SetFloat("_DissolveAmount", 1);
-
-        state.hp = 50;
-        state.moveSpeed = 5;
-        state.jumpPower = 5;
-        state.attackDamage = 5;
-        state.attackSpeed = 1;
-
-        currentHP = state.hp;
-        currentSpeed = state.moveSpeed;
-        currentDefense = state.defense;
-        currentDamage = state.attackDamage;
-
-        attack = monsterAttackStay;
-        move = monsterMoveStay;
-
-        dragonMove = new DragonMove(this, nav);
-        dragonChase = new DragonChase(this, nav);
-    }
-
-    protected override void HitDamage(float Damage, int instanceID, bool knockBack = false, float knockBackPower = 0)
-    {
-        base.HitDamage(Damage, instanceID, knockBack, knockBackPower);
+        //ResetAnimation();
     }
 }
 
-public class DragonMove : IMove
+public class DragonHeadMove : IMove
 {
     private Dragon dragon;
-    private NavMeshAgent nav;
+    private Character character;
+    private float speed;
+    private float maxHeight;
+    private float time;
+    private Vector3 startPos;
+    private Vector3 target;
 
-    public DragonMove(Dragon _dragon, NavMeshAgent _nav)
+    public DragonHeadMove(Dragon _dragon)
     {
         dragon = _dragon;
-        nav = _nav;
-    }
-
-
-    public void Move()
-    {
-        nav.isStopped = false;
-    }
-
-    public void MoveUp()
-    {
-        Vector3 pos = nav.destination;
-        pos.y = 6;
-        Vector3 dir = (pos - dragon.transform.position).normalized;
-
-        nav.baseOffset += dir.y * 3 * Time.deltaTime;
-    }
-}
-
-public class DragonChase : IMove
-{
-    private Dragon dragon;
-    private NavMeshAgent nav;
-
-    public DragonChase(Dragon _dragon, NavMeshAgent _nav)
-    {
-        dragon = _dragon;
-        nav = _nav;
+        character = Character.instance;
     }
 
     public void Move()
     {
-        nav.isStopped = false;
-        Vector3 pos = nav.destination;
-        pos.y = 1.2f;
-        Vector3 dir = (pos - dragon.transform.position).normalized;
+        Vector3 targetDir = (target - dragon.transform.position).normalized;
+        Vector3 targetHalfDir = (target / 2 - dragon.transform.position).normalized;
 
-        nav.baseOffset += dir.y * 3 * Time.deltaTime;
+        float dot = Vector3.Dot(targetDir, targetHalfDir);
+        dot = Mathf.Sign(dot);
+
+        float height = maxHeight - dragon.transform.position.y;
+        float heightRate = height / maxHeight * dot;
+
+        dragon.transform.Translate(Vector3.up * speed * heightRate * Time.deltaTime);
+
+        dragon.transform.Translate(targetDir * speed * Time.deltaTime);
     }
 
-    public void Chase()
+    public void SetTarget()
     {
-        nav.destination = Character.instance.transform.position;
+        startPos = dragon.transform.position;
+        Vector3 dir = character.transform.position - dragon.transform.position;
+        dir.y = dragon.transform.position.y;
+        dir.Normalize();
+
+        target = character.transform.position + dir * Random.Range(1f, 4f);
+        speed = Vector3.Distance(dragon.transform.position, target)/3;
+        maxHeight = Random.Range(3f, 6f);
+
+    }
+}
+
+public class DragonHeadMoveStay : IMove
+{
+    public void Move() { }
+}
+
+public class DragonBodyMove : IMove
+{
+    private Dragon dragon;
+    private Transform front;
+    private float radius;
+
+    public DragonBodyMove(Dragon _dragon, Transform _front)
+    {
+        dragon = _dragon;
+        front = _front;
+        radius = dragon.GetComponent<SphereCollider>().radius;
+    }
+
+    public void Move()
+    {
+        Vector3 dir = (front.position - dragon.transform.position).normalized;
+        float dis = Vector3.Distance(dragon.transform.position, front.position) - (radius * 2);
+
+        dragon.transform.Translate(dir * dis * 20 * Time.deltaTime);
     }
 }

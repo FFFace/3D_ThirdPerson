@@ -124,7 +124,7 @@ public class Monster : MonoBehaviour
 
         nav.destination = Character.instance.transform.position;
         nav.enabled = true;
-        monsterDirection = new MonsterAttackDirection(this);
+        //monsterDirection = new MonsterAttackDirection(this);
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody>();
         GetComponent<Collider>().enabled = true;
