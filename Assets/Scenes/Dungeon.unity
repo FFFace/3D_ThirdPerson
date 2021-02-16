@@ -29628,12 +29628,12 @@ PrefabInstance:
     - target: {fileID: 9016252366213942824, guid: fecf7de175f757842ab7c1636f4a445f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 35.832
+      value: 28.05
       objectReference: {fileID: 0}
     - target: {fileID: 9016252366213942824, guid: fecf7de175f757842ab7c1636f4a445f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.503
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 9016252366213942824, guid: fecf7de175f757842ab7c1636f4a445f,
         type: 3}
@@ -29685,15 +29685,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dragon
       objectReference: {fileID: 0}
-    - target: {fileID: 9016252366213942835, guid: fecf7de175f757842ab7c1636f4a445f,
+    - target: {fileID: 9016252366213942836, guid: fecf7de175f757842ab7c1636f4a445f,
         type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9016252366213942838, guid: fecf7de175f757842ab7c1636f4a445f,
-        type: 3}
-      propertyPath: m_ReceiveShadows
+      propertyPath: isHead
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9016252366213942836, guid: fecf7de175f757842ab7c1636f4a445f,
+        type: 3}
+      propertyPath: maxHeight
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 9016252366213942836, guid: fecf7de175f757842ab7c1636f4a445f,
+        type: 3}
+      propertyPath: minHeight
+      value: -40
+      objectReference: {fileID: 0}
+    - target: {fileID: 9016252366213942836, guid: fecf7de175f757842ab7c1636f4a445f,
+        type: 3}
+      propertyPath: bodyMaxNum
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fecf7de175f757842ab7c1636f4a445f, type: 3}

@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9016252366213942824
 Transform:
   m_ObjectHideFlags: 0
@@ -89,7 +89,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9016252366213942835}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -110,6 +110,6 @@ MonoBehaviour:
   attackDistance: 0
   attackDirection: 0
   buffParticle: {fileID: 0}
-  isHead: 1
+  isHead: 0
   bodyMaxNum: 5
   body: {fileID: 9016252366213942835}

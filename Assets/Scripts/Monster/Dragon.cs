@@ -17,6 +17,11 @@ public class Dragon : Monster
     private GameObject body;
     private Transform front;
 
+    [SerializeField]
+    private float maxHeight;
+        [SerializeField]
+    private float minHeight;
+
     private static DragonHeadMove headMove;
     private static DragonHeadMoveStay headMoveStay;
     private DragonBodyMove bodyMove;
@@ -31,8 +36,7 @@ public class Dragon : Monster
     {
         if (headMove == null)
         {
-            headMove = new DragonHeadMove(this);
-            headMove.SetTarget();
+            headMove = new DragonHeadMove(this, maxHeight, minHeight, 5f);
             headMoveStay = new DragonHeadMoveStay();
         }
 
@@ -67,8 +71,9 @@ public class Dragon : Monster
         while (true)
         {
 
+            yield return new WaitForSeconds(0.3f);
 
-            yield return new WaitForSeconds(0.1f);
+            headMove.SetTarget();
         }
     }
 
@@ -92,6 +97,16 @@ public class Dragon : Monster
 
         //ResetAnimation();
     }
+
+    public void DragonHeadStay()
+    {
+        move = headMoveStay;
+    }
+
+    public void DragonHeadMove()
+    {
+        move = headMove;
+    }
 }
 
 public class DragonHeadMove : IMove
@@ -100,42 +115,47 @@ public class DragonHeadMove : IMove
     private Character character;
     private float speed;
     private float maxHeight;
-    private float time;
-    private Vector3 startPos;
-    private Vector3 target;
+    private float minHeight;
+    private Vector3 yDir;
+    private Vector3 xzDir;
 
-    public DragonHeadMove(Dragon _dragon)
+    public DragonHeadMove(Dragon _dragon, float _maxHeight, float _minHeight, float _speed)
     {
         dragon = _dragon;
+        maxHeight = _maxHeight;
+        minHeight = _minHeight;
+        speed = _speed;
         character = Character.instance;
+        yDir = Vector3.up;
     }
 
     public void Move()
     {
-        Vector3 targetDir = (target - dragon.transform.position).normalized;
-        Vector3 targetHalfDir = (target / 2 - dragon.transform.position).normalized;
+        float heightRate = (maxHeight - dragon.transform.position.y) / maxHeight;
+        heightRate = Mathf.Clamp(heightRate, 0.1f, 1.0f);
 
-        float dot = Vector3.Dot(targetDir, targetHalfDir);
-        dot = Mathf.Sign(dot);
-
-        float height = maxHeight - dragon.transform.position.y;
-        float heightRate = height / maxHeight * dot;
-
-        dragon.transform.Translate(Vector3.up * speed * heightRate * Time.deltaTime);
-
-        dragon.transform.Translate(targetDir * speed * Time.deltaTime);
+        dragon.transform.Translate(xzDir.normalized * speed * Time.deltaTime);
+        dragon.transform.Translate(yDir * heightRate * speed * 3 * Time.deltaTime);
     }
 
     public void SetTarget()
     {
-        startPos = dragon.transform.position;
-        Vector3 dir = character.transform.position - dragon.transform.position;
-        dir.y = dragon.transform.position.y;
-        dir.Normalize();
+        if (maxHeight - dragon.transform.position.y < 0.1f)
+            yDir = Vector3.down;
 
-        target = character.transform.position + dir * Random.Range(1f, 4f);
-        speed = Vector3.Distance(dragon.transform.position, target)/3;
-        maxHeight = Random.Range(3f, 6f);
+        else if (dragon.transform.position.y < minHeight)
+            yDir = Vector3.up;
+
+        Vector3 charPos = character.transform.position;
+        charPos.y = minHeight;
+
+        Vector3 pos = dragon.transform.position;
+        pos.y = minHeight;
+
+        Vector3 dir = (charPos - pos).normalized;
+        //Vector3 cross = Vector3.Cross(dir, character.transform.up) * 2;
+
+        xzDir = dir;
 
     }
 }
@@ -161,8 +181,8 @@ public class DragonBodyMove : IMove
     public void Move()
     {
         Vector3 dir = (front.position - dragon.transform.position).normalized;
-        float dis = Vector3.Distance(dragon.transform.position, front.position) - (radius * 2);
+        float dis = Vector3.Distance(dragon.transform.position, front.position) / radius;
 
-        dragon.transform.Translate(dir * dis * 20 * Time.deltaTime);
+        dragon.transform.Translate(dir * dis * 4f * Time.deltaTime);
     }
 }
