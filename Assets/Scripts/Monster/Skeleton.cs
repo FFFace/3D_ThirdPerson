@@ -189,7 +189,7 @@ public class Skeleton : Monster
 
         Renderer[] renderer = GetComponentsInChildren<Renderer>();
         float num = 0;
-        while (num < 1.5)
+        while (num < 1.5f)
         {
             for (int i = 0; i < renderer.Length; i++)
                 renderer[i].material.SetFloat("_DissolveAmount", num);

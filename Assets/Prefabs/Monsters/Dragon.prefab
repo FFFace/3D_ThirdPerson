@@ -13,13 +13,13 @@ GameObject:
   - component: {fileID: 9016252366213942838}
   - component: {fileID: 9016252366213942837}
   - component: {fileID: 9016252366213942836}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dragon
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &9016252366213942824
 Transform:
   m_ObjectHideFlags: 0
@@ -110,6 +110,10 @@ MonoBehaviour:
   attackDistance: 0
   attackDirection: 0
   buffParticle: {fileID: 0}
-  isHead: 0
-  bodyMaxNum: 5
+  isHead: 1
+  bodyMaxNum: 8
   body: {fileID: 9016252366213942835}
+  front: {fileID: 0}
+  back: {fileID: 0}
+  maxHeight: 6
+  minHeight: -40

@@ -32,6 +32,7 @@ public class Chest : MonoBehaviour
         {
             if (!isOpen && Input.GetKeyDown(KeyCode.E))
             {
+                spawn.ChestCount();
                 spawn.ChestOpen<Skeleton>(skeletonNum);
                 spawn.ChestOpen<Warrok>(warrokNum);
                 AddItem();

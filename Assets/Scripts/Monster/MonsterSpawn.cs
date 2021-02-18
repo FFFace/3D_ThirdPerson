@@ -13,8 +13,12 @@ public class MonsterSpawn : MonoBehaviour
     private int tileZNum;
 
     [SerializeField]
+    private int chestNum;
+    private int openChestNum = 0;
+
+    [SerializeField]
     private bool isWarrok;
-    private bool isBattle;
+    private bool isBoss;
 
     //private List<Monster> monsters = new List<Monster>();
     //private bool isActive = true;
@@ -22,6 +26,7 @@ public class MonsterSpawn : MonoBehaviour
     private void Start()
     {
         MapSetting();
+        isBoss = true;
         //StartCoroutine(UpdateMonsterState());
     }
 
@@ -100,6 +105,18 @@ public class MonsterSpawn : MonoBehaviour
     public void ChestOpen<T>(int summonMonsterNum) where T : Monster
     {
         SummonMonsters<T>(summonMonsterNum);
+
+        if (openChestNum >= chestNum && isBoss)
+        {
+            Vector3 pos = GetMoveTile();
+            pos.y = -20;
+            Monster monster = MonsterPooling.instance.MonsterDequeue<Dragon>();
+            monster.transform.position = pos;
+            monster.SetMonsterRoom(this);
+            monster.gameObject.SetActive(true);
+            monster.SetSummonBoss(false);
+            isBoss = false;
+        }
     }
 
     private void SummonMonsters<T>(int summonMonsterNum) where T : Monster
@@ -145,5 +162,10 @@ public class MonsterSpawn : MonoBehaviour
         Vector3 pos = new Vector3(posX + x * tileX, 1, posZ + z * tileZ);
 
         return pos;
+    }
+
+    public void ChestCount()
+    {
+        openChestNum++;
     }
 }

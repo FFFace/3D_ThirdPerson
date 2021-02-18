@@ -15,7 +15,8 @@ public class Dragon : Monster
 
     [SerializeField]
     private GameObject body;
-    private Transform front;
+    public Dragon front;
+    public Dragon back;
 
     [SerializeField]
     private float maxHeight;
@@ -58,12 +59,15 @@ public class Dragon : Monster
             GameObject obj = Instantiate(body);
             Dragon dragon = obj.GetComponent<Dragon>();
 
+            back = dragon;
             dragon.bodyMaxNum = bodyMaxNum;
             dragon.bodyNum = bodyNum + 1;
-            dragon.front = transform;
+            dragon.front = this;
             dragon.body = body;
             dragon.isHead = false;
         }
+        else
+            back = null;
     }
 
     private IEnumerator State()
@@ -80,8 +84,14 @@ public class Dragon : Monster
     protected override void InitData()
     {
         EventManager.instance.AddHitEvent(HitDamage);
-        EventManager.instance.AddMonsterBuffDamageEvent(BuffDamage);
         character = Character.instance;
+
+        state.hp = 1;
+        state.attackDamage = 3;
+
+        currentHP = state.hp;
+        currentDamage = state.attackDamage;
+
         //nav = GetComponent<NavMeshAgent>();
 
         //nav.destination = Character.instance.transform.position;
@@ -91,11 +101,91 @@ public class Dragon : Monster
         rigid = GetComponent<Rigidbody>();
         GetComponent<Collider>().enabled = true;
         attack = monsterAttackStay;
+
+        if (headMove != null) move = headMove;
         //rigid.isKinematic = false;
 
-        monsterMoveStay = new MonsterMoveStay(nav);
-
         //ResetAnimation();
+        transform.parent = null;
+    }
+
+    protected override void HitDamage(float Damage, int instanceID, bool knockBack = false, float knockBackPower = 0)
+    {
+        if (transform.GetInstanceID() != instanceID) return;
+
+        currentHP -= Damage;
+        HitDamageFront(Damage);
+        HitDamageBack(Damage);
+
+        if (currentHP < 1)
+        {
+            move = headMoveStay;
+            StartCoroutine("DeadTime");
+        }
+    }
+
+    private void HitDamageFront(float _damage)
+    {
+        if (front)
+        {
+            front.currentHP -= _damage;
+            if (front.currentHP < 1) StartCoroutine(front.DeadTime());
+
+            front.HitDamageFront(_damage);
+        }
+    }
+
+    private void HitDamageBack(float _damage)
+    {
+        if (back)
+        {
+            back.currentHP -= _damage;
+            if (back.currentHP < 1) StartCoroutine(back.DeadTime());
+
+            back.HitDamageBack(_damage);
+        }
+    }
+    
+    protected override IEnumerator DeadTime()
+    {
+        float time = 0;
+        Renderer renderer = GetComponent<Renderer>();
+        GetComponent<Collider>().enabled = false;
+
+        move = headMoveStay;
+
+        while (time < 2)
+        {
+            time += Time.deltaTime;
+
+            Color color = renderer.material.GetColor("_Color");
+
+            color = Color.Lerp(color, Color.black, Time.deltaTime);
+
+            renderer.material.SetColor("_Color", color);
+
+
+            yield return null;
+        }
+
+        time = 0;
+        yield return new WaitForSeconds(2.0f);
+
+        while (time < 1.5f)
+        {
+            renderer.material.SetFloat("_DissolveAmount", time);
+
+            time += 0.5f * Time.deltaTime;
+            yield return null;
+        }
+
+        gameObject.SetActive(false);
+        renderer.material.SetFloat("_DissolveAmount", 0);
+        renderer.material.SetColor("_Color", new Color(0.5f, 0.5f, 0.5f, 1));
+        GetComponent<Collider>().enabled = true;
+
+        if (front) transform.parent = front.transform;
+        MonsterPooling.instance.MonsterEnqueue(this);
     }
 
     public void DragonHeadStay()
@@ -168,10 +258,10 @@ public class DragonHeadMoveStay : IMove
 public class DragonBodyMove : IMove
 {
     private Dragon dragon;
-    private Transform front;
+    private Dragon front;
     private float radius;
 
-    public DragonBodyMove(Dragon _dragon, Transform _front)
+    public DragonBodyMove(Dragon _dragon, Dragon _front)
     {
         dragon = _dragon;
         front = _front;
@@ -180,8 +270,8 @@ public class DragonBodyMove : IMove
 
     public void Move()
     {
-        Vector3 dir = (front.position - dragon.transform.position).normalized;
-        float dis = Vector3.Distance(dragon.transform.position, front.position) / radius;
+        Vector3 dir = (front.transform.position - dragon.transform.position).normalized;
+        float dis = Vector3.Distance(dragon.transform.position, front.transform.position) / radius;
 
         dragon.transform.Translate(dir * dis * 4f * Time.deltaTime);
     }

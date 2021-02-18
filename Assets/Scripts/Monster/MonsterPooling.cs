@@ -10,6 +10,7 @@ public class MonsterPooling : MonoBehaviour
     private Dictionary<Type, Queue<Monster>> monsterPool = new Dictionary<Type, Queue<Monster>>();
     private Queue<Monster> skeletonPool = new Queue<Monster>();
     private Queue<Monster> warrokPool = new Queue<Monster>();
+    private Queue<Monster> dragonPool = new Queue<Monster>();
 
     [SerializeField]
     private List<GameObject> monsters = new List<GameObject>();
@@ -24,6 +25,7 @@ public class MonsterPooling : MonoBehaviour
     {
         monsterPool.Add(typeof(Skeleton), skeletonPool);
         monsterPool.Add(typeof(Warrok), warrokPool);
+        monsterPool.Add(typeof(Dragon), dragonPool);
     }
 
     private void Update()
