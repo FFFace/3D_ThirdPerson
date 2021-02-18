@@ -87,7 +87,7 @@ public class Dragon : Monster
         character = Character.instance;
 
         state.hp = 1;
-        state.attackDamage = 3;
+        state.attackDamage = 1;
 
         currentHP = state.hp;
         currentDamage = state.attackDamage;
@@ -107,6 +107,17 @@ public class Dragon : Monster
 
         //ResetAnimation();
         transform.parent = null;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Vector3 dir = other.transform.position - transform.position;
+            dir.y = 0;
+            dir.Normalize();
+            character.Hit(currentDamage, dir);
+        }
     }
 
     protected override void HitDamage(float Damage, int instanceID, bool knockBack = false, float knockBackPower = 0)
