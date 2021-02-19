@@ -86,7 +86,7 @@ public class Dragon : Monster
         EventManager.instance.AddHitEvent(HitDamage);
         character = Character.instance;
 
-        state.hp = 1;
+        state.hp = 100;
         state.attackDamage = 1;
 
         currentHP = state.hp;
@@ -111,7 +111,7 @@ public class Dragon : Monster
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Character"))
         {
             Vector3 dir = other.transform.position - transform.position;
             dir.y = 0;
@@ -132,7 +132,15 @@ public class Dragon : Monster
         {
             move = headMoveStay;
             StartCoroutine("DeadTime");
+            return;
         }
+        HitColor();
+    }
+
+    private void HitColor()
+    {
+        Renderer renderer = GetComponent<Renderer>();
+        renderer.material.SetColor("_Color", new Color(0.5f, 0, 0, 1));
     }
 
     private void HitDamageFront(float _damage)
@@ -141,6 +149,7 @@ public class Dragon : Monster
         {
             front.currentHP -= _damage;
             if (front.currentHP < 1) StartCoroutine(front.DeadTime());
+            else front.HitColor();
 
             front.HitDamageFront(_damage);
         }
@@ -152,6 +161,7 @@ public class Dragon : Monster
         {
             back.currentHP -= _damage;
             if (back.currentHP < 1) StartCoroutine(back.DeadTime());
+            else back.HitColor();
 
             back.HitDamageBack(_damage);
         }
@@ -214,6 +224,7 @@ public class DragonHeadMove : IMove
 {
     private Dragon dragon;
     private Character character;
+    private Renderer renderer;
     private float speed;
     private float maxHeight;
     private float minHeight;
@@ -223,6 +234,7 @@ public class DragonHeadMove : IMove
     public DragonHeadMove(Dragon _dragon, float _maxHeight, float _minHeight, float _speed)
     {
         dragon = _dragon;
+        renderer = dragon.GetComponent<Renderer>();
         maxHeight = _maxHeight;
         minHeight = _minHeight;
         speed = _speed;
@@ -234,6 +246,9 @@ public class DragonHeadMove : IMove
     {
         float heightRate = (maxHeight - dragon.transform.position.y) / maxHeight;
         heightRate = Mathf.Clamp(heightRate, 0.1f, 1.0f);
+
+        Color color = Color.Lerp(renderer.material.GetColor("_Color"), new Color(0.5f, 0.5f, 0.5f, 1), Time.deltaTime);
+        renderer.material.SetColor("_Color", color);
 
         dragon.transform.Translate(xzDir.normalized * speed * Time.deltaTime);
         dragon.transform.Translate(yDir * heightRate * speed * 3 * Time.deltaTime);
@@ -271,18 +286,23 @@ public class DragonBodyMove : IMove
     private Dragon dragon;
     private Dragon front;
     private float radius;
+    private Renderer renderer;
 
     public DragonBodyMove(Dragon _dragon, Dragon _front)
     {
         dragon = _dragon;
         front = _front;
         radius = dragon.GetComponent<SphereCollider>().radius;
+        renderer = dragon.GetComponent<Renderer>();
     }
 
     public void Move()
     {
         Vector3 dir = (front.transform.position - dragon.transform.position).normalized;
         float dis = Vector3.Distance(dragon.transform.position, front.transform.position) / radius;
+        
+        Color color = Color.Lerp(renderer.material.GetColor("_Color"), new Color(0.5f, 0.5f, 0.5f, 1), Time.deltaTime);
+        renderer.material.SetColor("_Color", color);
 
         dragon.transform.Translate(dir * dis * 4f * Time.deltaTime);
     }
