@@ -87,7 +87,7 @@ Material:
     - _OutlineBold: 0.7
     - _Outline_Bold: 0.06
     - _Parallax: 0.02
-    - _RedColor: 1
+    - _RedColor: 0
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
     - _Specular: 1
