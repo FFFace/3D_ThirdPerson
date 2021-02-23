@@ -19,8 +19,15 @@ public class Dragon : Monster
     public Dragon back;
 
     [SerializeField]
+    private GameObject model;
+
+    [SerializeField]
+    private GameObject warning;
+    private GameObject _warning;
+
+    [SerializeField]
     private float maxHeight;
-        [SerializeField]
+    [SerializeField]
     private float minHeight;
 
     private static DragonHeadMove headMove;
@@ -35,28 +42,29 @@ public class Dragon : Monster
 
     protected override void Start()
     {
-        if (headMove == null)
-        {
-            headMove = new DragonHeadMove(this, maxHeight, minHeight, 5f);
-            headMoveStay = new DragonHeadMoveStay();
-        }
-
-        else
-            bodyMove = new DragonBodyMove(this, front);
-
         if (isHead)
         {
+            _warning = Instantiate(warning);
+            _warning.SetActive(false);
+        }
+
+        if (headMove == null)
+        {
+            headMove = new DragonHeadMove(this, model, _warning, maxHeight, minHeight, 3.5f);
+            headMoveStay = new DragonHeadMoveStay();
             move = headMove;
             bodyNum = 1;
         }
+
         else
         {
+            bodyMove = new DragonBodyMove(this, model, front);
             move = bodyMove;
         }
 
         if (bodyNum < bodyMaxNum)
         {
-            GameObject obj = Instantiate(body);
+            GameObject obj = Instantiate(body,transform.position, Quaternion.identity);
             Dragon dragon = obj.GetComponent<Dragon>();
 
             back = dragon;
@@ -70,11 +78,22 @@ public class Dragon : Monster
             back = null;
     }
 
+    protected override void Update()
+    {
+        base.Update();
+
+        if (isHead)
+        {
+            Vector3 pos = transform.position;
+            pos.y = 0.1f;
+            _warning.transform.position = pos;
+        }
+    }
+
     private IEnumerator State()
     {
         while (true)
         {
-
             yield return new WaitForSeconds(0.3f);
 
             headMove.SetTarget();
@@ -86,7 +105,7 @@ public class Dragon : Monster
         EventManager.instance.AddHitEvent(HitDamage);
         character = Character.instance;
 
-        state.hp = 100;
+        state.hp = 50;
         state.attackDamage = 1;
 
         currentHP = state.hp;
@@ -139,7 +158,7 @@ public class Dragon : Monster
 
     private void HitColor()
     {
-        Renderer renderer = GetComponent<Renderer>();
+        Renderer renderer = model.GetComponent<Renderer>();
         renderer.material.SetColor("_Color", new Color(0.5f, 0, 0, 1));
     }
 
@@ -170,7 +189,7 @@ public class Dragon : Monster
     protected override IEnumerator DeadTime()
     {
         float time = 0;
-        Renderer renderer = GetComponent<Renderer>();
+        Renderer renderer = model.GetComponent<Renderer>();
         GetComponent<Collider>().enabled = false;
 
         move = headMoveStay;
@@ -223,6 +242,8 @@ public class Dragon : Monster
 public class DragonHeadMove : IMove
 {
     private Dragon dragon;
+    private GameObject model;
+    private GameObject warning;
     private Character character;
     private Renderer renderer;
     private float speed;
@@ -231,10 +252,12 @@ public class DragonHeadMove : IMove
     private Vector3 yDir;
     private Vector3 xzDir;
 
-    public DragonHeadMove(Dragon _dragon, float _maxHeight, float _minHeight, float _speed)
+    public DragonHeadMove(Dragon _dragon, GameObject _model, GameObject _warning, float _maxHeight, float _minHeight, float _speed)
     {
         dragon = _dragon;
-        renderer = dragon.GetComponent<Renderer>();
+        model = _model;
+        warning = _warning;
+        renderer = model.GetComponent<Renderer>();
         maxHeight = _maxHeight;
         minHeight = _minHeight;
         speed = _speed;
@@ -249,6 +272,9 @@ public class DragonHeadMove : IMove
 
         Color color = Color.Lerp(renderer.material.GetColor("_Color"), new Color(0.5f, 0.5f, 0.5f, 1), Time.deltaTime);
         renderer.material.SetColor("_Color", color);
+
+        Vector3 rot = (xzDir + yDir).normalized;
+        model.transform.rotation = Quaternion.LookRotation(rot);
 
         dragon.transform.Translate(xzDir.normalized * speed * Time.deltaTime);
         dragon.transform.Translate(yDir * heightRate * speed * 3 * Time.deltaTime);
@@ -273,6 +299,17 @@ public class DragonHeadMove : IMove
 
         xzDir = dir;
 
+        if (yDir == Vector3.up)
+        {
+            Debug.Log("A");
+            if (dragon.transform.position.y > -20 && dragon.transform.position.y < 0)
+            {
+                warning.SetActive(true);
+                Debug.Log("B");
+            }
+            else
+                warning.SetActive(false);
+        }
     }
 }
 
@@ -284,16 +321,18 @@ public class DragonHeadMoveStay : IMove
 public class DragonBodyMove : IMove
 {
     private Dragon dragon;
+    private GameObject model;
     private Dragon front;
     private float radius;
     private Renderer renderer;
 
-    public DragonBodyMove(Dragon _dragon, Dragon _front)
+    public DragonBodyMove(Dragon _dragon, GameObject _model, Dragon _front)
     {
         dragon = _dragon;
+        model = _model;
         front = _front;
         radius = dragon.GetComponent<SphereCollider>().radius;
-        renderer = dragon.GetComponent<Renderer>();
+        renderer = model.GetComponent<Renderer>();
     }
 
     public void Move()
@@ -304,6 +343,9 @@ public class DragonBodyMove : IMove
         Color color = Color.Lerp(renderer.material.GetColor("_Color"), new Color(0.5f, 0.5f, 0.5f, 1), Time.deltaTime);
         renderer.material.SetColor("_Color", color);
 
+        model.transform.rotation = Quaternion.LookRotation(dir);
+
         dragon.transform.Translate(dir * dis * 4f * Time.deltaTime);
+        //dragon.transform.LookAt(front.transform.position);
     }
 }

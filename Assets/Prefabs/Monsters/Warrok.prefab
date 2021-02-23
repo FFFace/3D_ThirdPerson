@@ -2551,6 +2551,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Minimap
       objectReference: {fileID: 0}
+    - target: {fileID: 6695733660273674282, guid: 77991afe15be614479c84d97bef0ec58,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6695733660273674282, guid: 77991afe15be614479c84d97bef0ec58,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6695733660273674282, guid: 77991afe15be614479c84d97bef0ec58,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 77991afe15be614479c84d97bef0ec58, type: 3}
 --- !u!224 &7881630954092559051 stripped
