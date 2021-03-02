@@ -122,9 +122,9 @@ public class Archer : Character
         rightHandTR = GameObject.Find("FollowStringTR").transform;
         originPos = bowStringTR.localPosition;
 
-        UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
-        UIManager.instance.SetSkillCoolTime(mainSkill.GetCoolTime(), subSkill.GetCoolTime(), subAttack.GetCoolTime());
-        UIManager.instance.SetPlayerMaxHPBar(state.hp);
+        //UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
+        //UIManager.instance.SetSkillCoolTime(mainSkill.GetCoolTime(), subSkill.GetCoolTime(), subAttack.GetCoolTime());
+        //UIManager.instance.SetPlayerMaxHPBar(state.hp);
     }
 
     public override void AttackPressDown()
@@ -273,7 +273,7 @@ public class Archer : Character
 
 public class ArcherRangeAttack : IAttackAction
 {
-    private Archer archer;
+    public Archer archer;
 
     public ArcherRangeAttack(Archer _archer) { archer = _archer;}
 
@@ -407,12 +407,22 @@ public class ArcherSpreadArrow : ISkill, IActiveObj
         return character.GetCharacterCurrentDamage() * damageMagnification;
     }
 
+    public float GetDamageMagnification()
+    {
+        return damageMagnification;
+    }
+
     public Sprite GetImage()
     {
         return image;
     }
 
     public float GetCoolTime() { return coolTime; }
+
+    public string GetExplain()
+    {
+        return "적중 시 사방으로 퍼지는 화살을 날립니다. " + (damageMagnification * 100).ToString() + "% 만큼의 데미지를 줍니다.";
+    }
 }
 
 public class ArcherMultiArrow : ISkill, IActiveObj
@@ -486,12 +496,22 @@ public class ArcherMultiArrow : ISkill, IActiveObj
         return character.GetCharacterCurrentDamage() * damageMagnification;
     }
 
+    public float GetDamageMagnification()
+    {
+        return damageMagnification;
+    }
+
     public Sprite GetImage()
     {
         return image;
     }
 
     public float GetCoolTime() { return coolTime; }
+
+    public string GetExplain()
+    {
+        return "한번에 5발의 화살을 날립니다. 각 화살 당 " + (damageMagnification * 100).ToString() + "%만큼의 데미지를 줍니다.";
+    }
 }
 
 //public class ArcherUpdate : ICharacterUpdate
@@ -557,9 +577,19 @@ public class ArcherSubAttack : ISkill
         return 0;
     }
 
+    public float GetDamageMagnification()
+    {
+        return 0;
+    }
+
     public Sprite GetImage() { return image; }
 
     public float GetCoolTime() { return coolTime; }
+
+    public string GetExplain()
+    {
+        return "전방을 발로 차 120% 의 데미지를 줍니다.";
+    }
 }
 
 

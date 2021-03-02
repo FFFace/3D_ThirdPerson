@@ -344,9 +344,19 @@ public class WarrokAttack : ISkill
         return monster.GetMonsterDamage();
     }
 
+    public float GetDamageMagnification()
+    {
+        return 0;
+    }
+
     public Sprite GetImage() { return null; }
 
     public float GetCoolTime() { return 0; }
+
+    public string GetExplain()
+    {
+        return null;
+    }
 }
 
 public class WarrokJumpSKill : ISkill
@@ -383,9 +393,19 @@ public class WarrokJumpSKill : ISkill
         return monster.GetMonsterDamage() * magnification;
     }
 
+    public float GetDamageMagnification()
+    {
+        return magnification;
+    }
+
     public Sprite GetImage() { return null; }
 
     public float GetCoolTime() { return 0; }
+
+    public string GetExplain()
+    {
+        return null;
+    }
 }
 
 public class WarrokBuffSkill : ISkill
@@ -429,9 +449,20 @@ public class WarrokBuffSkill : ISkill
         return 0;
     }
 
+    public float GetDamageMagnification()
+    {
+        return magnification;
+    }
+
+
     public Sprite GetImage() { return null; }
 
     public float GetCoolTime() { return 0; }
+
+    public string GetExplain()
+    {
+        return null;
+    }
 }
 
 public class WarrokSummonSkill : ISkill
@@ -503,7 +534,18 @@ public class WarrokSummonSkill : ISkill
         return 0;
     }
 
+    public float GetDamageMagnification()
+    {
+        return 0;
+    }
+
+
     public Sprite GetImage() { return null; }
 
     public float GetCoolTime() { return 0; }
+
+    public string GetExplain()
+    {
+        return null;
+    }
 }

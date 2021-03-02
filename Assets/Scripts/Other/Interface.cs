@@ -23,6 +23,7 @@ public interface IRecharge
 public interface IAttackAction
 {
     void Attack();
+
 }
 
 public interface IActiveObj
@@ -55,8 +56,12 @@ public interface ISkill
 
     float GetDamage();
 
+    float GetDamageMagnification();
+
     Sprite GetImage();
 
     float GetCoolTime();
+
+    string GetExplain();
 }
 

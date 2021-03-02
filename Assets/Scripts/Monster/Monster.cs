@@ -459,9 +459,20 @@ public class MonsterAttack : ISkill
         return 0;
     }
 
+    public float GetDamageMagnification()
+    {
+        return 0;
+    }
+
+
     public Sprite GetImage() { return null; }
 
     public float GetCoolTime() { return 0; }
+
+    public string GetExplain()
+    {
+        return null;
+    }
 }
 
 public class MonsterAttackStay : ISkill
@@ -482,9 +493,20 @@ public class MonsterAttackStay : ISkill
         return 0;
     }
 
+    public float GetDamageMagnification()
+    {
+        return 0;
+    }
+
+
     public Sprite GetImage() { return null; }
 
     public float GetCoolTime() { return 0; }
+
+    public string GetExplain()
+    {
+        return null;
+    }
 }
 
 public class MonsterMoveStay : IMove

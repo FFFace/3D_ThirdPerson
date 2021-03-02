@@ -45,9 +45,9 @@ public class Paladin : Character
         currentDefense = state.defense;
         currentKnockBackPower = 0;
 
-        attack = new PaladinNormalAttack(this, weapon);
-        slash = new PaladinSlashAttack(this, weapon, 10.0f, 1.5f, SlashImage);
-        chain = new PaladinChainAttack(this, weapon, 3.0f, 1.7f, ChainImage);
+        attack = new PaladinNormalAttack(weapon);
+        slash = new PaladinSlashAttack(weapon, 10.0f, 1.5f, SlashImage);
+        chain = new PaladinChainAttack(weapon, 3.0f, 1.7f, ChainImage);
         block = new PaladinBlock(this, 1.5f, 10.0f, buff, BlockImage);
 
         normalAttack = attack;
@@ -57,9 +57,9 @@ public class Paladin : Character
 
         isChain = false;
 
-        UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
-        UIManager.instance.SetSkillCoolTime(mainSkill.GetCoolTime(), subSkill.GetCoolTime(), subAttack.GetCoolTime());
-        UIManager.instance.SetPlayerMaxHPBar(state.hp);
+        //UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
+        //UIManager.instance.SetSkillCoolTime(mainSkill.GetCoolTime(), subSkill.GetCoolTime(), subAttack.GetCoolTime());
+        //UIManager.instance.SetPlayerMaxHPBar(state.hp);
     }
 
     public override void Hit(float damage, Vector3 direction)
@@ -272,12 +272,12 @@ public class Paladin : Character
 
 public class PaladinNormalAttack : IAttackAction
 {
-    private Paladin character;
-    private PaladinWeapon weapon;
+    private Character character;
+    public PaladinWeapon weapon { get; private set; }
     private IEnumerator enumStay;
 
-    public PaladinNormalAttack(Paladin _character, PaladinWeapon _weapon) { character = _character; weapon = _weapon; }
-
+    public PaladinNormalAttack(PaladinWeapon _weapon) { character = Character.instance; weapon = _weapon; }
+    public PaladinNormalAttack() { }
     public void Attack()
     {
         weapon.SetDamage(character.GetCharacterCurrentDamage());
@@ -299,23 +299,36 @@ public class PaladinNormalAttack : IAttackAction
         yield return new WaitForSeconds(_time);
         _anim.SetLayerWeight(_layerIndex, 0);
     }
+
+    public void SetWeapon(PaladinWeapon _weapon)
+    {
+        weapon = _weapon;
+    }
 }
 
 public class PaladinSlashAttack : ISkill
 {
-    private Paladin character;
+    private Character character;
     private PaladinWeapon weapon;
     private float coolTime;
     private float damageMagnification;
     private Sprite image;
     public bool isActive { get; set; }
 
-    public PaladinSlashAttack(Paladin _character, PaladinWeapon _weapon, float _coolTime, float _damageManification, Sprite _sprite)
+    public PaladinSlashAttack(PaladinWeapon _weapon, float _coolTime, float _damageManification, Sprite _sprite)
     {
-        character = _character;
+        character = Character.instance;
         weapon = _weapon;
         coolTime = _coolTime;
         damageMagnification = _damageManification;
+        image = _sprite;
+    }
+
+    public PaladinSlashAttack(float _coolTime, float _damageMagnification, Sprite _sprite)
+    {
+        character = Character.instance;
+        coolTime = _coolTime;
+        damageMagnification = _damageMagnification;
         image = _sprite;
     }
 
@@ -343,27 +356,50 @@ public class PaladinSlashAttack : ISkill
         return character.GetCharacterCurrentDamage() * damageMagnification;
     }
 
+    public float GetDamageMagnification()
+    {
+        return damageMagnification;
+    }
+
     public Sprite GetImage()
     {
         return image;
     }
 
     public float GetCoolTime() { return coolTime; }
+
+    public string GetExplain()
+    {
+        return "주변에 " + (damageMagnification * 100).ToString() + "% 만큼의 데미지를 주고 넉백 시킵니다.";
+    }
+
+    public void SetWeapon(PaladinWeapon _weapon)
+    {
+        weapon = _weapon;
+    }
 }
 
 public class PaladinChainAttack : ISkill
 {
     private Paladin character;
-    private PaladinWeapon weapon;
+    public PaladinWeapon weapon { get; private set; }
     private float coolTime;
     private float damageMagnification;
     private Sprite image;
     public bool isActive { get; set; }
 
-    public PaladinChainAttack(Paladin _character, PaladinWeapon _weapon, float _coolTime, float _damageManification, Sprite _sprite)
+    public PaladinChainAttack(PaladinWeapon _weapon, float _coolTime, float _damageManification, Sprite _sprite)
     {
-        character = _character;
+        character = Character.instance as Paladin;
         weapon = _weapon;
+        coolTime = _coolTime;
+        damageMagnification = _damageManification;
+        image = _sprite;
+    }
+
+    public PaladinChainAttack(float _coolTime, float _damageManification, Sprite _sprite)
+    {
+        character = Character.instance as Paladin;
         coolTime = _coolTime;
         damageMagnification = _damageManification;
         image = _sprite;
@@ -423,12 +459,27 @@ public class PaladinChainAttack : ISkill
         return character.GetCharacterCurrentDamage() * damageMagnification;
     }
 
+    public float GetDamageMagnification()
+    {
+        return damageMagnification;
+    }
+
     public Sprite GetImage()
     {
         return image;
     }
 
     public float GetCoolTime() { return coolTime; }
+
+    public string GetExplain()
+    {
+        return "주변에 " + (damageMagnification * 100).ToString() + "% 만큼의 데미지를 주고 넉백 시킵니다. 총 3번 사용이 가능합니다.";
+    }
+
+    public void SetWeapon(PaladinWeapon _weapon)
+    {
+        weapon = _weapon;
+    }
 }
 
 public class PaladinBlock : ISkill
@@ -447,6 +498,15 @@ public class PaladinBlock : ISkill
         damageMagnification = _damageMagnification;
         buffTime = _buffTime;
         particle = _particle;
+        image = _sprite;
+        buff = JustBlockBuff();
+    }
+
+    public PaladinBlock(float _damageMagnification, float _buffTime, Sprite _sprite)
+    {
+        character = Character.instance as Paladin;
+        damageMagnification = _damageMagnification;
+        buffTime = _buffTime;
         image = _sprite;
         buff = JustBlockBuff();
     }
@@ -491,10 +551,26 @@ public class PaladinBlock : ISkill
         return 0;
     }
 
+    public float GetDamageMagnification()
+    {
+        return damageMagnification;
+    }
+
     public Sprite GetImage()
     {
         return image;
     }
 
     public float GetCoolTime() { return 0; }
+
+    public void SetParticle(ParticleSystem _particle)
+    {
+        particle = _particle;
+    }
+
+    public string GetExplain()
+    {
+        return "정면에서 들어오는 공격을 방어합니다. 정확한 타이밍에 방어를 성공하면 공격력이 " +
+            (damageMagnification * 100).ToString() + "% 만큼 증가하는 버프가 " + buffTime.ToString() + "초 만큼 지속됩니다.";
+    }
 }
