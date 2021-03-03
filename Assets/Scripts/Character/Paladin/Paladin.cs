@@ -570,7 +570,7 @@ public class PaladinBlock : ISkill
 
     public string GetExplain()
     {
-        return "정면에서 들어오는 공격을 방어합니다. 정확한 타이밍에 방어를 성공하면 공격력이 " +
+        return "[기본 보조스킬]\n\n정면에서 들어오는 공격을 방어합니다. 정확한 타이밍에 방어를 성공하면 공격력이 " +
             (damageMagnification * 100).ToString() + "% 만큼 증가하는 버프가 " + buffTime.ToString() + "초 만큼 지속됩니다.";
     }
 }

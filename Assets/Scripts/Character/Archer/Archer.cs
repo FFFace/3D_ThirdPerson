@@ -588,7 +588,7 @@ public class ArcherSubAttack : ISkill
 
     public string GetExplain()
     {
-        return "전방을 발로 차 120% 의 데미지를 줍니다.";
+        return "[기본 보조스킬]\n\n전방을 발로 차 120% 의 데미지를 줍니다.";
     }
 }
 
