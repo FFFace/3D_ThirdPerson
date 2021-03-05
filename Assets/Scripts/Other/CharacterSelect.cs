@@ -27,6 +27,7 @@ public class CharacterSelect : MonoBehaviour
     private List<ISkill> archerSkillList = new List<ISkill>();
     private List<ISkill> paladinSkillList = new List<ISkill>();
     private ISkill[] useSkillList = new ISkill[4];
+    private int slotNum = 9999;
 
     [Header("AllSkills"), SerializeField]
     private Image[] skillSlots;
@@ -63,6 +64,8 @@ public class CharacterSelect : MonoBehaviour
     [Header("DragImage"), SerializeField]
     private Image dragImage;
 
+    [Header("NoneSelectPanel"), SerializeField]
+    private Image noneSelectPanel;
     private Transform target;
     private void Awake()
     {
@@ -77,6 +80,7 @@ public class CharacterSelect : MonoBehaviour
     private void Update()
     {
         CameraMove();
+        DragImageMove();
     }
 
     private void DefineSkill()
@@ -127,6 +131,11 @@ public class CharacterSelect : MonoBehaviour
         }
     }
 
+    private void DragImageMove()
+    {
+        dragImage.transform.position = Input.mousePosition;
+    }
+
     public void SelectUseSkillSlot(int num)
     {
         if (useSkillList[num] == null) return;
@@ -137,50 +146,121 @@ public class CharacterSelect : MonoBehaviour
     public void SelectSkillSlot(int num)
     {
         if (characterNum >= characterSkillList.Count ||
-            characterSkillList[characterNum][num + 2] == null) return;
+            characterSkillList[characterNum][num + 1] == null) return;
 
-        skillExplain.text = characterSkillList[characterNum][num + 2].GetExplain();
+        skillExplain.text = characterSkillList[characterNum][num + 1].GetExplain();
     }
 
     public void SelectCharacter(int num)
     {
+        if (characterNum == num) return;
+
         characterNum = num;
         target = characterCamPos[num];
         ResetSkillSlots();
 
-        for (int i = 0; i < 2; i++)
-        {
-            useSkillList[i] = characterSkillList[num][i];
+        useSkillList[0] = characterSkillList[num][0];
 
-            useSkillSlots[i].sprite = characterSkillList[num][i].GetImage();
-            useSkillSlots[i].enabled = true;
-        }
+        useSkillSlots[0].sprite = characterSkillList[num][0].GetImage();
+        useSkillSlots[0].enabled = true;
 
         for (int i = 0; i < skillSlots.Length; i++)
         {
-            if (characterSkillList[num].Count < i + 3) break;
+            if (characterSkillList[num].Count < i + 2) break;
 
-            skillSlots[i].sprite = characterSkillList[num][i + 2].GetImage();
+            skillSlots[i].sprite = characterSkillList[num][i + 1].GetImage();
             skillSlots[i].enabled = true;
         }
+
+        noneSelectPanel.gameObject.SetActive(false);
     }
 
-    public void SkillBeginDrag()
+    public void UseSkillSlotMouseEnter(int num)
     {
-
+        slotNum = num;
     }
 
-    public void SKillEndDrag()
+    public void UseSKillSlotMouseExit()
     {
+        slotNum = 9999;
+    }
 
+    public void SkillSlotBeginDrag(int num)
+    {
+        if (characterSkillList[characterNum].Count <= num+1) return;
+        dragImage.sprite = characterSkillList[characterNum][num + 1].GetImage();
+        dragImage.enabled = true;
+    }
+
+    public void SkillSlotEndDrag(int num)
+    {
+        if (slotNum > useSkillList.Length || slotNum == 0 ||
+            characterSkillList[characterNum][num] == null)
+        {
+            dragImage.enabled = false;
+            slotNum = 9999; 
+            return;
+        }
+
+        int useSlotNum = 0;
+        bool isHave = false;
+
+        while (useSlotNum < useSkillList.Length)
+        {
+            if (useSkillList[useSlotNum] == characterSkillList[characterNum][num + 1])
+            {
+                isHave = true;
+                break;
+            }
+
+            ++useSlotNum;
+        }
+
+        if (isHave)
+        {
+            if (slotNum == useSlotNum)
+            {
+                dragImage.enabled = false;
+                slotNum = 9999;
+                return;
+            }
+
+            else if (useSkillList[slotNum] == null)
+            {
+                useSkillList[slotNum] = characterSkillList[characterNum][num + 1];
+                useSkillList[useSlotNum] = null;
+            }
+
+            else
+            {
+                ISkill skill = useSkillList[slotNum];
+                useSkillList[slotNum] = characterSkillList[characterNum][num + 1];
+                useSkillList[useSlotNum] = skill;
+            }
+       
+        }
+
+        else
+            useSkillList[slotNum] = characterSkillList[characterNum][num + 1];
+
+        for (int i = 0; i < useSkillList.Length; i++)
+        {
+            if (useSkillList[i] == null)
+            {
+                useSkillSlots[i].enabled = false;
+            }
+
+            else
+            {
+                useSkillSlots[i].sprite = useSkillList[i].GetImage();
+                useSkillSlots[i].enabled = true;
+            }
+        }
+
+        dragImage.enabled = false;
+        slotNum = 9999;
     }
 }
-
-public class SkillSlot
-{
-    public ISkill skill { get; private set; }
-}
-
 
 namespace DummyClass
 {

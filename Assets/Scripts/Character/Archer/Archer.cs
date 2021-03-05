@@ -9,6 +9,7 @@ public class Archer : Character
 {
     //private ArcherUpdate archerUpdate;
     private ArcherKick archerKick;
+    private ArcherSubAttack archerSubAttack;
     private ArcherArrowActive arrowActive;
     private ArcherRecharge recharge;
     private ArcherRangeAttack attack;
@@ -105,7 +106,8 @@ public class Archer : Character
 
         //archerUpdate = new ArcherUpdate(bowStringTR, rightHandTR, modelArrow);
         normalAttack = recharge;
-        subAttack = new ArcherSubAttack(kickImage);
+        archerSubAttack = new ArcherSubAttack(kickImage);
+        subAttack = archerSubAttack;
         //characterUpdate = archerUpdate;
         recharge = new ArcherRecharge(this, rechargeTime);
 
