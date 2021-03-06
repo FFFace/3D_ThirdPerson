@@ -76,7 +76,7 @@ public class Skeleton : Monster
                         attack = skeletonAttack;
                         move = monsterMoveStay;
 
-                        attack.Skill();
+                        attack.SkillKeyDown();
                         StartCoroutine(attack.SkillCoolTime());
 
                         float time = Random.Range(2.0f, 5.0f);

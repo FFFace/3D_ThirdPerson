@@ -50,7 +50,9 @@ public interface IStand
 public interface ISkill
 { 
     bool isActive { get; set; }
-    void Skill();
+    void SkillKeyDown();
+
+    void SkillKeyUp();
 
     IEnumerator SkillCoolTime();
 
@@ -63,5 +65,7 @@ public interface ISkill
     float GetCoolTime();
 
     string GetExplain();
+
+    bool GetToggleState();
 }
 

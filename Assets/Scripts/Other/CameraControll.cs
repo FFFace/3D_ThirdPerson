@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CameraControll : MonoBehaviour
 {
-    [SerializeField]
     private Transform targetTR;
 
     [SerializeField]
@@ -28,11 +27,26 @@ public class CameraControll : MonoBehaviour
 
     private float mouseY = -20;
 
+    private void Start()
+    {
+        //StartCoroutine(IEnumUpdate());
+    }
+
+    private IEnumerator IEnumUpdate()
+    {
+        yield return new WaitForSeconds(3.0f);
+        while (true)
+        {
+            CameraTargetFollow();
+            CameraAxis();
+            yield return null;
+        }
+    }
+
     private void Update()
     {
         CameraTargetFollow();
         CameraAxis();
-        //CameraZoomInOut();
     }
 
     private void CameraTargetFollow()
@@ -74,5 +88,10 @@ public class CameraControll : MonoBehaviour
         Quaternion angle = Quaternion.Euler(camAngle);
         transform.rotation = angle;
         //transform.rotation = Quaternion.Euler(camAngle);
+    }
+
+    public void SetTarget(GameObject obj)
+    {
+        targetTR = obj.transform;
     }
 }

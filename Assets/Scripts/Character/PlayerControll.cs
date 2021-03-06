@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class PlayerControll : MonoBehaviour
 {
-    [SerializeField]
     private Character character;
 
     private KeyCommand mouseLeftClick;
@@ -34,12 +33,25 @@ public class PlayerControll : MonoBehaviour
     private void Start()
     {
         InitData();
+        StartCoroutine(IEnumUpdate());
     }
 
-    private void Update()
+    private IEnumerator IEnumUpdate()
     {
-        PlayerInput();
-        PlayerAxis();
+        yield return new WaitForSeconds(3.0f);
+
+        while (true)
+        {
+            PlayerInput();
+            PlayerAxis();
+            yield return null;
+        }
+    }
+
+    public void Update()
+    {
+        //PlayerInput();
+        //PlayerAxis();
     }
 
     private void FixedUpdate()
@@ -67,8 +79,7 @@ public class PlayerControll : MonoBehaviour
 
             if (Input.GetMouseButton(0))
                 mouseLeftClick.command();
-
-            if (Input.GetMouseButtonUp(0))
+            else if (Input.GetMouseButtonUp(0))
                 mouseLeftUp.command();
 
             if (Input.GetMouseButton(1))
@@ -123,6 +134,11 @@ public class PlayerControll : MonoBehaviour
     public bool GetDeathState()
     {
         return isDead;
+    }
+
+    public void SetTarget(GameObject obj)
+    {
+        character = obj.GetComponent<Character>();
     }
 }
 

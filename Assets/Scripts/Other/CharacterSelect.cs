@@ -260,6 +260,12 @@ public class CharacterSelect : MonoBehaviour
         dragImage.enabled = false;
         slotNum = 9999;
     }
+
+    public void StartGame()
+    {
+        CharacterInfo.instance.characterNum = characterNum;
+        CharacterInfo.instance.SetSkills(useSkillList);
+    }
 }
 
 namespace DummyClass
@@ -271,7 +277,9 @@ namespace DummyClass
 
         public bool isActive { get; set; }
 
-        public void Skill() { }
+        public void SkillKeyDown() { }
+
+        public void SkillKeyUp() { }
         public IEnumerator SkillCoolTime() { return null; }
         public float GetDamage() { return 0; }
         public float GetDamageMagnification() { return 0; }
@@ -281,6 +289,11 @@ namespace DummyClass
             return "[기본 공격]\n\n조준한 적에게 화살을 발사합니다. 아무도 조준되어있지 않다면 어디로 날라갈지 알 수 없습니다.";
         }
         public Sprite GetImage() { return image; }
+
+        public bool GetToggleState()
+        {
+            return false;
+        }
     }
 
     public class PaladinNormalAttack : ISkill
@@ -291,7 +304,9 @@ namespace DummyClass
 
         public bool isActive { get; set; }
 
-        public void Skill() { }
+        public void SkillKeyDown() { }
+
+        public void SkillKeyUp() { }
         public IEnumerator SkillCoolTime() { return null; }
         public float GetDamage() { return 0; }
         public float GetDamageMagnification() { return 0; }
@@ -301,5 +316,10 @@ namespace DummyClass
             return "[기본 공격]\n\n전방을 향해 무기를 휘두릅니다. 누르고 있으면 계속해서 공격합니다.";
         }
         public Sprite GetImage() { return image; }
+
+        public bool GetToggleState()
+        {
+            return false;
+        }
     }
 }

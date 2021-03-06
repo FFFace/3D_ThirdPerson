@@ -93,7 +93,7 @@ public class Warrok : Monster
                 if (attack.isActive)
                 {
                     nav.isStopped = true;
-                    attack.Skill();
+                    attack.SkillKeyDown();
                     move = monsterMoveStay;
 
                     StartCoroutine(attack.SkillCoolTime());
@@ -325,12 +325,14 @@ public class WarrokAttack : ISkill
         isActive = true;
     }
 
-    public void Skill()
+    public void SkillKeyDown()
     {
         monster.SetAnimationBool("Walk", false);
 
         monster.SetAnimationTrigger("Attack");
     }
+
+    public void SkillKeyUp() { }
 
     public IEnumerator SkillCoolTime()
     {
@@ -357,6 +359,11 @@ public class WarrokAttack : ISkill
     {
         return null;
     }
+
+    public bool GetToggleState()
+    {
+        return false;
+    }
 }
 
 public class WarrokJumpSKill : ISkill
@@ -375,11 +382,13 @@ public class WarrokJumpSKill : ISkill
         isActive = true;
     }
 
-    public void Skill()
+    public void SkillKeyDown()
     {
         monster.SetAnimationBool("Walk", false);
         monster.SetAnimationBool("JumpSkill", true);
     }
+
+    public void SkillKeyUp() { }
 
     public IEnumerator SkillCoolTime()
     {
@@ -406,6 +415,11 @@ public class WarrokJumpSKill : ISkill
     {
         return null;
     }
+
+    public bool GetToggleState()
+    {
+        return false;
+    }
 }
 
 public class WarrokBuffSkill : ISkill
@@ -428,13 +442,15 @@ public class WarrokBuffSkill : ISkill
         isActive = true;
     }
 
-    public void Skill()
+    public void SkillKeyDown()
     {
         monster.SetAnimationBool("Walk", false);
         monster.SetAnimationTrigger("Buff");
 
         EventManager.instance.MonsterBuffDamage(spawn, buffTime, magnification);
     }
+
+    public void SkillKeyUp() { }
 
     public IEnumerator SkillCoolTime()
     {
@@ -462,6 +478,10 @@ public class WarrokBuffSkill : ISkill
     public string GetExplain()
     {
         return null;
+    }
+    public bool GetToggleState()
+    {
+        return false;
     }
 }
 
@@ -497,7 +517,7 @@ public class WarrokSummonSkill : ISkill
         }
     }
 
-    public void Skill()
+    public void SkillKeyDown()
     {
         for (int i = 0; i < num; i++)
         {
@@ -520,6 +540,8 @@ public class WarrokSummonSkill : ISkill
         monster.ResetAnimation();
         monster.SetAnimationBool("Summon", true);
     }
+
+    public void SkillKeyUp() { }
 
     public IEnumerator SkillCoolTime()
     {
@@ -547,5 +569,9 @@ public class WarrokSummonSkill : ISkill
     public string GetExplain()
     {
         return null;
+    }
+    public bool GetToggleState()
+    {
+        return false;
     }
 }

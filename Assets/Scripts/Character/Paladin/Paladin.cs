@@ -6,9 +6,9 @@ using UnityEngine;
 public class Paladin : Character
 {
     private PaladinNormalAttack attack;
-    private PaladinSlashAttack slash;
-    private PaladinChainAttack chain;
-    private PaladinBlock block;
+    //private PaladinSlashAttack slash;
+    //private PaladinChainAttack chain;
+    //private PaladinBlock block;
 
     [SerializeField]
     private ParticleSystem buff;
@@ -26,6 +26,7 @@ public class Paladin : Character
     private bool isChain;
     public bool isBlock;
     private bool isJustBlock;
+    private IEnumerator IEnumbuff;
 
     protected override void InitData()
     {
@@ -46,20 +47,24 @@ public class Paladin : Character
         currentKnockBackPower = 0;
 
         attack = new PaladinNormalAttack(weapon);
-        slash = new PaladinSlashAttack(weapon, 10.0f, 1.5f, SlashImage);
-        chain = new PaladinChainAttack(weapon, 3.0f, 1.7f, ChainImage);
-        block = new PaladinBlock(this, 1.5f, 10.0f, buff, BlockImage);
+        //slash = new PaladinSlashAttack(weapon, 10.0f, 1.5f, SlashImage);
+        //chain = new PaladinChainAttack(weapon, 3.0f, 1.7f, ChainImage);
+        //block = new PaladinBlock(this, 1.5f, 10.0f, buff, BlockImage);
 
         normalAttack = attack;
-        subSkill = slash;
-        mainSkill = chain;
-        subAttack = block;
+        //mainSkill = CharacterInfo.instance.GetSkills(0); //chain;
+        //subSkill = CharacterInfo.instance.GetSkills(1); //slash;
+        //subAttack = CharacterInfo.instance.GetSkills(2);  //block;
 
         isChain = false;
 
-        //UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
-        //UIManager.instance.SetSkillCoolTime(mainSkill.GetCoolTime(), subSkill.GetCoolTime(), subAttack.GetCoolTime());
-        //UIManager.instance.SetPlayerMaxHPBar(state.hp);
+        UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
+        UIManager.instance.SetSkillCoolTime(mainSkill.GetCoolTime(), subSkill.GetCoolTime(), subAttack.GetCoolTime());
+        UIManager.instance.SetPlayerMaxHPBar(state.hp);
+
+        if (mainSkill is PaladinBlock) IEnumbuff = (mainSkill as PaladinBlock).JustBlockBuff();
+        else if (subSkill is PaladinBlock) IEnumbuff = (subSkill as PaladinBlock).JustBlockBuff();
+        else if (subAttack is PaladinBlock) IEnumbuff = (subAttack as PaladinBlock).JustBlockBuff();
     }
 
     public override void Hit(float damage, Vector3 direction)
@@ -70,8 +75,8 @@ public class Paladin : Character
         {
             if (isJustBlock)
             {
-                StopCoroutine(block.buff);
-                StartCoroutine(block.buff);
+                StopCoroutine(IEnumbuff);
+                StartCoroutine(IEnumbuff);
                 damage = 0;
             }
 
@@ -100,105 +105,45 @@ public class Paladin : Character
 
     public override void SubAttackPressDown()
     {
-        bool active;
-
-        if (subAttack == chain)
-            active = (!subAttack.isActive && !isAction) || !isChain;
-
-        else if (subAttack == block)
-            active = (!subAttack.isActive && !isAction) || isBlock;
-
-        else
-            active = !subAttack.isActive && !isAction;
-
-        if (active)
+        if (!isAction)
         {
             isAttack = true;
             isAction = true;
             ResetAnimation();
-            subAttack.Skill();
-
-            if (subAttack != chain)
-                StartCoroutine(subAttack.SkillCoolTime());
+            subAttack.SkillKeyDown();
         }
     }
 
     public override void SubAttackPressUp()
     {
-        bool active;
-
-        if (subAttack == chain)
-            active = (!subAttack.isActive && !isAction) || !isChain;
-
-        else if (subAttack == block)
-            active = (!subAttack.isActive && !isAction) || isBlock;
-
-        else
-            active = !subAttack.isActive && !isAction;
-
-        if (active)
+        if (!isAction)
         {
             isAttack = true;
             isAction = true;
             ResetAnimation();
-            subAttack.Skill();
-
-            if (subAttack != chain)
-                StartCoroutine(subAttack.SkillCoolTime());
+            subAttack.SkillKeyUp();
         }
     }
 
     public override void MainSkill()
     {
-        bool active;
-        if (mainSkill == chain)
-            active = (!mainSkill.isActive && !isAction) || !isChain;
-
-        else if (mainSkill == block)
-            active = (!mainSkill.isActive && !isAction) || isBlock;
-
-        else
-            active = !mainSkill.isActive && !isAction;
-
-        if (active)
+        if (!isAction)
         {
             isAttack = true;
             isAction = true;
             ResetAnimation();
-            mainSkill.Skill();
-
-            if (mainSkill != chain)
-            {
-                StartCoroutine(mainSkill.SkillCoolTime());
-                UIManager.instance.SetMainSkillCoolTime();
-            }
+            mainSkill.SkillKeyDown();
         }   
     }
 
     public override void SubSkill()
     {
-        bool active;
-        if (subSkill == chain)
-            active = (!subSkill.isActive && !isAction) || !isChain;
-
-        else if (subSkill == block)
-            active = (!subSkill.isActive && !isAction) || isBlock;
-
-        else
-            active = !subSkill.isActive && !isAction;
-
-        if (active)
+        if (!isAction)
         {
             isAttack = true;
             isAction = true;
             ResetAnimation();
-            subSkill.Skill();
-
-            if (subSkill != chain)
-            {
-                StartCoroutine(subSkill.SkillCoolTime());
-                UIManager.instance.SetSubSkillCoolTime();
-            }
+            subSkill.SkillKeyDown();
         }
     }
 
@@ -218,35 +163,42 @@ public class Paladin : Character
         SetAnimationBool("Walk", false);
     }
 
-    public void OnChainAttack()
-    {
-        isChain = false;
-    }
+    //public void OnChainAttack()
+    //{
+    //    isChain = false;
+    //}
 
-    public void OffChainAttack()
+    public void OnChainAttack()
     {
         isChain = true;
     }
 
     public void ChainCombo()
     {
-        chain.isActive = false;
+        //chain.isActive = false;
         isChain = false;
     }
 
     public void ChainComboEnd()
     {
-        chain.isActive = true;
-        isChain = true;
+        //chain.isActive = true;
+        //isChain = true;
+    }
+
+    public bool GetChainState()
+    {
+        return isChain;
     }
 
     public void ChainCoolTime()
     {
-        StartCoroutine(chain.SkillCoolTime());
+        if (mainSkill is PaladinChainAttack) StartCoroutine((mainSkill as PaladinChainAttack).SkillCoolTime());
+        else if (subSkill is PaladinChainAttack) StartCoroutine((subSkill as PaladinChainAttack).SkillCoolTime());
+        else if (subAttack is PaladinChainAttack) StartCoroutine((subAttack as PaladinChainAttack).SkillCoolTime());
 
-        if (mainSkill == chain) UIManager.instance.SetMainSkillCoolTime();
-        else if (subSkill == chain) UIManager.instance.SetSubSkillCoolTime();
-        else if (subAttack == chain) UIManager.instance.SetSubAttackCoolTime();
+        UIManager.instance.SetMainSkillCoolTime(mainSkill.isActive);
+        UIManager.instance.SetSubSkillCoolTime(subSkill.isActive);
+        UIManager.instance.SetSubAttackCoolTime(subAttack.isActive);
     }
 
     public void JuskBlock()
@@ -332,17 +284,20 @@ public class PaladinSlashAttack : ISkill
         image = _sprite;
     }
 
-    public void Skill()
+    public void SkillKeyDown()
     {
         if (!isActive)
         {
             character.ResetAnimation();
-            character.SetisAction(true);
+            character.ActionActive();
             weapon.SetDamage(character.GetCharacterCurrentDamage() * damageMagnification);
             weapon.KnockBack(true, 10);
             character.SetAnimationTrigger("Slash");
+            character.StartCoroutine(SkillCoolTime());
         }
     }
+
+    public void SkillKeyUp() { }
 
     public IEnumerator SkillCoolTime()
     {
@@ -377,6 +332,11 @@ public class PaladinSlashAttack : ISkill
     {
         weapon = _weapon;
     }
+
+    public bool GetToggleState()
+    {
+        return false;
+    }
 }
 
 public class PaladinChainAttack : ISkill
@@ -405,23 +365,25 @@ public class PaladinChainAttack : ISkill
         image = _sprite;
     }
 
-    public void Skill()
+    public void SkillKeyDown()
     {
-        if (!isActive)
+        if (!isActive && character.GetChainState())
         {
             character.ResetAnimation();
-            character.SetisAction(true);
+            character.ActionActive();
             weapon.SetDamage(character.GetCharacterCurrentDamage() * damageMagnification);
             weapon.KnockBack(true, 5);
             character.SetAnimationTrigger("Chain");
         }
     }
 
+    public void SkillKeyUp() { }
+
     public IEnumerator SkillCoolTime()
     {
         isActive = true;
-        yield return new WaitForSeconds(coolTime);
         character.ChainCombo();
+        yield return new WaitForSeconds(coolTime);
 
         //character.OffChainAttack();
         //int num = chainNum;
@@ -480,6 +442,11 @@ public class PaladinChainAttack : ISkill
     {
         weapon = _weapon;
     }
+
+    public bool GetToggleState()
+    {
+        return false;
+    }
 }
 
 public class PaladinBlock : ISkill
@@ -489,7 +456,6 @@ public class PaladinBlock : ISkill
     private float buffTime;
     private ParticleSystem particle;
     private Sprite image;
-    public IEnumerator buff { get; }
     public bool isActive { get; set; }
 
     public PaladinBlock(Paladin _character, float _damageMagnification, float _buffTime, ParticleSystem _particle, Sprite _sprite)
@@ -499,7 +465,7 @@ public class PaladinBlock : ISkill
         buffTime = _buffTime;
         particle = _particle;
         image = _sprite;
-        buff = JustBlockBuff();
+        isActive = false;
     }
 
     public PaladinBlock(float _damageMagnification, float _buffTime, Sprite _sprite)
@@ -508,23 +474,21 @@ public class PaladinBlock : ISkill
         damageMagnification = _damageMagnification;
         buffTime = _buffTime;
         image = _sprite;
-        buff = JustBlockBuff();
     }
 
-    public void Skill()
+    public void SkillKeyDown()
     {
         character.ResetAnimation();
-        character.SetisAction(true);
+        character.ActionActive();
         character.SetAnimationBool("Block", true);
         character.BlockActive(true);
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            character.ResetAnimation();
-            character.BlockActive(false);
-        }
     }
 
+    public void SkillKeyUp() 
+    {
+        character.SetAnimationBool("Block", false);
+        character.BlockActive(false);
+    }
     public IEnumerator JustBlockBuff()
     {
         float damage = character.GetCharacterState().attackDamage;
@@ -572,5 +536,10 @@ public class PaladinBlock : ISkill
     {
         return "[기본 보조스킬]\n\n정면에서 들어오는 공격을 방어합니다. 정확한 타이밍에 방어를 성공하면 공격력이 " +
             (damageMagnification * 100).ToString() + "% 만큼 증가하는 버프가 " + buffTime.ToString() + "초 만큼 지속됩니다.";
+    }
+
+    public bool GetToggleState()
+    {
+        return false;
     }
 }

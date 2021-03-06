@@ -41,6 +41,8 @@ public class Character : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("Awake " + anim + name);
+
         if (instance == null) instance = this;
         else Destroy(gameObject);
     }
@@ -60,6 +62,12 @@ public class Character : MonoBehaviour
     {
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
+
+        Debug.Log("Inint " + anim + name);
+
+        mainSkill = CharacterInfo.instance.GetSkills(0);
+        subSkill = CharacterInfo.instance.GetSkills(1);
+        subAttack = CharacterInfo.instance.GetSkills(2);
     }
 
     public void Move()
@@ -116,10 +124,10 @@ public class Character : MonoBehaviour
             isAttack = true;
             isAction = true;
             ResetAnimation();
-            subAttack.Skill();
+            subAttack.SkillKeyDown();
 
             StartCoroutine(subAttack.SkillCoolTime());
-            UIManager.instance.SetSubAttackCoolTime();
+            UIManager.instance.SetSubAttackCoolTime(subAttack.isActive);
         }
     }
 
@@ -130,10 +138,10 @@ public class Character : MonoBehaviour
             isAttack = true;
             isAction = true;
             ResetAnimation();
-            subAttack.Skill();
+            subAttack.SkillKeyUp();
 
             StartCoroutine(subAttack.SkillCoolTime());
-            UIManager.instance.SetSubAttackCoolTime();
+            UIManager.instance.SetSubAttackCoolTime(subAttack.isActive);
         }
     }
 
@@ -144,10 +152,10 @@ public class Character : MonoBehaviour
             isAttack = true;
             isAction = true;
             ResetAnimation();
-            mainSkill.Skill();
+            mainSkill.SkillKeyDown();
 
             StartCoroutine(mainSkill.SkillCoolTime());
-            UIManager.instance.SetMainSkillCoolTime();
+            UIManager.instance.SetMainSkillCoolTime(mainSkill.isActive);
         }
     }
 
@@ -158,10 +166,10 @@ public class Character : MonoBehaviour
             isAttack = true;
             isAction = true;
             ResetAnimation();
-            subSkill.Skill();
+            subSkill.SkillKeyUp();
 
             StartCoroutine(subSkill.SkillCoolTime());
-            UIManager.instance.SetSubSkillCoolTime();
+            UIManager.instance.SetSubSkillCoolTime(subSkill.isActive);
         }
     }
 
@@ -237,9 +245,14 @@ public class Character : MonoBehaviour
         isAction = false;
     }
 
-    public void SetisAction(bool active)
+    public void ActionActive()
     {
-        isAction = active;
+        isAction = true;
+    }
+
+    public void AttackActive()
+    {
+        isAttack = true;
     }
 
     /// <summary>
@@ -277,9 +290,10 @@ public class Character : MonoBehaviour
         anim.SetTrigger(name);
     }
 
-    public void SetAnimationFloat(string name, float num)
+    public void SetAnimationFloat(string name_, float num)
     {
-        anim.SetFloat(name, num);
+        Debug.Log("SetAnimationFloat " + anim + name);
+        anim.SetFloat(name_, num);
     }
 
     public void ResetAnimation()

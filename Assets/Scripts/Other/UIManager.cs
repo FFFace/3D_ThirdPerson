@@ -122,18 +122,21 @@ public class UIManager : MonoBehaviour
         subAttackCoolTime = _subAttack;
     }
 
-    public void SetMainSkillCoolTime()
+    public void SetMainSkillCoolTime(bool active)
     {
+        if (!active && mainSkillCoolTime > 0) return;
         mainSkillCurrentTime = mainSkillCoolTime;
     }
 
-    public void SetSubSkillCoolTime()
+    public void SetSubSkillCoolTime(bool active)
     {
+        if (!active && subSkillCurrentTime > 0) return;
         subSkillCurrentTime = subSkillCoolTime;
     }
 
-    public void SetSubAttackCoolTime( )
+    public void SetSubAttackCoolTime(bool active)
     {
+        if (!active && subAttackCurrentTime > 0) return;
         subAttackCurrentTime = subAttackCoolTime;
     }
 

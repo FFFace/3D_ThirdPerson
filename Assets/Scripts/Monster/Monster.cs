@@ -442,13 +442,15 @@ public class MonsterAttack : ISkill
         monster = _monster;
     }
 
-    public void Skill()
+    public void SkillKeyDown()
     {
         monster.SetAnimationBool("Walk", false);
         monster.SetAnimationBool("Run", false);
 
         monster.SetAnimationTrigger("Attack");
     }
+
+    public void SkillKeyUp() { }
     public IEnumerator SkillCoolTime()
     {
         yield return null;
@@ -472,6 +474,11 @@ public class MonsterAttack : ISkill
     public string GetExplain()
     {
         return null;
+    }
+
+    public bool GetToggleState()
+    {
+        return false;
     }
 }
 
@@ -482,8 +489,9 @@ public class MonsterAttackStay : ISkill
 
     public MonsterAttackStay() { }
 
-    public void Skill() { }
-    public IEnumerator SkillCoolTime()
+    public void SkillKeyDown() { }
+    public void SkillKeyUp() { }
+public IEnumerator SkillCoolTime()
     {
         yield return null;
     }
@@ -506,6 +514,11 @@ public class MonsterAttackStay : ISkill
     public string GetExplain()
     {
         return null;
+    }
+
+    public bool GetToggleState()
+    {
+        return false;
     }
 }
 
