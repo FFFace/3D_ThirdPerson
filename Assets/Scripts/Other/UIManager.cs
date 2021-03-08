@@ -40,20 +40,6 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Image skill3Amount;
 
-    //[Space, Header("-Item-")]
-    //[SerializeField]
-    //private Image itemPanel;
-    //[SerializeField]
-    //private Image itemImageBG;
-    //[SerializeField]
-    //private Image itemImage;
-    //[SerializeField]
-    //private Text itemText;
-
-    //private Queue<Item> items = new Queue<Item>();
-
-    //private bool isGetItem;
-
     public static UIManager instance;
 
 
@@ -108,35 +94,45 @@ public class UIManager : MonoBehaviour
         isHit = false;
     }
 
-    public void SetSkillImage(Sprite _skill1, Sprite _skill2, Sprite _skill3)
+    public void SetMainSkill(ISkill _skill)
     {
-        mainSKill.sprite = _skill1;
-        subSkill.sprite = _skill2;
-        subAttack.sprite = _skill3;
+        mainSKill.sprite = _skill.GetImage();
+        mainSkillCoolTime = _skill.GetCoolTime();
     }
 
-    public void SetSkillCoolTime(float _mainSkill, float _subSkill, float _subAttack)
+    public void SetSubSkill(ISkill _skill)
     {
-        mainSkillCoolTime = _mainSkill;
-        subSkillCoolTime = _subSkill;
-        subAttackCoolTime = _subAttack;
+        subSkill.sprite = _skill.GetImage();
+        subSkillCoolTime = _skill.GetCoolTime();
+    }
+
+    public void SetSubAttack(ISkill _skill)
+    {
+        subAttack.sprite = _skill.GetImage();
+        subSkillCoolTime = _skill.GetCoolTime();
     }
 
     public void SetMainSkillCoolTime(bool active)
     {
-        if (!active && mainSkillCoolTime > 0) return;
+        Debug.Log("UIManager MainSkillCoolTime");
+        if (!active || mainSkillCurrentTime > 0) { Debug.Log("UIManager MainSkillCoolTime Return"); return; }
+
+        Debug.Log("UIManager MainSkillCoolTime Start");
         mainSkillCurrentTime = mainSkillCoolTime;
     }
 
     public void SetSubSkillCoolTime(bool active)
     {
-        if (!active && subSkillCurrentTime > 0) return;
+        if (!active || subSkillCurrentTime > 0) return;
         subSkillCurrentTime = subSkillCoolTime;
     }
 
     public void SetSubAttackCoolTime(bool active)
     {
-        if (!active && subAttackCurrentTime > 0) return;
+        Debug.Log("UIManager SubAttackCoolTime");
+        if (!active || subAttackCurrentTime > 0) { Debug.Log("UIManager SubAttackCoolTime Return"); return; }
+
+        Debug.Log("UIManager SubAttackCoolTime Start");
         subAttackCurrentTime = subAttackCoolTime;
     }
 
@@ -146,50 +142,4 @@ public class UIManager : MonoBehaviour
         playerCurrentHP = _hp;
         playerCurrentHPBG = _hp;
     }
-
-
-    //public void PlayerGetItem(Item _item)
-    //{
-    //    items.Enqueue(_item);
-    //    if (!isGetItem) StartCoroutine(IEnumGetItem());
-    //}
-
-    //private IEnumerator IEnumGetItem()
-    //{
-    //    isGetItem = true;
-
-    //    while (isGetItem)
-    //    {
-    //        if (items.Count > 0)
-    //        {
-    //            Item item = items.Dequeue();
-
-    //            itemImage.sprite = item.GetItemSprite;
-    //            itemText.text = item.GetItemEx;
-
-    //            itemPanel.color = Color.white;
-    //            itemImageBG.color = Color.white;
-    //            itemImage.color = Color.white;
-    //            itemText.color = Color.white;
-
-    //            yield return new WaitForSeconds(3.0f);
-
-    //            float time = 0;
-    //            Color color = new Color(1, 1, 1, 0);
-
-    //            while (time >= 2)
-    //            {
-    //                itemPanel.color = Color.Lerp(itemPanel.color, color, Time.deltaTime);
-    //                itemImageBG.color = Color.Lerp(itemImageBG.color, color, Time.deltaTime);
-    //                itemImage.color = Color.Lerp(itemImage.color, color, Time.deltaTime);
-    //                itemText.color = Color.Lerp(itemText.color, color, Time.deltaTime);
-
-    //                time += Time.deltaTime;
-    //                yield return null;
-    //            }
-    //        }
-    //        else
-    //            isGetItem = false;
-    //    }
-    //}
 }

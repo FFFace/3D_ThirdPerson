@@ -65,7 +65,5 @@ public interface ISkill
     float GetCoolTime();
 
     string GetExplain();
-
-    bool GetToggleState();
 }
 

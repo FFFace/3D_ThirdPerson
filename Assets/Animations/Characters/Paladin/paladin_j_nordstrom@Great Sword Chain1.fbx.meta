@@ -71,7 +71,7 @@ ModelImporter:
         intParameter: 0
         messageOptions: 0
       - time: 0.5140496
-        functionName: ChainCombo
+        functionName: OnChain
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: 501a5b39807ebb04ca558a4df20d8e28,
           type: 3}
@@ -95,7 +95,7 @@ ModelImporter:
         intParameter: 0
         messageOptions: 0
       - time: 0.91051877
-        functionName: ChainComboEnd
+        functionName: OffChain
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: 501a5b39807ebb04ca558a4df20d8e28,
           type: 3}

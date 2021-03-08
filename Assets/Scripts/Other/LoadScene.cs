@@ -33,7 +33,6 @@ public class LoadScene : MonoBehaviour
 
     private void Start()
     {
-        //StartCoroutine(IEnumSceneOpen());
     }
 
     private void SceneOpen(Scene scene, LoadSceneMode mode)
@@ -45,7 +44,7 @@ public class LoadScene : MonoBehaviour
     private IEnumerator IEnumSceneOpen()
     {
         float time = 0;
-
+        yield return new WaitForSeconds(1.0f);
         while (time < 5)
         {
             black.color = Color.Lerp(black.color, Color.clear, 1.5f * Time.deltaTime);
@@ -64,7 +63,6 @@ public class LoadScene : MonoBehaviour
     private IEnumerator IEnumSceneClose()
     {
         float time = 0;
-
         while (time < 5)
         {
             black.color = Color.Lerp(black.color, Color.white, 1.5f * Time.deltaTime);

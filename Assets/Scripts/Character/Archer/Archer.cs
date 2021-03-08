@@ -7,15 +7,10 @@ using UnityEngine.UIElements;
 
 public class Archer : Character
 {
-    //private ArcherUpdate archerUpdate;
     private ArcherArrowActive arrowActive;
     private ArcherRangeAttack attack;
     private ArcherRecharge recharge;
     private ArcherKick archerKick;
-
-    //private ArcherMultiArrow multiArrow;
-    //private ArcherSpreadArrow spreadArrow;
-    //private ArcherSubAttack archerSubAttack;
 
     [SerializeField]
     protected GameObject modelArrow;
@@ -46,9 +41,6 @@ public class Archer : Character
     private Transform rightHandTR;
     private Vector3 originPos;
 
-    private delegate void SkillOnOff();
-    private event SkillOnOff onoff;
-
     protected override void Start()
     {
         base.Start();
@@ -63,6 +55,7 @@ public class Archer : Character
 
     private IEnumerator IEnumUpdate()
     {
+        yield return new WaitForSeconds(1.0f);
         while (true)
         {
             if (isStringPull)
@@ -83,8 +76,6 @@ public class Archer : Character
 
     protected override void InitData()
     {
-        base.InitData();
-
         state.hp = 30;
         state.attackDamage = 1;
         state.attackSpeed = 1;
@@ -104,21 +95,8 @@ public class Archer : Character
         attack = new ArcherRangeAttack(this);
         archerKick = transform.Find("KickDistance").GetComponent<ArcherKick>();
 
-        //Transform bowStringTR = GameObject.Find("WB.string").transform;
-        //Transform rightHandTR = GameObject.Find("FollowStringTR").transform;
-
-        //archerUpdate = new ArcherUpdate(bowStringTR, rightHandTR, modelArrow);
         normalAttack = recharge;
-        //archerSubAttack = new ArcherSubAttack(kickImage);
-        //subAttack = CharacterInfo.instance.GetSkills(0); //archerSubAttack;
-        //characterUpdate = archerUpdate;
         recharge = new ArcherRecharge(this, rechargeTime);
-
-        //multiArrow = new ArcherMultiArrow(10.0f, 1.5f, multiArrowImage);
-        //spreadArrow = new ArcherSpreadArrow(15.0f, 1.25f, spreadArrowImage);
-
-        //mainSkill = CharacterInfo.instance.GetSkills(1); //multiArrow;
-        //subSkill = CharacterInfo.instance.GetSkills(2); //spreadArrow;
 
         arrowActive = new ArcherArrowActive(this);
         activeArrow = arrowActive;
@@ -127,19 +105,13 @@ public class Archer : Character
         rightHandTR = GameObject.Find("FollowStringTR").transform;
         originPos = bowStringTR.localPosition;
 
-        Debug.Log(UIManager.instance);
-        Debug.Log(mainSkill);
-
-        UIManager.instance.SetSkillImage(mainSkill.GetImage(), subSkill.GetImage(), subAttack.GetImage());
-        UIManager.instance.SetSkillCoolTime(mainSkill.GetCoolTime(), subSkill.GetCoolTime(), subAttack.GetCoolTime());
-        UIManager.instance.SetPlayerMaxHPBar(state.hp);
+        base.InitData();
     }
 
     public override void AttackPressDown()
     {
         normalAttack = recharge;
         base.AttackPressDown();
-        isAttack = true;
     }
 
     public override void AttackPressUp()
@@ -151,46 +123,46 @@ public class Archer : Character
         }
     }
 
-    public override void MainSkill()
+    public override void MainSkillPressDown()
     {
-        if (!isAction)
+        if (mainSkill != null)
         {
-            isAttack = true;
-            mainSkill.SkillKeyDown();
+            if (!isAction)
+            {
+                Debug.Log("MainSkill");
+                mainSkill.SkillKeyDown();
+                UIManager.instance.SetMainSkillCoolTime(mainSkill.isActive);
+            }
         }
-
-        //if (mainSkill == multiArrow as ISkill || mainSkill == spreadArrow as ISkill)
-        //    subSkill.isActive = mainSkill.isActive ? false : subSkill.isActive;
-
-        //if (mainSkill.isActive) activeArrow = mainSkill as IActiveObj;
-        //else activeArrow = arrowActive;
-        //else if (!mainSkill.isActive && !subSkill.isActive) activeArrow = arrowActive;
-
     }
 
-    public override void SubSkill()
+    public override void SubSkillPressDown()
     {
-        if (!isAction)
+        if (subSkill != null)
         {
-            isAttack = true;
-            subSkill.SkillKeyDown();
+            if (!isAction)
+            {
+                subSkill.SkillKeyDown();
+                UIManager.instance.SetSubSkillCoolTime(subSkill.isActive);
+            }
         }
-
-        //if (subSkill == multiArrow as ISkill || subSkill == spreadArrow as ISkill)
-        //    mainSkill.isActive = subSkill.isActive ? false : subSkill.isActive;
-
-        //if (subSkill.isActive) activeArrow = subSkill as IActiveObj;
-        //else activeArrow = arrowActive;
-        //else if (!mainSkill.isActive && !subSkill.isActive) activeArrow = arrowActive;
     }
 
     public override void SubAttackPressDown()
     {
-        if (!isAction)
+        if (subSkill != null)
         {
-            isAttack = true;
-            subAttack.SkillKeyDown();
+            if (!isAction)
+            {
+                subAttack.SkillKeyDown();
+                UIManager.instance.SetSubAttackCoolTime(subAttack.isActive);
+            }
         }
+    }
+
+    public override void SubAttackPressUp()
+    {
+        
     }
 
 
@@ -222,10 +194,6 @@ public class Archer : Character
     public void ArrowDrawOut()
     {
         activeArrow.Active();
-
-        //if (activeArrow == mainSkill as IActiveObj) UIManager.instance.SetMainSkillCoolTime();
-        //else if (activeArrow == subSkill as IActiveObj) UIManager.instance.SetSubSkillCoolTime();
-        //else if (activeArrow == subAttack as IActiveObj) UIManager.instance.SetSubAttackCoolTime();
 
         UIManager.instance.SetMainSkillCoolTime(mainSkill.isActive);
         UIManager.instance.SetSubSkillCoolTime(subSkill.isActive);
@@ -289,14 +257,6 @@ public class Archer : Character
 
     public Transform MonsterInCrossHair()
     {
-        //Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 5));
-        //Ray ray = new Ray(pos, Camera.main.transform.forward);
-        //RaycastHit hit;
-        //LayerMask layer = 1 << LayerMask.NameToLayer("Monster");
-
-        //return Physics.BoxCast(pos, new Vector3(0.25f, 0.25f, 0.25f), transform.forward, out hit, transform.rotation, 20, layer) ? hit.transform : null;
-        //return Physics.Raycast(ray, out hit, 20, layer) ? hit.transform : null;
-
         return targetMonster;
     }
 
@@ -312,21 +272,21 @@ public class Archer : Character
 
     public void ToggleOff()
     {
-        if (mainSkill is ToggleSkill) mainSkill.isActive = false;
-        if (subSkill is ToggleSkill) subSkill.isActive = false;
-        if (subAttack is ToggleSkill) subAttack.isActive = false;
+        if (mainSkill is ToggleSkill) (mainSkill as ToggleSkill).SetToggele(false);
+        if (subSkill is ToggleSkill) (subSkill as ToggleSkill).SetToggele(false);
+        if (subAttack is ToggleSkill) (subAttack as ToggleSkill).SetToggele(false);
     }
 }
 
 public class ArcherRangeAttack : IAttackAction
 {
-    public Archer archer;
+    public Archer character;
 
-    public ArcherRangeAttack(Archer _archer) { archer = _archer;}
+    public ArcherRangeAttack(Archer _archer) { character = _archer;}
 
     public virtual void Attack()
     {
-        archer.SetAnimationBool("Recharge", false);
+        character.SetAnimationBool("Recharge", false);
     }
 }
 
@@ -360,6 +320,8 @@ public class ArcherArrowActive : IActiveObj
 
     public void Active()
     {
+        if (!character) character = Character.instance as Archer;
+
         Transform MonsterTR = character.MonsterInCrossHair();
 
         arrow = character.ArrowDequeue();
@@ -376,19 +338,22 @@ public class ArcherArrowActive : IActiveObj
         arrow.gameObject.SetActive(true);
 
         arrow = null;
-
-        //obj = archer.ArrowDequeue();
-        //obj.SetTarget(MonsterTR);
-
-        //obj.transform.position = fireTR.position;
-        //obj.transform.rotation = fireTR.rotation;
-        //obj.gameObject.SetActive(true);
     }
 }
 
 public abstract class ToggleSkill
 {
+    protected bool isAttack = false;
 
+    public void SetToggele(bool _active)
+    {
+        isAttack = _active;
+    }
+
+    public bool GetToggle()
+    {
+        return isAttack;
+    }
 }
 
 public class ArcherSpreadArrow : ToggleSkill, ISkill, IActiveObj
@@ -397,7 +362,6 @@ public class ArcherSpreadArrow : ToggleSkill, ISkill, IActiveObj
     private Arrow arrow;
     private float coolTime;
     private float damageMagnification;
-    private bool isAttack = false;
     private Sprite image;
     public bool isActive { get; set; }
 
@@ -416,6 +380,8 @@ public class ArcherSpreadArrow : ToggleSkill, ISkill, IActiveObj
 
     public void SkillKeyDown()
     {
+        if (!character) character = Character.instance as Archer;
+
         if (!isActive)
         {
             character.ToggleOff();
@@ -432,25 +398,24 @@ public class ArcherSpreadArrow : ToggleSkill, ISkill, IActiveObj
 
     public void Active()
     {
-        if (isActive)
-        {
-            Transform MonsterTR = character.MonsterInCrossHair();
+        Transform MonsterTR = character.MonsterInCrossHair();
 
-            arrow = character.ArrowDequeue();
-            arrow.SetSpread(true);
-            float damage = GetDamage();
-            arrow.SetArrowDamage(damage);
-            arrow.SetItemEffect(character.GetItemEffectList());
+        arrow = character.ArrowDequeue();
+        arrow.SetSpread(true);
+        float damage = GetDamage();
+        arrow.SetArrowDamage(damage);
+        arrow.SetItemEffect(character.GetItemEffectList());
 
-            Transform fireTR = character.GetArrowFireTR();
-            arrow.SetTarget(MonsterTR);
+        Transform fireTR = character.GetArrowFireTR();
+        arrow.SetTarget(MonsterTR);
 
-            arrow.transform.position = fireTR.position;
-            arrow.transform.rotation = fireTR.rotation;
+        arrow.transform.position = fireTR.position;
+        arrow.transform.rotation = fireTR.rotation;
 
-            arrow.gameObject.SetActive(true);
-            character.StartCoroutine(SkillCoolTime());
-        }
+        arrow.gameObject.SetActive(true);
+        character.StartCoroutine(SkillCoolTime());
+
+        isActive = true;
     }
 
     public IEnumerator SkillCoolTime()
@@ -458,9 +423,9 @@ public class ArcherSpreadArrow : ToggleSkill, ISkill, IActiveObj
         if (!isActive) yield return null;
         else
         {
-            isActive = true;
             isAttack = false;
             yield return new WaitForSeconds(coolTime);
+            isActive = false;
         }
     }
 
@@ -485,11 +450,6 @@ public class ArcherSpreadArrow : ToggleSkill, ISkill, IActiveObj
     {
         return "적중 시 사방으로 퍼지는 화살을 날립니다. " + (damageMagnification * 100).ToString() + "% 만큼의 데미지를 줍니다.";
     }
-
-    public bool GetToggleState()
-    {
-        return isAttack;
-    }
 }
 
 public class ArcherMultiArrow : ToggleSkill, ISkill, IActiveObj
@@ -498,7 +458,6 @@ public class ArcherMultiArrow : ToggleSkill, ISkill, IActiveObj
     private Arrow[] arrows;
     private float coolTime;
     private float damageMagnification;
-    private bool isAttack = false;
     private Sprite image;
     public bool isActive { get; set; }
 
@@ -518,6 +477,8 @@ public class ArcherMultiArrow : ToggleSkill, ISkill, IActiveObj
 
     public void SkillKeyDown()
     {
+        if (!character) character = Character.instance as Archer;
+
         if (!isActive)
         {
             character.ToggleOff();
@@ -534,28 +495,26 @@ public class ArcherMultiArrow : ToggleSkill, ISkill, IActiveObj
 
     public void Active()
     {
-        if (isActive)
+        Transform MonsterTR = character.MonsterInCrossHair();
+
+        for (int i = 0; i < 5; i++)
         {
-            Transform MonsterTR = character.MonsterInCrossHair();
+            arrows[i] = character.ArrowDequeue();
+            float damage = GetDamage();
+            arrows[i].SetArrowDamage(damage);
+            arrows[i].SetItemEffect(character.GetItemEffectList());
 
-            for (int i = 0; i < 5; i++)
-            {
-                arrows[i] = character.ArrowDequeue();
-                float damage = GetDamage();
-                arrows[i].SetArrowDamage(damage);
-                arrows[i].SetItemEffect(character.GetItemEffectList());
+            Transform fireTR = character.GetArrowFireTR();
+            arrows[i].SetTarget(MonsterTR);
 
-                Transform fireTR = character.GetArrowFireTR();
-                arrows[i].SetTarget(MonsterTR);
+            arrows[i].transform.position = fireTR.position;
+            arrows[i].transform.rotation = fireTR.rotation;
 
-                arrows[i].transform.position = fireTR.position;
-                arrows[i].transform.rotation = fireTR.rotation;
-
-                arrows[i].gameObject.SetActive(true);
-            }
-
-            character.StartCoroutine(SkillCoolTime());
+            arrows[i].gameObject.SetActive(true);
         }
+
+        isActive = true;
+        character.StartCoroutine(SkillCoolTime());
     }
 
     public IEnumerator SkillCoolTime()
@@ -563,9 +522,9 @@ public class ArcherMultiArrow : ToggleSkill, ISkill, IActiveObj
         if (!isActive) yield return null;
         else
         {
-            isActive = true;
             isAttack = false;
             yield return new WaitForSeconds(coolTime);
+            isActive = true;
         }
     }
 
@@ -590,45 +549,7 @@ public class ArcherMultiArrow : ToggleSkill, ISkill, IActiveObj
     {
         return "한번에 5발의 화살을 날립니다. 각 화살 당 " + (damageMagnification * 100).ToString() + "%만큼의 데미지를 줍니다.";
     }
-
-    public bool GetToggleState()
-    {
-        return isAttack;
-    }
 }
-
-//public class ArcherUpdate : ICharacterUpdate
-//{
-//    public bool isStringPull { get; set; }
-//    private Transform bowStringTR;
-//    private Transform rightHandTR;
-//    private GameObject modelArrow;
-
-//    private Vector3 originPos;
-
-//    public ArcherUpdate(Transform bow, Transform rightHand, GameObject _modelArrow)
-//    {
-//        bowStringTR = bow;
-//        rightHandTR = rightHand;
-//        originPos = bowStringTR.localPosition;
-//        modelArrow = _modelArrow;
-//    }
-
-//    public void CharacterUpdate()
-//    {
-//        if (isStringPull)
-//            bowStringTR.position = rightHandTR.position;
-//        else
-//            bowStringTR.localPosition = originPos;
-//    }
-
-//    public void BowStringReSet()
-//    {
-//        isStringPull = false;
-//        bowStringTR.localPosition = originPos;
-//        modelArrow.SetActive(false);
-//    }
-//}
 
 public class ArcherSubAttack : ISkill
 {
@@ -643,19 +564,28 @@ public class ArcherSubAttack : ISkill
 
     public void SkillKeyDown()
     {
-        character.ResetAnimation();
-        character.SetAnimationTrigger("SubAttack");
-        character.BowStringReSet();
-        character.StartCoroutine(SkillCoolTime());
+        if (!isActive)
+        {
+            Debug.Log("Archer Kick");
+            if (!character) character = Character.instance as Archer;
+
+            character.ResetAnimation();
+            character.SetAnimationTrigger("SubAttack");
+            character.BowStringReSet();
+            character.ActionActive();
+            character.StartCoroutine(SkillCoolTime());
+            isActive = true;
+        }
     }
 
     public void SkillKeyUp() { }
 
     public IEnumerator SkillCoolTime()
     {
-        isActive = true;
+        Debug.Log("Archer Kick SKillCoolTime Start");
         yield return new WaitForSeconds(coolTime);
         isActive = false;
+        Debug.Log("Archer Kick SKillCoolTime End");
     }
 
     public float GetDamage()
@@ -674,7 +604,7 @@ public class ArcherSubAttack : ISkill
 
     public string GetExplain()
     {
-        return "[기본 보조스킬]\n\n전방을 발로 차 120% 의 데미지를 줍니다.";
+        return "전방을 발로 차 120% 의 데미지를 줍니다.";
     }
 
     public bool GetToggleState()
@@ -682,55 +612,3 @@ public class ArcherSubAttack : ISkill
         return false;
     }
 }
-
-
-//public class ArcherSkillArrow : ISkill
-//{
-//    private Character character;
-//    private float coolTime;
-//    private float damageMagnification;
-//    private bool isAttack = false;
-//    private Sprite image;
-//    public bool isActive { get; set; }
-
-//    /// <summary>
-//    /// 
-//    /// </summary>
-//    /// <param name="_coolTime">스킬 쿨타임</param>
-//    /// <param name="_damageMagnification">스킬 데미지 배율</param>
-//    public ArcherSkillArrow(float _coolTime, float _damageMagnification, Sprite _image) 
-//    {
-//        character = Character.instance;
-//        coolTime = _coolTime;
-//        damageMagnification = _damageMagnification;
-//        image = _image;
-//    }
-
-//    public void Skill()
-//    {
-//        if (isAttack == false)
-//            isActive = !isActive;
-//    }
-
-//    public IEnumerator SkillCoolTime()
-//    {
-//        if (!isActive) yield return null;
-//        else
-//        {
-//            isAttack = true;
-//            isActive = false;
-//            yield return new WaitForSeconds(coolTime);
-//            isAttack = false;
-//        }
-//    }
-
-//    public float GetDamage()
-//    {
-//        return character.GetCharacterCurrentDamage() * damageMagnification;
-//    }
-
-//    public Sprite GetImage()
-//    {
-//        return image;
-//    }
-//}

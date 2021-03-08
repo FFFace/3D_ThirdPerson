@@ -12,8 +12,10 @@ public class PlayerControll : MonoBehaviour
     private KeyCommand mouseRightUp;
     private KeyCommand mouseLeftUp;
     private KeyCommand leftShift;
-    private KeyCommand alpha1;
-    private KeyCommand alpha2;
+    private KeyCommand alpha1Down;
+    private KeyCommand alpha1Up;
+    private KeyCommand alpha2Down;
+    private KeyCommand alpha2Up;
 
     private bool isDead;
 
@@ -32,13 +34,13 @@ public class PlayerControll : MonoBehaviour
 
     private void Start()
     {
-        InitData();
         StartCoroutine(IEnumUpdate());
     }
 
     private IEnumerator IEnumUpdate()
     {
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(1.0f);
+        InitData();
 
         while (true)
         {
@@ -50,8 +52,6 @@ public class PlayerControll : MonoBehaviour
 
     public void Update()
     {
-        //PlayerInput();
-        //PlayerAxis();
     }
 
     private void FixedUpdate()
@@ -67,8 +67,10 @@ public class PlayerControll : MonoBehaviour
         mouseRightUp = new SubAttackPressUp(character);
         leftShift = new Dodge(character);
 
-        alpha1 = new MainSkill(character);
-        alpha2 = new SubSkill(character);
+        alpha1Down = new MainSkillPressDown(character);
+        alpha1Up = new MainSkillPressUp(character);
+        alpha2Down = new SubSkillPressDown(character);
+        alpha2Up = new SubSKillPressUp(character);
     }
 
     private void PlayerInput()
@@ -88,10 +90,14 @@ public class PlayerControll : MonoBehaviour
                 mouseRightUp.command();
 
             if (Input.GetKeyDown(KeyCode.Alpha1))
-                alpha1.command();
+                alpha1Down.command();
+            else if (Input.GetKeyUp(KeyCode.Alpha1))
+                alpha1Up.command();
 
             if (Input.GetKeyDown(KeyCode.Alpha2))
-                alpha2.command();
+                alpha2Down.command();
+            else if (Input.GetKeyUp(KeyCode.Alpha2))
+                alpha2Up.command();
 
             if (Input.GetKey(KeyCode.LeftShift))
                 leftShift.command();
@@ -139,6 +145,11 @@ public class PlayerControll : MonoBehaviour
     public void SetTarget(GameObject obj)
     {
         character = obj.GetComponent<Character>();
+    }
+
+    public void SetPlayerCharacter(Character _character)
+    {
+        character = _character;
     }
 }
 
@@ -193,22 +204,45 @@ public class Dodge : KeyCommand
     }
 }
 
-public class MainSkill : KeyCommand
+public class MainSkillPressDown : KeyCommand
 {
     private Character character;
-    public MainSkill(Character _character) { character = _character; }
+    public MainSkillPressDown(Character _character) { character = _character; }
     public void command()
     {
-        character.MainSkill();
+        character.MainSkillPressDown();
     }
 }
 
-public class SubSkill : KeyCommand
+public class MainSkillPressUp : KeyCommand
 {
     private Character character;
-    public SubSkill(Character _character) { character = _character; }
+
+    public MainSkillPressUp(Character _character) { character = _character; }
+
     public void command()
     {
-        character.SubSkill();
+        character.MainSkillPressUp();
+    }
+}
+
+public class SubSkillPressDown : KeyCommand
+{
+    private Character character;
+    public SubSkillPressDown(Character _character) { character = _character; }
+    public void command()
+    {
+        character.SubSkillPressDown();
+    }
+}
+
+public class SubSKillPressUp : KeyCommand
+{
+    private Character character;
+    public SubSKillPressUp(Character _character) { character = _character; }
+
+    public void command()
+    {
+        character.SubSkillPressUp();
     }
 }

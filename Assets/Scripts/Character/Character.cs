@@ -11,8 +11,6 @@ public class Character : MonoBehaviour
     protected ISkill subAttack;
     protected ISkill mainSkill;
     protected ISkill subSkill;
-    //protected IRecharge recharge;
-    //protected ICharacterUpdate characterUpdate;
     protected IActiveObj activeArrow;
     protected IItemEffect effect;
 
@@ -45,12 +43,14 @@ public class Character : MonoBehaviour
 
         if (instance == null) instance = this;
         else Destroy(gameObject);
+
+        rigid = GetComponent<Rigidbody>();
+        anim = GetComponent<Animator>();
     }
 
     protected virtual void Start()
     {
         InitData();
-        //StartCoroutine(CharacterUpdate());
     }
 
     protected virtual void Update()
@@ -60,14 +60,25 @@ public class Character : MonoBehaviour
 
     protected virtual void InitData()
     {
-        rigid = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
-
         Debug.Log("Inint " + anim + name);
 
-        mainSkill = CharacterInfo.instance.GetSkills(0);
-        subSkill = CharacterInfo.instance.GetSkills(1);
-        subAttack = CharacterInfo.instance.GetSkills(2);
+        if (CharacterInfo.instance.GetSkills(0) != null)
+        {
+            mainSkill = CharacterInfo.instance.GetSkills(0);
+            UIManager.instance.SetMainSkill(mainSkill);
+        }
+        if (CharacterInfo.instance.GetSkills(1) != null)
+        {
+            subSkill = CharacterInfo.instance.GetSkills(1);
+            UIManager.instance.SetSubSkill(subSkill);
+        }
+        if (CharacterInfo.instance.GetSkills(2) != null)
+        {
+            subAttack = CharacterInfo.instance.GetSkills(2);
+            UIManager.instance.SetSubAttack(subAttack);
+        }
+
+        UIManager.instance.SetPlayerMaxHPBar(state.hp);
     }
 
     public void Move()
@@ -110,15 +121,6 @@ public class Character : MonoBehaviour
 
     public virtual void SubAttackPressDown()
     {
-        //if (!isSubAttack)
-        //{
-        //    isSubAttack = true;
-        //    isAttack = true;
-        //    ResetAnimation();
-        //    subAttack.Attack();
-        //    StartCoroutine(SubAttackCoolTime(subAttackCoolTime));
-        //}
-
         if (!subAttack.isActive && !isAction)
         {
             isAttack = true;
@@ -145,7 +147,7 @@ public class Character : MonoBehaviour
         }
     }
 
-    public virtual void MainSkill()
+    public virtual void MainSkillPressDown()
     {
         if (!mainSkill.isActive && !isAction)
         {
@@ -159,7 +161,12 @@ public class Character : MonoBehaviour
         }
     }
 
-    public virtual void SubSkill()
+    public virtual void MainSkillPressUp()
+    {
+
+    }
+
+    public virtual void SubSkillPressDown()
     {
         if (!subSkill.isActive && !isAction)
         {
@@ -173,13 +180,13 @@ public class Character : MonoBehaviour
         }
     }
 
+    public virtual void SubSkillPressUp()
+    {
+
+    }
+
     public virtual void Dodge()
     {
-        if (!isAction)
-        {
-            isAction = true;
-            SetAnimationBool("Dodge", true);
-        }
     }
 
     public virtual void Hit(float damage, Vector3 direction)
@@ -202,11 +209,6 @@ public class Character : MonoBehaviour
 
     public virtual void Jump()
     {
-        if (!isJump)
-        {
-            rigid.AddForce(Vector3.up * currentJumpPower, ForceMode.Impulse);
-            isJump = true;
-        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -219,15 +221,6 @@ public class Character : MonoBehaviour
         }
     }
 
-    //private IEnumerator CharacterUpdate()
-    //{
-    //    while (true)
-    //    {
-    //        characterUpdate.CharacterUpdate();
-    //        yield return new WaitForSeconds(0.1f);
-    //    }
-    //}
-
     public virtual void AttackEnd()
     {
         isAttack = false;
@@ -235,7 +228,6 @@ public class Character : MonoBehaviour
 
     public virtual void EndAction(float _time)
     {
-        //isAction = false;
         StartCoroutine(IEnumEndAction(_time));
     }
 
@@ -385,6 +377,11 @@ public class Character : MonoBehaviour
     public List<IItemEffect> GetItemEffectList()
     {
         return itemEffects;
+    }
+
+    public bool GetActionState()
+    {
+        return isAction;
     }
 }
 

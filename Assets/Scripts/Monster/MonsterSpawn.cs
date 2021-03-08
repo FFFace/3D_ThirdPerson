@@ -20,54 +20,11 @@ public class MonsterSpawn : MonoBehaviour
     private bool isWarrok;
     private bool isBoss;
 
-    //private List<Monster> monsters = new List<Monster>();
-    //private bool isActive = true;
-
     private void Start()
     {
         MapSetting();
         isBoss = true;
-        //StartCoroutine(UpdateMonsterState());
     }
-
-    //private IEnumerator UpdateMonsterState()
-    //{
-    //    while (true)
-    //    {
-    //        float distance = Vector3.Distance(transform.position, Character.instance.transform.position);
-    //        bool isOn = distance < 50.0f ? true : false;
-
-    //        //Debug.Log(distance.ToString() + ", " + transform.name);
-
-    //        if (isActive != isOn)
-    //        {
-    //            //Debug.Log(isOn);
-    //            if (isOn)
-    //            {
-    //                foreach (var monster in monsters)
-    //                {
-    //                    Monster.MonsterAction state = monster.GetMonsterState();
-    //                    if(state == Monster.MonsterAction.NULL)
-    //                        monster.SetMonsterState(Monster.MonsterAction.STAY);
-    //                    isActive = isOn;
-    //                }
-    //            }
-
-    //            else
-    //            {
-    //                foreach (var monster in monsters)
-    //                {
-    //                    Monster.MonsterAction state = monster.GetMonsterState();
-    //                    if(state == Monster.MonsterAction.STAY)
-    //                        monster.SetMonsterState(Monster.MonsterAction.NULL);
-    //                    isActive = isOn;
-    //                }
-    //            }
-    //        }
-
-    //        yield return new WaitForSeconds(1.0f);
-    //    }
-    //}
 
     /// <summary>
     /// 가상의 타일을 만들어 해당 타일위치에 소환이 가능한 상태인지 판별
@@ -90,14 +47,6 @@ public class MonsterSpawn : MonoBehaviour
             {
                 Vector3 pos = new Vector3(x + i * tileX, 0.5f, z + j * tileZ);
                 map[i, j] = Physics.OverlapBox(pos, new Vector3(tileX, 0, tileZ), Quaternion.identity, layer).Length > 0 ? false : true;
-
-                //if (map[i, j])
-                //{
-                //    GameObject a = new GameObject();
-                //    a.transform.position = pos;
-                //    a.AddComponent<BoxCollider>();
-                //    a.GetComponent<BoxCollider>().size = new Vector3(tileX, 0, tileZ);
-                //}
             }
         }
     }

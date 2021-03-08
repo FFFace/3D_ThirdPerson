@@ -13,17 +13,9 @@ public class Chest : MonoBehaviour
 
     private bool isOpen;
 
-    //private void Start()
-    //{
-    //    spawn.ChestOpen(MonsterNum);
-    //}
-
     private void AddItem()
     {
         ItemList.instance.RespawnSphere(transform.position, new Color(1, 0.6640f, 0, 1));
-        //if (item == null) return;
-        //Character.instance.AddItem(item);
-        //UIManager.instance.PlayerGetItem(item);
     }
 
     private void OnTriggerStay(Collider other)

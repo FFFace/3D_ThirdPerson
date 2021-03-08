@@ -12,6 +12,7 @@ public class PaladinBehaviour_baseIdle : StateMachineBehaviour
 
         paladin.EndAction(info.duration);
         paladin.AttackEnd();
+        paladin.OnChain();
 
         if (info.IsUserName("EndChain")) paladin.ChainCoolTime();
     }

@@ -35,12 +35,6 @@ public class Warrok : Monster
         jumpSkill = new WarrokJumpSKill(this, 15.0f, 1.5f);
         normalAttack = new WarrokAttack(this);
 
-        //attack = nomalAttack;
-        //chase = new WarrokChase(this, nav, currentSpeed);
-        //stand = new WarrokStand(this, nav, currentSpeed);
-        //hit = new MonsterHit(this);
-        //dead = new MonsterDead(this);
-
         warrokChase = new WarrokChase(this, nav, currentSpeed);
         warrokStand = new WarrokStand(this, nav, currentSpeed);
         warrokHit = new MonsterHit(this, nav);
@@ -155,53 +149,6 @@ public class Warrok : Monster
         }
     }
 
-    //protected override void Attack()
-    //{
-    //    if (!isAttack)
-    //    {
-    //        isAttack = true;
-    //        nav.isStopped = true;
-    //        attack.Skill();
-    //        float time = 2.5f;
-    //        StartCoroutine(AttackCoolTime(time));
-    //        StartCoroutine(attack.SkillCoolTime());
-
-    //        attack = nomalAttack;
-    //    }
-
-    //    else if (isAttackDecision)
-    //    {
-    //        character.Hit(currentDamage);
-    //        isAttackDecision = false;
-    //    }
-    //}
-
-    //protected override void Chase()
-    //{
-    //    nav.isStopped = false;
-    //    nav.destination = character.transform.position;
-    //    chase.Move();
-
-    //    if (summonSkill.isActive)
-    //    {
-    //        attack = summonSkill;
-    //        action = MonsterAction.ATTACK;
-    //        return;
-    //    }
-
-    //    else if (buffSkill.isActive)
-    //    {
-    //        attack = buffSkill;
-    //        action = MonsterAction.ATTACK;
-    //        return;
-    //    }
-
-    //    float dis = Vector3.Distance(transform.position, character.transform.position);
-
-    //    action = !isAttack ? dis < attackDistance ? monsterDirection.GetinDirection(attackDirection) ?
-    //        MonsterAction.ATTACK : MonsterAction.CHASE : MonsterAction.CHASE : MonsterAction.STAND;
-    //}
-
     protected override IEnumerator DeadTime()
     {
         GetComponent<Collider>().enabled = false;
@@ -281,7 +228,7 @@ public class WarrokChase : IMove
     {
         nav.isStopped = false;
         nav.destination = character.transform.position;
-        // NavMeshAgent를 통해 목적지에 도착 시, 이동뿐만 아니라 회전도 멈추기 때문에 직접 회전
+       
         monster.transform.rotation = Quaternion.Lerp(monster.transform.rotation, Quaternion.LookRotation(monster.GetLookCharacterRotation()), 15 * Time.deltaTime);
 
         monster.SetAnimationBool("Walk", true);
@@ -496,13 +443,6 @@ public class WarrokSummonSkill : ISkill
 
     public bool isActive { get; set; }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="_monster"></param>
-    /// <param name="_num"></param>
-    /// <param name="_coolTime"></param>
-    /// <param name="_monsters"></param>
     public WarrokSummonSkill(Monster _monster, int _num, float _coolTime, List<Monster> _monsters, MonsterSpawn _spawn)
     {
         monster = _monster;

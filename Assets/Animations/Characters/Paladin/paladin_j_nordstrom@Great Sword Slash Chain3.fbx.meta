@@ -78,14 +78,6 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.34440148
-        functionName: ChainComboEnd
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 501a5b39807ebb04ca558a4df20d8e28,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
       - time: 0.5357639
         functionName: AttackEnd
         data: 

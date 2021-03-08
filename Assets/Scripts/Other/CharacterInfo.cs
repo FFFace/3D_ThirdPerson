@@ -30,7 +30,6 @@ public class CharacterInfo : MonoBehaviour
             if (i == 0) continue;
 
             skills[i - 1] = _skills[i];
-            Debug.Log(skills[i - 1]);
         }
     }
 

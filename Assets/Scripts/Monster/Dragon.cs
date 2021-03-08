@@ -111,20 +111,12 @@ public class Dragon : Monster
         currentHP = state.hp;
         currentDamage = state.attackDamage;
 
-        //nav = GetComponent<NavMeshAgent>();
-
-        //nav.destination = Character.instance.transform.position;
-        //nav.enabled = true;
-        //monsterDirection = new MonsterAttackDirection(this);
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody>();
         GetComponent<Collider>().enabled = true;
         attack = monsterAttackStay;
 
         if (headMove != null) move = headMove;
-        //rigid.isKinematic = false;
-
-        //ResetAnimation();
         transform.parent = null;
     }
 
@@ -295,7 +287,6 @@ public class DragonHeadMove : IMove
         pos.y = minHeight;
 
         Vector3 dir = (charPos - pos).normalized;
-        //Vector3 cross = Vector3.Cross(dir, character.transform.up) * 2;
 
         xzDir = dir;
 
@@ -346,6 +337,5 @@ public class DragonBodyMove : IMove
         model.transform.rotation = Quaternion.LookRotation(dir);
 
         dragon.transform.Translate(dir * dis * 4f * Time.deltaTime);
-        //dragon.transform.LookAt(front.transform.position);
     }
 }
