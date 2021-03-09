@@ -70,7 +70,7 @@ public class MonsterSpawn : MonoBehaviour
 
     private void SummonMonsters<T>(int summonMonsterNum) where T : Monster
     {
-        int num = UnityEngine.Random.Range(Mathf.CeilToInt(summonMonsterNum / 2), summonMonsterNum + 1);
+        int num = UnityEngine.Random.Range(Mathf.CeilToInt((float)summonMonsterNum / 2), summonMonsterNum + 1);
         Type type = typeof(T);
 
         for(int i=0; i<num; i++)

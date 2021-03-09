@@ -109,7 +109,7 @@ public class UIManager : MonoBehaviour
     public void SetSubAttack(ISkill _skill)
     {
         subAttack.sprite = _skill.GetImage();
-        subSkillCoolTime = _skill.GetCoolTime();
+        subAttackCoolTime = _skill.GetCoolTime();
     }
 
     public void SetMainSkillCoolTime(bool active)
